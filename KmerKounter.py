@@ -106,9 +106,9 @@ for rline in rfastaFileName:
 
 
 aseqdict = {**fseqdict,**rseqdict}
-print(addict)
+print(aseqdict)
 
-a = addict.values()
+a = aseqdict.values()
 b = list(a)
 c = [str(i) for i in b]
 #print(c)
