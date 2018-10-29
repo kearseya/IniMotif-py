@@ -99,3 +99,25 @@ seqlistcount = Counter(seqlist)
 seqcountdict = {**seqlistcount}
 print(seqcountdict)
 
+seqs = list(seqcountdict.keys())
+print(seqs)
+
+seqs = list(seqcountdict.keys())
+print(seqs)
+
+kmerdict = {}
+for i in seqs:
+    fastaseq = hash2kmer(i,6)
+    #print(fastaseq)
+    for k in range(3, len(fastaseq)):
+        for x in range(6-k):
+            kmers = fastaseq[x:x+k+1]
+            #print(kmers)
+            for line in kmers:
+                kmer = str(line[1:])
+                if i not in kmerdict:
+                    kmerdict[i] = []
+                continue
+            kmerdict[i].append(kmer2hash(kmers))
+
+print(kmerdict)
