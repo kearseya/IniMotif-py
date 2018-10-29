@@ -39,6 +39,7 @@ def hash2kmer(hashkey, k):
     return arr.tostring().decode("utf-8")
 
 
+
 revnuc = {'A':'T','T':'A','G':'C','C':'G','N':'N'}
 
 def revComp(seq):
@@ -49,21 +50,14 @@ def revComp(seq):
     return rev
 
 
+
 fastaFileName = open("simplefastafile", "r")
+
 
 
 fseqdict = {}
 for line in fastaFileName:
     line = line.strip()
-    #if not line:
-            #continue
-            #if line.startswith(">"):
-                #barcode = line[1:]
-            #if barcode not in fseqdict:
-                #fseqdict[barcode] = []
-            #continue
-            #fseq = line
-            #fseqdict[barcode].append(fseq)
     if not line:
         continue
     if line.startswith(">"):
@@ -75,22 +69,11 @@ for line in fastaFileName:
     fseqdict[(barcode)].append(kmer2hash(fseq))
 
 
-#print(fddict)
-
 
 rfastaFileName = open("simplefastafile", "r")
 rseqdict = {}
 for rline in rfastaFileName:
     rline = rline.strip()
-    #if not rline:
-            #continue
-            #if rline.startswith(">"):
-                #rbarcode = rline[1:]
-            #if rbarcode not in rseqdict:
-                #rseqdict[rbarcode] = []
-            #continue
-            #rseq = rline
-            #rseqdict[rbarcode].append(revComp(rseq))
     if not rline:
         continue
     if rline.startswith(">"):
@@ -101,8 +84,6 @@ for rline in rfastaFileName:
     rseq = rline
     rseqdict[(rbarcode+"rev")].append(kmer2hash(revComp(rseq)))
 
-#print(rseqdict)
-
 
 
 aseqdict = {**fseqdict,**rseqdict}
@@ -111,6 +92,10 @@ print(aseqdict)
 a = aseqdict.values()
 b = list(a)
 c = [str(i) for i in b]
-#print(c)
-d = Counter(c)
-print(d)
+
+seqlist = [int(i[1:-1]) for i in c]
+seqlistcount = Counter(seqlist)
+
+seqcountdict = {**seqlistcount}
+print(seqcountdict)
+
