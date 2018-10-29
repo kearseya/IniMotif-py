@@ -99,11 +99,10 @@ seqlistcount = Counter(seqlist)
 seqcountdict = {**seqlistcount}
 print(seqcountdict)
 
-seqs = list(seqcountdict.keys())
-print(seqs)
 
 seqs = list(seqcountdict.keys())
 print(seqs)
+
 
 kmerdict = {}
 for i in seqs:
