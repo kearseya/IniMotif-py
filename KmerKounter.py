@@ -2,6 +2,7 @@ from itertools import groupby
 from collections import Counter
 import numpy as np
 import sys
+import os
 from Bio.Seq import Seq
 
 
@@ -50,73 +51,105 @@ def revComp(seq):
     return rev
 
 
+#runnum = input("RunNum:")
+#filename = input("FileName:")
+runnum = 1
+filename = "simplefastafile"
 
-fastaFileName = open("simplefastafile", "r")
-
-
-
-fseqdict = {}
-for line in fastaFileName:
-    line = line.strip()
-    if not line:
-        continue
-    if line.startswith(">"):
-        barcode = line[1:]
-        if barcode not in fseqdict:
-            fseqdict[(barcode)] = []
-        continue
-    fseq = line
-    fseqdict[(barcode)].append(kmer2hash(fseq))
+frunnumdicts = {1 : "fseqdict1", 2 : "fseqdict2", 3 : "fseqdict3"}
+rrunnumdicts = {1 : "rseqdict1", 2 : "rseqdict2", 3 : "rseqdict3"}
 
 
+fastaFileName = open(filename, "r")
+#print(str(fastaFileName.readlines()[-2].strip()[1:]))
+#print(kmer2hash(str(fastaFileName.readlines()[-1].strip())))
+FileName = fastaFileName
 
-rfastaFileName = open("simplefastafile", "r")
-rseqdict = {}
-for rline in rfastaFileName:
-    rline = rline.strip()
-    if not rline:
-        continue
-    if rline.startswith(">"):
-        rbarcode = rline[1:]
-        if rbarcode not in rseqdict:
-            rseqdict[(rbarcode+"rev")] = []
-        continue
-    rseq = rline
-    rseqdict[(rbarcode+"rev")].append(kmer2hash(revComp(rseq)))
+fastaFileName = open(filename, "r")
+lastbarcode = fastaFileName.read().splitlines()[-2].strip()[1:]
+#print(lastbarcode)
 
+
+
+def CreateSeqDict(FileName, runnum):
+    fseqdict = frunnumdicts.get(runnum)
+    fseqdict = {}
+    fastaFileName = open(filename, "r")
+    FileName = fastaFileName
+    for line in FileName:
+        line = line.strip()
+        if not line:
+            continue
+        if line.startswith(">"):
+            barcode = line[1:]
+            if barcode not in fseqdict:
+                fseqdict[(barcode)] = []
+            continue
+        fseq = line
+        fseqdict[(barcode)].append(kmer2hash(fseq))
+        fastaFileName = open(filename, "r")
+        if lastbarcode in list(fseqdict.keys()):
+            return fseqdict
+
+fseqdict = CreateSeqDict(FileName, runnum)
+print(fseqdict)
+
+
+
+def CreateRevSeqDict(FileName, runnum):
+    rrunnumdicts.get(runnum)
+    rseqdict = {}
+    fastaFileName = open(filename, "r")
+    FileName = fastaFileName
+    for rline in fastaFileName:
+        rline = rline.strip()
+        if not rline:
+            continue
+        if rline.startswith(">"):
+            rbarcode = rline[1:]
+            if rbarcode not in rseqdict:
+                rseqdict[(rbarcode+"rev")] = []
+            continue
+        rseq = rline
+        rseqdict[(rbarcode+"rev")].append(kmer2hash(revComp(rseq)))
+        fastaFileName = open(filename, "r")
+        if lastbarcode + "rev" in list(rseqdict.keys()):
+            return rseqdict
+
+rseqdict = CreateRevSeqDict(FileName, runnum)
 
 
 aseqdict = {**fseqdict,**rseqdict}
 print(aseqdict)
 
-a = aseqdict.values()
-b = list(a)
-c = [str(i) for i in b]
+aseqvals = aseqdict.values()
+aseqvalslist = list(aseqvals)
+aseqvalsliststr = [str(i) for i in aseqvalslist]
 
-seqlist = [int(i[1:-1]) for i in c]
+seqlist = [int(i[1:-1]) for i in aseqvalsliststr]
 seqlistcount = Counter(seqlist)
 
 seqcountdict = {**seqlistcount}
 print(seqcountdict)
 
 
+
 seqs = list(seqcountdict.keys())
 print(seqs)
 
+length = 6
 
-kmerdict = {}
-for i in seqs:
-    fastaseq = hash2kmer(i,6)
-    #print(fastaseq)
-    for k in range(3, len(fastaseq)):
-        for x in range(6-k):
-            kmers = fastaseq[x:x+k+1]
-            #print(kmers)
-            for line in kmers:
-                kmer = str(line[1:])
-                if i not in kmerdict:
-                    kmerdict[i] = []
+def kmercount(l):
+    kmerdict = {}
+    for i in seqs:
+        fastaseq = hash2kmer(i,length)
+        for x in range(-1,((length+1)-l)):
+            kmers = fastaseq[x:x+l]
+            if i not in kmerdict:
+                kmerdict[i] = []
                 continue
             kmerdict[i].append(kmer2hash(kmers))
+    return kmerdict
 
+kmerdict = kmercount(4)
 print(kmerdict)
