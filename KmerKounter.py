@@ -62,6 +62,7 @@ runlists = ["NA",{},{},{},{},{},{},{},{},{},{}]
 kmercount = ["NA",{},{},{},{},{},{},{},{},{},{}]
 
 
+
 def CreateKmerList(FileName, runnum, k):
     #runlists.append(runnum)
     #runlists[runnum] = {}
@@ -82,23 +83,23 @@ def CreateKmerList(FileName, runnum, k):
                 if len(rkmers) > 0:
                     runlists[runnum][k].append(kmer2hash(rkmers))
 
+
+
 def RangeKmerList(mink,maxk):
     for i in range(mink,maxk+1):
         CreateKmerList(FileName, runnum, i)
 
 RangeKmerList(3,4)
 
-#print(runlists[1])
-#print(runlists[1][3])
 
 
 def KmerCounter():
     for x in list(runlists[runnum]):
         kmercount[runnum][x] = []
-        for i in runlists[runnum]:
-            kmerlistcount = Counter(runlists[runnum][i])
-            kmerlistcount2 = {**kmerlistcount}
-            kmercount[runnum][x].append(kmerlistcount2)
+    for i in runlists[runnum]:
+        kmerlistcount = Counter(runlists[runnum][i])
+        kmerlistcount2 = {**kmerlistcount}
+        kmercount[runnum][i].append(kmerlistcount2)
 
 KmerCounter()
-#print(kmercount[runnum][3])
+print(kmercount[runnum])
