@@ -53,12 +53,13 @@ def revComp(seq):
 
 FileName = "simplefastafile"
 runnum = 1
-revcompwanted = True
+revcompwanted = False
 
 #FileName = input("Fasta File Name:")
 #runnum = input("Run number:")
 
 runlists = ["NA",{},{},{},{},{},{},{},{},{},{}]
+kmercount = ["NA",{},{},{},{},{},{},{},{},{},{}]
 
 
 def CreateKmerList(FileName, runnum, k):
@@ -84,3 +85,20 @@ def CreateKmerList(FileName, runnum, k):
 def RangeKmerList(mink,maxk):
     for i in range(mink,maxk+1):
         CreateKmerList(FileName, runnum, i)
+
+RangeKmerList(3,4)
+
+#print(runlists[1])
+#print(runlists[1][3])
+
+
+def KmerCounter():
+    for x in list(runlists[runnum]):
+        kmercount[runnum][x] = []
+        for i in runlists[runnum]:
+            kmerlistcount = Counter(runlists[runnum][i])
+            kmerlistcount2 = {**kmerlistcount}
+            kmercount[runnum][x].append(kmerlistcount2)
+
+KmerCounter()
+#print(kmercount[runnum][3])
