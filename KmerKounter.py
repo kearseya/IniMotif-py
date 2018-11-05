@@ -51,105 +51,36 @@ def revComp(seq):
     return rev
 
 
-#runnum = input("RunNum:")
-#filename = input("FileName:")
+FileName = "simplefastafile"
 runnum = 1
-filename = "simplefastafile"
+revcompwanted = True
 
-frunnumdicts = {1 : "fseqdict1", 2 : "fseqdict2", 3 : "fseqdict3"}
-rrunnumdicts = {1 : "rseqdict1", 2 : "rseqdict2", 3 : "rseqdict3"}
+#FileName = input("Fasta File Name:")
+#runnum = input("Run number:")
 
-
-fastaFileName = open(filename, "r")
-#print(str(fastaFileName.readlines()[-2].strip()[1:]))
-#print(kmer2hash(str(fastaFileName.readlines()[-1].strip())))
-FileName = fastaFileName
-
-fastaFileName = open(filename, "r")
-lastbarcode = fastaFileName.read().splitlines()[-2].strip()[1:]
-#print(lastbarcode)
+runlists = ["NA",{},{},{},{},{},{},{},{},{},{}]
 
 
-
-def CreateSeqDict(FileName, runnum):
-    fseqdict = frunnumdicts.get(runnum)
-    fseqdict = {}
-    fastaFileName = open(filename, "r")
-    FileName = fastaFileName
-    for line in FileName:
+def CreateKmerList(FileName, runnum, k):
+    #runlists.append(runnum)
+    #runlists[runnum] = {}
+    runlists[runnum][k] = []
+    fastaFileName = open(FileName, "r")
+    for line in fastaFileName:
         line = line.strip()
-        if not line:
-            continue
         if line.startswith(">"):
-            barcode = line[1:]
-            if barcode not in fseqdict:
-                fseqdict[(barcode)] = []
             continue
-        fseq = line
-        fseqdict[(barcode)].append(kmer2hash(fseq))
-        fastaFileName = open(filename, "r")
-        if lastbarcode in list(fseqdict.keys()):
-            return fseqdict
+        for x in range(-1,((len(line)+1)-k)):
+            kmers = line[x:x+k]
+            if len(kmers) > 0:
+                runlists[runnum][k].append(kmer2hash(kmers))
 
-fseqdict = CreateSeqDict(FileName, runnum)
-print(fseqdict)
+        if revcompwanted == True:
+            for x in range(-1,((len(line)+1)-k)):
+                rkmers = revComp(line[x:x+k])
+                if len(rkmers) > 0:
+                    runlists[runnum][k].append(kmer2hash(rkmers))
 
-
-
-def CreateRevSeqDict(FileName, runnum):
-    rrunnumdicts.get(runnum)
-    rseqdict = {}
-    fastaFileName = open(filename, "r")
-    FileName = fastaFileName
-    for rline in fastaFileName:
-        rline = rline.strip()
-        if not rline:
-            continue
-        if rline.startswith(">"):
-            rbarcode = rline[1:]
-            if rbarcode not in rseqdict:
-                rseqdict[(rbarcode+"rev")] = []
-            continue
-        rseq = rline
-        rseqdict[(rbarcode+"rev")].append(kmer2hash(revComp(rseq)))
-        fastaFileName = open(filename, "r")
-        if lastbarcode + "rev" in list(rseqdict.keys()):
-            return rseqdict
-
-rseqdict = CreateRevSeqDict(FileName, runnum)
-
-
-aseqdict = {**fseqdict,**rseqdict}
-print(aseqdict)
-
-aseqvals = aseqdict.values()
-aseqvalslist = list(aseqvals)
-aseqvalsliststr = [str(i) for i in aseqvalslist]
-
-seqlist = [int(i[1:-1]) for i in aseqvalsliststr]
-seqlistcount = Counter(seqlist)
-
-seqcountdict = {**seqlistcount}
-print(seqcountdict)
-
-
-
-seqs = list(seqcountdict.keys())
-print(seqs)
-
-length = 6
-
-def kmercount(l):
-    kmerdict = {}
-    for i in seqs:
-        fastaseq = hash2kmer(i,length)
-        for x in range(-1,((length+1)-l)):
-            kmers = fastaseq[x:x+l]
-            if i not in kmerdict:
-                kmerdict[i] = []
-                continue
-            kmerdict[i].append(kmer2hash(kmers))
-    return kmerdict
-
-kmerdict = kmercount(4)
-print(kmerdict)
+def RangeKmerList(mink,maxk):
+    for i in range(mink,maxk+1):
+        CreateKmerList(FileName, runnum, i)
