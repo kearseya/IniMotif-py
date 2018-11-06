@@ -1,9 +1,10 @@
 from itertools import groupby
 from collections import Counter
+from collections import OrderedDict
 import numpy as np
-import sys
-import os
-from Bio.Seq import Seq
+#import sys
+#import os
+#from Bio.Seq import Seq
 
 
 
@@ -51,7 +52,7 @@ def revComp(seq):
     return rev
 
 
-FileName = "simplefastafile"
+FileName = "NF1-2"
 runnum = 1
 revcompwanted = False
 
@@ -63,9 +64,8 @@ kmercount = ["NA",{},{},{},{},{},{},{},{},{},{}]
 
 
 
+
 def CreateKmerList(FileName, runnum, k):
-    #runlists.append(runnum)
-    #runlists[runnum] = {}
     runlists[runnum][k] = []
     fastaFileName = open(FileName, "r")
     for line in fastaFileName:
@@ -89,17 +89,23 @@ def RangeKmerList(mink,maxk):
     for i in range(mink,maxk+1):
         CreateKmerList(FileName, runnum, i)
 
-RangeKmerList(3,4)
+
+RangeKmerList(4,6)
 
 
 
 def KmerCounter():
     for x in list(runlists[runnum]):
-        kmercount[runnum][x] = []
+        kmercount[runnum][x] = {}
     for i in runlists[runnum]:
         kmerlistcount = Counter(runlists[runnum][i])
         kmerlistcount2 = {**kmerlistcount}
-        kmercount[runnum][i].append(kmerlistcount2)
+        sort = sorted(kmerlistcount2.items(), key=lambda x: x[1], reverse=True)
+        sortdict = OrderedDict(sort)
+        sortdict2 = {**sortdict}
+        kmercount[runnum][i].update(sortdict2)
+
 
 KmerCounter()
+
 print(kmercount[runnum])
