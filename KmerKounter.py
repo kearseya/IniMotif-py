@@ -48,7 +48,6 @@ def revComp(seq):
     rev = ''
     for i in range(len(seq) - 1,-1,-1):
         rev += revnuc[seq[i]]
-
     return rev
 
 
@@ -61,7 +60,8 @@ revcompwanted = False
 
 runlists = ["NA",{},{},{},{},{},{},{},{},{},{}]
 kmercount = ["NA",{},{},{},{},{},{},{},{},{},{}]
-
+hamlist = ["NA",{},{},{},{},{},{},{},{},{},{}]
+hamdict = ["NA",{},{},{},{},{},{},{},{},{},{}]
 
 
 
@@ -90,7 +90,7 @@ def RangeKmerList(mink,maxk):
         CreateKmerList(FileName, runnum, i)
 
 
-RangeKmerList(4,6)
+RangeKmerList(4,7)
 
 
 
@@ -108,4 +108,42 @@ def KmerCounter():
 
 KmerCounter()
 
-print(kmercount[runnum])
+#print(list(kmercount[runnum][5].keys())[0])
+
+
+
+def hamming_distance(s1, s2):
+    if len(s1) != len(s2):
+        raise ValueError("Undefined for sequences of unequal length")
+    return sum(ch1 != ch2 for ch1, ch2 in zip(s1, s2))
+
+
+
+def listhammer():
+    for i in kmercount[runnum]:
+        hamlist[runnum][i] = []
+        hconsensus = (list(kmercount[runnum][i].keys())[0])
+        consensus = hash2kmer(hconsensus, i)
+        for x in list(kmercount[runnum][i].keys()):
+            values = hash2kmer(x,i)
+            if hamming_distance(consensus, values) <= 1:
+                hamlist[runnum][i].append(kmer2hash(values))
+
+
+listhammer()
+
+
+
+def dicthammer():
+    for i in hamlist[runnum]:
+        hamdict[runnum][i] = {}
+        test = { z : kmercount[runnum][i][z] for z in hamlist[runnum][i] }
+        M = sum(test.values())
+        test = { z : (kmercount[runnum][i][z]/M) for z in test }
+        hamdict[runnum][i].update(test)
+
+
+dicthammer()
+
+
+print(hamdict[runnum])
