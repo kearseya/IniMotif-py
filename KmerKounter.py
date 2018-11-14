@@ -41,6 +41,17 @@ def hash2kmer(hashkey, k):
     return arr.tostring().decode("utf-8")
 
 
+def seq2hash(kmer):
+    k = len(kmer)
+    base = {'A': 0, 'C': 1, 'G': 2, 'T': 3, 'a': 0, 'c': 1, 'g': 2, 't': 3}
+    kh = np.zeros(1,dtype='uint32')
+    kh = base[kmer[0]]
+    for tb in kmer[1:]:
+        kh = kh<<2
+        kh += base[tb]
+    return kh
+
+
 
 revnuc = {'A':'T','T':'A','G':'C','C':'G','N':'N'}
 
@@ -52,19 +63,50 @@ def revComp(seq):
 
 
 FileName = "NF1-2"
+l = 33
 runnum = 1
 revcompwanted = False
 
+
 #FileName = input("Fasta File Name:")
 #runnum = input("Run number:")
+#l = input("Read lengths:")
 
+#seqdict = ["NA",{},{},{},{},{},{},{},{},{},{}]
 runlists = ["NA",{},{},{},{},{},{},{},{},{},{}]
 kmercount = ["NA",{},{},{},{},{},{},{},{},{},{}]
 hamlist = ["NA",{},{},{},{},{},{},{},{},{},{}]
 hamdict = ["NA",{},{},{},{},{},{},{},{},{},{}]
+pwm = ["NA",{},{},{},{},{},{},{},{},{},{}]
+
+"""
+def sequencedictmaker(FileName, runnum, l):
+    fastaFileName = open(FileName, "r")
+    seqlist = []
+    seqcount = {}
+    for line in fastaFileName:
+        line = line.strip()
+        if not line:
+            continue
+        if line.startswith(">"):
+            barcode = line[1:]
+            if barcode:
+                continue
+        seq = line
+        if len(seq) == l:
+            seqlist.append(seq2hash(seq))
+    countseq = Counter(seqlist)
+    lseqdict = {**countseq}
+    return lseqdict
+
+def addseqdict(FileName, runnum):
+    seqdict[runnum].update(sequencedictmaker(FileName, runnum, l))
+
+addseqdict(FileName, 1)
+"""
 
 
-
+#potentially add something in line "kmers = line[x:x+k]" about removing illumina barcodes
 def CreateKmerList(FileName, runnum, k):
     runlists[runnum][k] = []
     fastaFileName = open(FileName, "r")
@@ -74,13 +116,13 @@ def CreateKmerList(FileName, runnum, k):
             continue
         for x in range(-1,((len(line)+1)-k)):
             kmers = line[x:x+k]
-            if len(kmers) > 0:
+            if len(kmers) > 0 and line.count(kmers) == 1:
                 runlists[runnum][k].append(kmer2hash(kmers))
 
         if revcompwanted == True:
             for x in range(-1,((len(line)+1)-k)):
                 rkmers = revComp(line[x:x+k])
-                if len(rkmers) > 0:
+                if len(rkmers) > 0 and line.count(kmers) == 1:
                     runlists[runnum][k].append(kmer2hash(rkmers))
 
 
@@ -90,7 +132,8 @@ def RangeKmerList(mink,maxk):
         CreateKmerList(FileName, runnum, i)
 
 
-RangeKmerList(4,7)
+RangeKmerList(6,6)
+
 
 
 
@@ -107,8 +150,6 @@ def KmerCounter():
 
 
 KmerCounter()
-
-#print(list(kmercount[runnum][5].keys())[0])
 
 
 
@@ -138,12 +179,43 @@ def dicthammer():
     for i in hamlist[runnum]:
         hamdict[runnum][i] = {}
         test = { z : kmercount[runnum][i][z] for z in hamlist[runnum][i] }
+        #M = sum(kmercount[runnum][i].values())
         M = sum(test.values())
-        test = { z : (kmercount[runnum][i][z]/M) for z in test }
+        test = { z : round((kmercount[runnum][i][z]/M),5) for z in test }
         hamdict[runnum][i].update(test)
 
 
 dicthammer()
 
 
-print(hamdict[runnum])
+
+def startpwm():
+    for i in hamdict[runnum]:
+        pwm[runnum][i] = {}
+        for j in range(1,i+1):
+            pwm[runnum][i][j] = {"A":0}
+            pwm[runnum][i][j].update({"C":0})
+            pwm[runnum][i][j].update({"G":0})
+            pwm[runnum][i][j].update({"T":0})
+
+startpwm()
+
+
+
+def pwmmaker():
+    for i in hamdict[runnum]:
+        for x in hamdict[runnum][i]:
+            kmer = hash2kmer((x),i)
+            for j in range(1,i+1):
+                if kmer[j-1] == "A":
+                    pwm[runnum][i][j]["A"] += hamdict[runnum][i][x]
+                elif kmer[j-1] == "C":
+                    pwm[runnum][i][j]["C"] += hamdict[runnum][i][x]
+                elif kmer[j-1] == "T":
+                    pwm[runnum][i][j]["T"] += hamdict[runnum][i][x]
+                elif kmer[j-1] == "G":
+                    pwm[runnum][i][j]["G"] += hamdict[runnum][i][x]
+
+pwmmaker()
+
+print(pwm)
