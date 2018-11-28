@@ -62,16 +62,16 @@ def revComp(seq):
     return rev
 
 
-FileName = "NF1-2"
-l = 33
-runnum = 1
+#FileName = "NF1-2"
+#l = 33
+#runnum = 1
 revcompwanted = False
 
-
-#FileName = input("Fasta File Name:")
-#runnum = input("Run number:")
-#l = input("Read lengths:")
-
+"""
+FileName = input("Fasta File Name:")
+runnum = int(input("Run number:"))
+l = int(input("Read lengths:"))
+"""
 #seqdict = ["NA",{},{},{},{},{},{},{},{},{},{}]
 runlists = ["NA",{},{},{},{},{},{},{},{},{},{}]
 kmercount = ["NA",{},{},{},{},{},{},{},{},{},{}]
@@ -122,7 +122,7 @@ def CreateKmerList(FileName, runnum, k):
         if revcompwanted == True:
             for x in range(-1,((len(line)+1)-k)):
                 rkmers = revComp(line[x:x+k])
-                if len(rkmers) > 0 and line.count(kmers) == 1:
+                if len(rkmers) > 0 and (line.count(kmers) + line.count(rkmers)) == 1:
                     runlists[runnum][k].append(kmer2hash(rkmers))
 
 
@@ -132,7 +132,7 @@ def RangeKmerList(mink,maxk):
         CreateKmerList(FileName, runnum, i)
 
 
-RangeKmerList(6,6)
+#RangeKmerList(6,8)
 
 
 
@@ -149,7 +149,7 @@ def KmerCounter():
         kmercount[runnum][i].update(sortdict2)
 
 
-KmerCounter()
+#KmerCounter()
 
 
 
@@ -171,7 +171,7 @@ def listhammer():
                 hamlist[runnum][i].append(kmer2hash(values))
 
 
-listhammer()
+#listhammer()
 
 
 
@@ -181,11 +181,11 @@ def dicthammer():
         test = { z : kmercount[runnum][i][z] for z in hamlist[runnum][i] }
         #M = sum(kmercount[runnum][i].values())
         M = sum(test.values())
-        test = { z : round((kmercount[runnum][i][z]/M),5) for z in test }
+        test = { z : (kmercount[runnum][i][z]/M) for z in test }
         hamdict[runnum][i].update(test)
 
 
-dicthammer()
+#dicthammer()
 
 
 
@@ -198,7 +198,7 @@ def startpwm():
             pwm[runnum][i][j].update({"G":0})
             pwm[runnum][i][j].update({"T":0})
 
-startpwm()
+#startpwm()
 
 
 
@@ -216,6 +216,36 @@ def pwmmaker():
                 elif kmer[j-1] == "G":
                     pwm[runnum][i][j]["G"] += hamdict[runnum][i][x]
 
-pwmmaker()
+#pwmmaker()
 
-print(pwm)
+#print(hamdict)
+#print(pwm[runnum][7])
+
+
+
+def addrun():
+    global FileName
+    FileName = input("Fasta File Name:")
+    global runnum
+    runnum = int(input("Run number:"))
+    global l
+    l = int(input("Read lengths:"))
+    global mink
+    mink = int(input("Minimum kmer:"))
+    global maxk
+    maxk = int(input("Maximum kmer:"))
+    RangeKmerList(mink,maxk)
+    KmerCounter()
+    listhammer()
+    dicthammer()
+    startpwm()
+    pwmmaker()
+
+
+
+def addingall(n):
+    for _ in range(n):
+        addrun()
+
+numofruns= int(input("Number of runs:"))
+addingall(numofruns)
