@@ -1,23 +1,15 @@
-#%matplotlib inline
 import seaborn
 import matplotlib.pyplot as plt
 plt.style.use('seaborn-ticks')
 from matplotlib import transforms
 import matplotlib.patheffects
 import numpy as np
+
 from test import pwm
+from test import numofruns
+from test import mink
+from test import maxk
 
-
-COLOR_SCHEME = {'G': 'orange',
-                'A': 'red',
-                'C': 'blue',
-                'T': 'darkgreen'}
-BASES = list(COLOR_SCHEME.keys())
-#print(pwm)
-
-numofruns = int(input("Number of runs:"))
-mink = int(input("Minimum kmer:"))
-maxk = int(input("Maximum kmer:"))
 
 
 logoform = []
@@ -48,12 +40,13 @@ allmaker(numofruns, mink, maxk)
 print(logoform)
 
 
-#kmerpwm(6)
-#print(kmerpwm(6))
-
-#ALL_SCORES1 = kmerpwm(2, 6)
 
 
+COLOR_SCHEME = {'G': 'orange',
+                'A': 'red',
+                'C': 'blue',
+                'T': 'darkgreen'}
+BASES = list(COLOR_SCHEME.keys())
 
 
 class Scale(matplotlib.patheffects.RendererBase):
@@ -111,14 +104,11 @@ def draw_logo(all_scores):
     plt.show()
 
 
+
+
 def logoprinter():
     for i in logoform:
         draw_logo(i)
 
 
 logoprinter()
-
-
-#print(ALL_SCORES1)
-#draw_logo(ALL_SCORES1)
-
