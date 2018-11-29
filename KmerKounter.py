@@ -4,7 +4,6 @@ from collections import OrderedDict
 import numpy as np
 #import sys
 #import os
-#from Bio.Seq import Seq
 
 
 
@@ -61,7 +60,7 @@ def revComp(seq):
         rev += revnuc[seq[i]]
     return rev
 
-
+numofruns= int(input("Number of runs:"))
 #FileName = "NF1-2"
 #l = 33
 #runnum = 1
@@ -73,11 +72,21 @@ runnum = int(input("Run number:"))
 l = int(input("Read lengths:"))
 """
 #seqdict = ["NA",{},{},{},{},{},{},{},{},{},{}]
-runlists = ["NA",{},{},{},{},{},{},{},{},{},{}]
-kmercount = ["NA",{},{},{},{},{},{},{},{},{},{}]
-hamlist = ["NA",{},{},{},{},{},{},{},{},{},{}]
-hamdict = ["NA",{},{},{},{},{},{},{},{},{},{}]
-pwm = ["NA",{},{},{},{},{},{},{},{},{},{}]
+runlists = []
+kmercount = []
+hamlist = []
+hamdict = []
+pwm = []
+
+def dictinit(numofruns):
+    for _ in range(numofruns + 1):
+        runlists.append({})
+        kmercount.append({})
+        hamlist.append({})
+        hamdict.append({})
+        pwm.append({})
+
+dictinit(numofruns)
 
 """
 def sequencedictmaker(FileName, runnum, l):
@@ -131,9 +140,7 @@ def RangeKmerList(mink,maxk):
     for i in range(mink,maxk+1):
         CreateKmerList(FileName, runnum, i)
 
-
 #RangeKmerList(6,8)
-
 
 
 
@@ -147,7 +154,6 @@ def KmerCounter():
         sortdict = OrderedDict(sort)
         sortdict2 = {**sortdict}
         kmercount[runnum][i].update(sortdict2)
-
 
 #KmerCounter()
 
@@ -170,7 +176,6 @@ def listhammer():
             if hamming_distance(consensus, values) <= 1:
                 hamlist[runnum][i].append(kmer2hash(values))
 
-
 #listhammer()
 
 
@@ -183,7 +188,6 @@ def dicthammer():
         M = sum(test.values())
         test = { z : (kmercount[runnum][i][z]/M) for z in test }
         hamdict[runnum][i].update(test)
-
 
 #dicthammer()
 
@@ -218,9 +222,6 @@ def pwmmaker():
 
 #pwmmaker()
 
-#print(hamdict)
-#print(pwm[runnum][7])
-
 
 
 def addrun():
@@ -247,5 +248,5 @@ def addingall(n):
     for _ in range(n):
         addrun()
 
-numofruns= int(input("Number of runs:"))
+
 addingall(numofruns)
