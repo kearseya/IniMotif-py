@@ -31,7 +31,7 @@ kmercount = [{},{4: {200: 113, 220: 98, 242: 51, 114: 49, 50: 35, 115: 34, 112: 
 
 def makexaxis():
     xaxis = ([])
-    for i in range(1, numofruns+1):
+    for i in range(numofruns):
         xaxis.append(i)
     return xaxis
 
