@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import math
 
-#numofruns = 4
+print(len(kmercount))
 
 
 def hash2kmer(hashkey, k):
@@ -37,7 +37,7 @@ def makexaxis():
         xaxis.append(i)
     return xaxis
 
-def makeyaxis(i, k):
+def makeyaxis1(i, k):
     yaxis = ([])
     for l in range(1, (len(kmercount))):
         total = sum(kmercount[l][k].values())
@@ -58,10 +58,10 @@ def graphyboy(k):
     for l in range(1, len(kmercount)):
         for i in kmercount[l][k]:
             try:
-                plt.plot(makexaxis(), makeyaxis(i,k), label = str(hash2kmer(i,k)))
+                plt.plot(makexaxis(), makeyaxis1(i,k), label = str(hash2kmer(i,k)))
             except:
                 continue
     plt.show()
 
 
-graphyboy(4)
+graphyboy(8)
