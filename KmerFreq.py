@@ -1,5 +1,4 @@
 from test import kmercount
-from test import numofruns
 #from test import hamlist
 import matplotlib.pyplot as plt
 import numpy as np
@@ -34,7 +33,7 @@ kmercount = [{},{4: {200: 113, 220: 98, 242: 51, 114: 49, 50: 35, 115: 34, 112: 
 
 def makexaxis():
     xaxis = ([])
-    for i in range(numofruns):
+    for i in range(len(kmercount)-1):
         xaxis.append(i)
     return xaxis
 
