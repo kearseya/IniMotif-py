@@ -35,7 +35,7 @@ def makexaxis():
         xaxis.append(i)
     return xaxis
 
-def makeyaxis(i):
+def makeyaxis(i, k):
     yaxis = ([])
     for l in range(1, len(kmercount)):
         if i in kmercount[l][k]:
@@ -52,7 +52,7 @@ def graphyboy(k):
     for l in range(1, len(kmercount)):
         for i in kmercount[l][k]:
             try:
-                plt.plot(makexaxis(), makeyaxis(i))
+                plt.plot(makexaxis(), makeyaxis(i,k))
             except:
                 continue
     plt.show()
