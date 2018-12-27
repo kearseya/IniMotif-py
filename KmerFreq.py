@@ -4,8 +4,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import math
 
-print(len(kmercount))
-
 
 def hash2kmer(hashkey, k):
     """
@@ -23,13 +21,6 @@ def hash2kmer(hashkey, k):
 
     return arr.tostring().decode("utf-8")
 
-"""
-#test data to save input from "test.py" file
-kmercount = [{},{4: {200: 113, 220: 98, 242: 51, 114: 49, 50: 35, 115: 34, 112: 33, 113: 33, 178: 32, 203: 29, 206: 24, 202: 23, 188: 22, 252: 22, 162: 20, 47: 20, 174: 20, 171: 20, 175: 20, 168: 19, 60: 19, 44: 19, 201: 19, 80: 19, 140: 18, 37: 18, 207: 18, 204: 18, 192: 18, 27: 18, 227: 18, 63: 18, 5: 18, 205: 18, 236: 18, 42: 17, 3: 17, 107: 17, 38: 17, 190: 17, 198: 17, 170: 17, 65: 17, 58: 17, 195: 17, 234: 16, 46: 16, 148: 16, 82: 16, 239: 16, 84: 16, 71: 16, 51: 16, 12: 15, 185: 15, 41: 15, 149: 15, 139: 15, 250: 15, 59: 15, 81: 15, 76: 15, 20: 15, 143: 14, 64: 14, 9: 14, 172: 14, 196: 14, 15: 14, 186: 14, 85: 14, 248: 14, 164: 14, 68: 14, 36: 14, 194: 13, 111: 13, 156: 13, 191: 13, 2: 13, 56: 13, 108: 13, 14: 13, 243: 13, 193: 13, 106: 13, 83: 13, 154: 13, 218: 13, 73: 13, 246: 12, 40: 12, 245: 12, 215: 12, 226: 12, 45: 12, 124: 12, 75: 12, 163: 12, 16: 12, 6: 12, 25: 12, 224: 12, 92: 12, 233: 12, 62: 12, 138: 12, 235: 12, 43: 12, 145: 12, 147: 12, 13: 12, 53: 12, 159: 12, 29: 12, 119: 12, 231: 12, 212: 12, 70: 12, 0: 12, 61: 12, 213: 12, 8: 11, 189: 11, 208: 11, 90: 11, 103: 11, 253: 11, 183: 11, 184: 11, 57: 11, 67: 11, 28: 11, 66: 11, 101: 11, 99: 11, 131: 11, 55: 11, 26: 11, 167: 11, 247: 11, 78: 11, 7: 11, 31: 11, 126: 11, 182: 11, 109: 10, 150: 10, 228: 10, 10: 10, 165: 10, 86: 10, 32: 10, 94: 10, 142: 10, 240: 10, 251: 10, 199: 10, 116: 10, 1: 10, 39: 10, 152: 10, 4: 10, 117: 10, 34: 10, 255: 10, 17: 10, 97: 10, 136: 9, 74: 9, 130: 9, 120: 9, 18: 9, 122: 9, 238: 9, 134: 9, 157: 9},
-5: {882: 43, 968: 40, 883: 34, 880: 31, 456: 31, 200: 28, 712: 26, 881: 26, 459: 18, 462: 15, 242: 14, 562: 13, 754: 13, 457: 13, 50: 12, 498: 12, 1010: 12, 451: 12, 463: 11, 690: 11, 448: 11, 454: 11, 178: 11, 810: 10, 815: 10, 818: 10, 370: 10, 461: 10, 458: 10, 674: 9, 812: 9, 806: 9, 452: 9, 826: 9, 449: 9, 434: 9, 908: 9, 697: 8, 828: 8, 956: 8, 65: 8, 149: 8, 748: 8, 809: 8, 821: 8, 814: 8, 687: 8, 306: 8, 700: 8, 329: 8, 827: 8, 12: 7, 37: 7, 795: 7, 252: 7, 1008: 7, 771: 7, 108: 7, 455: 7, 773: 7, 580: 7}},
-{4: {200: 150, 220: 125, 242: 75, 114: 49, 50: 35, 115: 34, 112: 33, 113: 33, 178: 32, 203: 29, 206: 24, 202: 23, 188: 22, 252: 22, 162: 20, 47: 20, 174: 20, 171: 20, 175: 20, 168: 19, 60: 19, 44: 19, 201: 19, 80: 19, 140: 18, 37: 18, 207: 18, 204: 18, 192: 18, 27: 18, 227: 18, 63: 18, 5: 18, 205: 18, 236: 18, 42: 17, 3: 17, 107: 17, 38: 17, 190: 17, 198: 17, 170: 17, 65: 17, 58: 17, 195: 17, 234: 16, 46: 16, 148: 16, 82: 16, 239: 16, 84: 16, 71: 16, 51: 16, 12: 15, 185: 15, 41: 15, 149: 15, 139: 15, 250: 15}, 5: {882: 46}}]
-"""
-
 
 def makexaxis():
     xaxis = ([])
@@ -37,31 +28,141 @@ def makexaxis():
         xaxis.append(i)
     return xaxis
 
+"""
+def makexaxis2():
+    xaxis = ([])
+    for i in range(-1, len(kmercount)+1):
+        xaxis.append(i)
+    return xaxis
+"""
+
 def makeyaxis1(i, k):
-    yaxis = ([])
+    yaxis1 = ([])
     for l in range(1, (len(kmercount))):
         total = sum(kmercount[l][k].values())
         if i in kmercount[l][k]:
             num =  kmercount[l][k][i]
             f = num/total
             freq = (f/(1-f))
-            yaxis.append(math.log10(freq))
-    return yaxis
+            yaxis1.append(math.log10(freq))
+    return yaxis1
 
+def makeyaxis2(i, k):
+    yaxis2 = ([])
+    for l in range(1, (len(kmercount))):
+        total = sum(kmercount[l][k].values())
+        if i in kmercount[l][k]:
+            num =  kmercount[l][k][i]
+            f = num/total
+            yaxis2.append(f)
+    return yaxis2
+
+def makeyaxis3(k):
+    yaxis3 = ([])
+    for l in range(1, (len(kmercount))):
+        total = sum(kmercount[l][k].values())
+        yaxis3.append(total)
+    return yaxis3
+
+
+def colours(k):
+    global colours
+    colours = []
+    for l in range(1, len(kmercount)):
+        keys = list(kmercount[l][k].keys())
+        for i in range(25):
+            colours.append(keys[i])
+    return colours
+
+def top6(k):
+    global top6
+    top6 = []
+    l = (len(kmercount)-1)
+    keys = list(kmercount[l][k].keys())
+    for i in range(6):
+        top6.append(keys[i])
+    return top6
+
+
+#print(colours(6))
+#print(top6(6))
 
 
 def graphyboy(k):
-    #graph = plt.subplots(1,1)
-    plt.xlabel("SELEX round")
-    plt.ylabel("Kmer count")
-    plt.title("Kmer frequency")
+
+    xaxis = makexaxis()
+    last = (len(xaxis)-1)
+    top6(k)
+    colours(k)
+
+    #graph = plt.subplots(1,2)
+    fig = plt.figure(figsize=(6,6))
+    grid = plt.GridSpec(2,3,wspace=0.4,hspace=0.3)
+
+    top = fig.add_subplot(grid[:-1,:])
+    top.set_xlabel("SELEX round")
+    top.set_ylabel("Kmer count (log(f/(1-f)))")
+    top.set_title("Kmer frequency")
+    top.set_xticks(makexaxis())
+
+    bottom = fig.add_subplot(grid[-1,:-1])
+    bottom.set_xlabel("SELEX round")
+    bottom.set_ylabel("Kmer count (kmer/total)")
+    bottom.set_title("Kmer frequency")
+    bottom.set_xticks(makexaxis())
+
+    bar = fig.add_subplot(grid[-1,-1:])
+    bar.set_xlabel("SELEX round")
+    bar.set_ylabel("Total kmers")
+    bar.set_title("Kmer total distribution")
+    bar.set_xticks(makexaxis())
+
+
     for l in range(1, len(kmercount)):
         for i in kmercount[l][k]:
-            try:
-                plt.plot(makexaxis(), makeyaxis1(i,k), label = str(hash2kmer(i,k)))
-            except:
-                continue
+            yaxis1 = makeyaxis1(i,k)
+            if i in colours:
+                try:
+                    top.plot(xaxis, yaxis1)
+                except:
+                    continue
+            else:
+                try:
+                    top.plot(xaxis, yaxis1, color = '0.75')
+                except:
+                    continue
+            if i in top6:
+                top.annotate((str((top6.index(i)+1)) + '. ' + hash2kmer(i,k)), (xaxis[last], yaxis1[last]))
+
+
+    for l in range(1, len(kmercount)):
+        for i in kmercount[l][k]:
+            yaxis2 = makeyaxis2(i,k)
+            if i in colours:
+                try:
+                    bottom.plot(xaxis, yaxis2)
+                except:
+                    continue
+            else:
+                try:
+                    bottom.plot(xaxis, yaxis2, color = '0.75')
+                except:
+                    continue
+            if i in top6:
+                bottom.annotate((str((top6.index(i)+1)) + '. ' + hash2kmer(i,k)), (xaxis[last], yaxis2[last]))
+
+    bar.bar(xaxis, makeyaxis3(k))
+
+    handles = []
+    for i in top6:
+        handles.append(str((top6.index(i)+1)) + '. ' + hash2kmer(i,k))
+    handles.reverse()
+    
+
+    top.legend(handles, bbox_to_anchor=(1.01, 1), loc=2, borderaxespad=0.)
+
+
     plt.show()
 
 
-graphyboy(8)
+graphyboy(6)
