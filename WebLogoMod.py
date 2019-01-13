@@ -1,3 +1,4 @@
+#%matplotlib inline
 import seaborn
 import matplotlib.pyplot as plt
 plt.style.use('seaborn-ticks')
@@ -37,7 +38,7 @@ def allmaker(numofruns, mink, maxk):
 
 allmaker(numofruns, mink, maxk)
 
-print(logoform)
+#print(logoform)
 
 
 
