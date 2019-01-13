@@ -1,4 +1,6 @@
-from test import kmercount
+from KmerKount import kmercount
+from KmerKount import mink
+from KmerKount import maxk
 #from test import hamlist
 import matplotlib.pyplot as plt
 import numpy as np
@@ -65,8 +67,7 @@ def makeyaxis3(k):
     return yaxis3
 
 
-def colours(k):
-    global colours
+def colours1(k):
     colours = []
     for l in range(1, len(kmercount)):
         keys = list(kmercount[l][k].keys())
@@ -75,25 +76,24 @@ def colours(k):
     return colours
 
 def top6(k):
-    global top6
-    top6 = []
+    top6s = []
     l = (len(kmercount)-1)
     keys = list(kmercount[l][k].keys())
     for i in range(6):
-        top6.append(keys[i])
-    return top6
+        top6s.append(keys[i])
+    return top6s
 
 
 #print(colours(6))
 #print(top6(6))
 
 
-def graphyboy(k):
+def grapher(k):
 
     xaxis = makexaxis()
     last = (len(xaxis)-1)
-    top6(k)
-    colours(k)
+    top6s = top6(k)
+    colours = colours1(k)
 
     #graph = plt.subplots(1,2)
     fig = plt.figure(figsize=(6,6))
@@ -102,7 +102,7 @@ def graphyboy(k):
     top = fig.add_subplot(grid[:-1,:])
     top.set_xlabel("SELEX round")
     top.set_ylabel("Kmer count (log(f/(1-f)))")
-    top.set_title("Kmer frequency")
+    top.set_title("Kmer frequency"+', K: '+str(k))
     top.set_xticks(makexaxis())
 
     bottom = fig.add_subplot(grid[-1,:-1])
@@ -131,8 +131,8 @@ def graphyboy(k):
                     top.plot(xaxis, yaxis1, color = '0.75')
                 except:
                     continue
-            if i in top6:
-                top.annotate((str((top6.index(i)+1)) + '. ' + hash2kmer(i,k)), (xaxis[last], yaxis1[last]))
+            if i in top6s:
+                top.annotate((str((top6s.index(i)+1)) + '. ' + hash2kmer(i,k)), (xaxis[last], yaxis1[last]))
 
 
     for l in range(1, len(kmercount)):
@@ -148,21 +148,24 @@ def graphyboy(k):
                     bottom.plot(xaxis, yaxis2, color = '0.75')
                 except:
                     continue
-            if i in top6:
-                bottom.annotate((str((top6.index(i)+1)) + '. ' + hash2kmer(i,k)), (xaxis[last], yaxis2[last]))
+            if i in top6s:
+                bottom.annotate((str((top6s.index(i)+1)) + '. ' + hash2kmer(i,k)), (xaxis[last], yaxis2[last]))
 
     bar.bar(xaxis, makeyaxis3(k))
 
     handles = []
-    for i in top6:
-        handles.append(str((top6.index(i)+1)) + '. ' + hash2kmer(i,k))
+    for i in top6s:
+        handles.append(str((top6s.index(i)+1)) + '. ' + hash2kmer(i,k))
     handles.reverse()
-    
+
 
     top.legend(handles, bbox_to_anchor=(1.01, 1), loc=2, borderaxespad=0.)
 
 
     plt.show()
 
+def multigrapher(mink, maxk):
+    for k in range(mink, maxk+1):
+        grapher(k)
 
-graphyboy(6)
+multigrapher(mink, maxk)
