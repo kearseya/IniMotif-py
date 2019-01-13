@@ -39,7 +39,7 @@ def hash2kmer(hashkey, k):
 
     return arr.tostring().decode("utf-8")
 
-
+"""
 def seq2hash(kmer):
     k = len(kmer)
     base = {'A': 0, 'C': 1, 'G': 2, 'T': 3, 'a': 0, 'c': 1, 'g': 2, 't': 3}
@@ -49,7 +49,7 @@ def seq2hash(kmer):
         kh = kh<<2
         kh += base[tb]
     return kh
-
+"""
 
 
 revnuc = {'A':'T','T':'A','G':'C','C':'G','N':'N'}
@@ -115,24 +115,53 @@ addseqdict(FileName, 1)
 """
 
 
-#potentially add something in line "kmers = line[x:x+k]" about removing illumina barcodes
-def CreateKmerList(FileName, runnum, k):
-    runlists[runnum][k] = []
+
+def barcodechecker(FileName):
+    bar = []
     fastaFileName = open(FileName, "r")
     for line in fastaFileName:
         line = line.strip()
         if line.startswith(">"):
             continue
-        for x in range(-1,((len(line)+1)-k)):
-            kmers = line[x:x+k]
-            if len(kmers) > 0 and line.count(kmers) == 1:
-                runlists[runnum][k].append(kmer2hash(kmers))
+        for i in range(6):
+            start = line[0:i]
+            end = revComp(line[len(line)-i : len(line)])
+            if start == end:
+                x = i
+            else:
+                break
+        bar.append(x)
+    favg = (sum(bar)/len(bar))
+    avg = round(favg)
+    return avg
+
+
+
+def CreateKmerList(FileName, runnum, k):
+    runlists[runnum][k] = []
+    fastaFileName = open(FileName, "r")
+    avg = barcodechecker(FileName)
+    for line in fastaFileName:
+        line = line.strip()
+        if line.startswith(">"):
+            continue
+        if len(line) == l and "N" not in line:
+            for x in range(0,((len(line)+1)-k)-(2*avg)):
+                kmers = str(line[x+avg:x+k+avg])
+                if len(kmers) > 0 and line.count(kmers) == 1:
+                    runlists[runnum][k].append(kmer2hash(kmers))
+        else:
+            continue
+
 
         if revcompwanted == True:
-            for x in range(-1,((len(line)+1)-k)):
-                rkmers = revComp(line[x:x+k])
-                if len(rkmers) > 0 and (line.count(kmers) + line.count(rkmers)) == 1:
-                    runlists[runnum][k].append(kmer2hash(rkmers))
+            if len(line) == l and "N" not in line:
+                for x in range(0,((len(line)+1)-k)-(2*avg)):
+                    rkmers = revComp(line[x+avg:x+k+avg])
+                    if len(rkmers) > 0 and (line.count(kmers) + line.count(rkmers)) == 1:
+                        runlists[runnum][k].append(kmer2hash(rkmers))
+            else:
+                continue
 
 
 
@@ -169,7 +198,8 @@ def hamming_distance(s1, s2):
 def listhammer():
     for i in kmercount[runnum]:
         hamlist[runnum][i] = []
-        hconsensus = (list(kmercount[runnum][i].keys())[0])
+        #hconsensus = (list(kmercount[runnum][i].keys())[0])
+        hconsensus = max(kmercount[runnum][i], key=lambda key: kmercount[runnum][i][key])
         consensus = hash2kmer(hconsensus, i)
         for x in list(kmercount[runnum][i].keys()):
             values = hash2kmer(x,i)
@@ -250,3 +280,10 @@ def addingall(n):
 
 
 addingall(numofruns)
+
+
+#print(runlists)
+#print(kmercount)
+#print(hamlist)
+#print(hamdict)
+#print(pwm)
