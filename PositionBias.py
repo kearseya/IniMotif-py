@@ -4,14 +4,14 @@ from itertools import groupby
 from collections import Counter
 from collections import OrderedDict
 
-from test import numofruns
-from test import kmercount
-from test import barcodechecker
-from test import lvalues
-from test import mink
-from test import maxk
-from test import filenames
-from test import revcompwanted
+from KmerKount import numofruns
+from KmerKount import kmercount
+from KmerKount import barcodechecker
+from KmerKount import lvalues
+from KmerKount import mink
+from KmerKount import maxk
+from KmerKount import filenames
+from KmerKount import revcompwanted
 
 
 
