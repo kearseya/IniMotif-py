@@ -4,16 +4,16 @@ from itertools import groupby
 from collections import Counter
 from collections import OrderedDict
 
-from KmerKount import numofruns
-from KmerKount import kmercount
-from KmerKount import barcodechecker
-from KmerKount import l
-from KmerKount import mink
-from KmerKount import maxk
-from KmerKount import filenames
-from KmerKount import revcompwanted
+from test import numofruns
+from test import kmercount
+from test import barcodechecker
+from test import lvalues
+from test import mink
+from test import maxk
+from test import filenames
+from test import revcompwanted
 
-print(filenames)
+
 
 def kmer2hash(kmer):
     """
@@ -48,6 +48,17 @@ def hash2kmer(hashkey, k):
     return arr.tostring().decode("utf-8")
 
 
+def addrun():
+    global FileName
+    FileName = input("Fasta File Name:")
+    global runnum
+    runnum = int(input("Run number:"))
+    global l
+    l = int(input("Read lengths:"))
+    global k
+    k = int(input("K:"))
+
+#addrun()
 
 
 revnuc = {'A':'T','T':'A','G':'C','C':'G','N':'N'}
@@ -59,34 +70,14 @@ def revComp(seq):
     return rev
 
 
-def barcodechecker(FileName):
-    bar = []
-    fastaFileName = open(FileName, "r")
-    for line in fastaFileName:
-        line = line.strip()
-        if line.startswith(">"):
-            continue
-        for i in range(6):
-            start = line[0:i]
-            end = revComp(line[len(line)-i : len(line)])
-            if start == end:
-                x = i
-            else:
-                break
-        bar.append(x)
-    favg = (sum(bar)/len(bar))
-    avg = round(favg)
-    return avg
-
-
-
 poslist = []
-posdict = []
+rposlist = []
 
 hamminglist2 = []
 
 
-def listinit(l, mink, maxk):
+def listinit(mink, maxk):
+    l = lvalues[1]
     for i in range(0,numofruns+1):
         poslist.append({})
         rposlist.append({})
@@ -102,14 +93,15 @@ def listinit(l, mink, maxk):
                 rposlist[i][k].update({x:[]})
 
 
-listinit(l,mink,maxk)
-print(poslist)
+listinit(mink,maxk)
+
 
 def hamdictinit(numofruns):
     for _ in range(numofruns + 1):
         hamminglist2.append({})
 
 hamdictinit(numofruns)
+
 
 
 def hamming_distance(s1, s2):
@@ -145,7 +137,8 @@ def listhammer(runnum, k):
                 if hamming_distance(rconsensus, values) <= 2:
                     hamminglist2[runnum][k].append(kmer2hash(values))
 
-                    
+
+
 
 def multilisthammer(numofruns, mink, maxk):
     for x in range(1, numofruns+1):
@@ -189,7 +182,6 @@ def FindTotal(FileName, k, runnum):
 
 
 
-
 def CreatePosList(FileName, k, runnum):
     fastaFileName = open(FileName, "r")
     avg = barcodechecker(FileName)
@@ -197,7 +189,7 @@ def CreatePosList(FileName, k, runnum):
         line = line.strip()
         if line.startswith(">"):
             continue
-        if len(line) == l and "N" not in line:
+        if len(line) == lvalues[runnum] and "N" not in line:
             for x in range(0,((len(line)+1)-k)-(2*avg)):
                 kmers = str(line[x+avg:x+k+avg])
                 if len(kmers) > 0 and line.count(kmers) == 1:
@@ -206,7 +198,7 @@ def CreatePosList(FileName, k, runnum):
                         poslist[runnum][k][x].append(hkmers)
 
         if revcompwanted == True:
-            if len(line) == l and "N" not in line:
+            if len(line) == lvalues[runnum] and "N" not in line:
                 for x in range(0,((len(line)+1)-k)-(2*avg)):
                     rkmers = revComp(line[x+avg:x+k+avg])
                     if len(rkmers) > 0 and (line.count(rkmers) + line.count(kmers)) == 1:
@@ -235,8 +227,6 @@ def FindTotal(runnum, k):
 
 
 
-
-
 def fseqbias(runnum, k, total):
     fseqbias = []
     for i in poslist[runnum][k]:
@@ -257,6 +247,7 @@ def makexaxis(runnum, k):
     for i in range(1, len(poslist[runnum][k])+1):
         xaxis.append(i)
     return xaxis
+
 
 
 def rmakexaxis1(width, runnum, k):
@@ -367,6 +358,24 @@ plotrange(numofruns, mink, maxk)
 
 
 
+
+
+
+"""
+            try:
+                ftotal = kmercount[x+1][k][i]
+                #print(ftotal)
+            except:
+                continue
+            #print(ftotal)
+            try:
+                rtotal = kmercount[x+1][k][rseq]
+                #print(rtotal)
+            except:
+                continue
+"""
+
+
 def TSeqCounter(FileName, k):
     global TSeqNum
     TSeqNum = 0
@@ -397,3 +406,30 @@ print(LSeqNum)
 
 
 
+
+"""
+for x in range(0, len(poslist)):
+    for i in poslist[x]:
+        fseq = hash2kmer(i,k)
+        rseq = kmer2hash(revComp(fseq))
+        fseqcount = posdict[x][i]
+    #    print(fseqcount)
+        try:
+            rseqcount = posdict[x][rseq]
+            #print(rseqcount)
+        except:
+            rseqcount = 0
+    #    print(rseqcount)
+
+        #print(rtotal)
+        bias = (((fseqcount)-(rseqcount))/((fseqcount)+(rseqcount)))
+        #print(bias)
+        #print(fseqbias)
+        fseqbias[x].append(bias)
+        #print(fseqbias)
+print(fseqbias)
+for x in range(0,len(poslist)):
+    fseqbiasval = (sum(fseqbias[x])/len(fseqbias[x]))
+    fseqvals.append(fseqbiasval)
+return fseqvals
+"""
