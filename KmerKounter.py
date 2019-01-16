@@ -64,7 +64,7 @@ numofruns= int(input("Number of runs:"))
 #FileName = "NF1-2"
 #l = 33
 #runnum = 1
-revcompwanted = False
+revcompwanted = True
 
 """
 FileName = input("Fasta File Name:")
@@ -77,6 +77,8 @@ kmercount = []
 hamlist = []
 hamdict = []
 pwm = []
+filenames = {}
+lvalues = {}
 
 def dictinit(numofruns):
     for _ in range(numofruns + 1):
@@ -85,6 +87,7 @@ def dictinit(numofruns):
         hamlist.append({})
         hamdict.append({})
         pwm.append({})
+
 
 dictinit(numofruns)
 
@@ -259,8 +262,10 @@ def addrun():
     FileName = input("Fasta File Name:")
     global runnum
     runnum = int(input("Run number:"))
+    filenames.update({runnum:FileName})
     global l
     l = int(input("Read lengths:"))
+    lvalues.update({runnum:l})
     global mink
     mink = int(input("Minimum kmer:"))
     global maxk
