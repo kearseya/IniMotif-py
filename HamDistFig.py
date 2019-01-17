@@ -1,8 +1,8 @@
-from test import identifier
+from KmerKounter import identifier
 
-from test import kmercount
-from test import numofruns
-from test import hash2kmer
+from KmerKounter import kmercount
+from KmerKounter import numofruns
+from KmerKounter import hash2kmer
 from KmerKounter import kmer2hash
 from KmerKounter import revcompwanted
 from KmerKounter import mink
