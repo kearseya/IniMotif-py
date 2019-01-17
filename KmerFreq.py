@@ -1,7 +1,9 @@
-from KmerKount import kmercount
-from KmerKount import mink
-from KmerKount import maxk
-#from test import hamlist
+from KmerKounter import identifier
+
+from KmerKounter import kmercount
+from KmerKounter import mink
+from KmerKounter import maxk
+
 import matplotlib.pyplot as plt
 import numpy as np
 import math
@@ -162,7 +164,8 @@ def grapher(k):
     top.legend(handles, bbox_to_anchor=(1.01, 1), loc=2, borderaxespad=0.)
 
 
-    plt.show()
+    plt.savefig('figures/kmerfreq_'+str(k), dpi=600)
+    plt.close()
 
 def multigrapher(mink, maxk):
     for k in range(mink, maxk+1):
