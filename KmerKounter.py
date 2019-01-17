@@ -6,7 +6,6 @@ import numpy as np
 #import os
 
 
-
 def kmer2hash(kmer):
     """
     kmer: input sequence
@@ -60,11 +59,14 @@ def revComp(seq):
         rev += revnuc[seq[i]]
     return rev
 
-numofruns= int(input("Number of runs:"))
+identifier = str(input("Identifier:"))
+
+
+numofruns = int(input("Number of runs:"))
 #FileName = "NF1-2"
 #l = 33
 #runnum = 1
-revcompwanted = True
+revcompwanted = bool(input("Reverse compliment:"))
 
 """
 FileName = input("Fasta File Name:")
@@ -292,3 +294,12 @@ addingall(numofruns)
 #print(hamlist)
 #print(hamdict)
 #print(pwm)
+
+print('Generating Logos')
+import WebLogo
+print('Generating Hamming distance figures')
+import hamdistfig
+print('Generating Position bias figures')
+import postionbar
+print('Generating Kmer frequency figures')
+import kmerfreq
