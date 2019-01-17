@@ -1,4 +1,5 @@
 #%matplotlib inline
+from KmerKounter import identifier
 import seaborn
 import matplotlib.pyplot as plt
 plt.style.use('seaborn-ticks')
@@ -6,14 +7,20 @@ from matplotlib import transforms
 import matplotlib.patheffects
 import numpy as np
 
-from test import pwm
-from test import numofruns
-from test import mink
-from test import maxk
-
+from KmerKounter import pwm
+from KmerKounter import numofruns
+from KmerKounter import mink
+from KmerKounter import maxk
 
 
 logoform = []
+
+def dictinit():
+    for r in range(0, numofruns+1):
+        logoform.append({})
+        for k in range(mink, maxk+1):
+            logoform[r].update({k:[]})
+dictinit()
 
 
 def logopos(a,t,c,g):
@@ -34,7 +41,7 @@ def kmerpwm(runnum, k):
 def allmaker(numofruns, mink, maxk):
     for z in range(1, numofruns+1):
         for j in range(mink,maxk+1):
-            logoform.append(kmerpwm(z,j))
+            logoform[z][j].append(kmerpwm(z,j))
 
 allmaker(numofruns, mink, maxk)
 
@@ -59,9 +66,9 @@ class Scale(matplotlib.patheffects.RendererBase):
         affine = affine.identity().scale(self._sx, self._sy)+affine
         renderer.draw_path(gc, tpath, affine, rgbFace)
 
-def draw_logo(all_scores):
+def draw_logo(all_scores, run, k):
     fig = plt.figure()
-    fig.set_size_inches(len(all_scores),2.5)
+    fig.set_size_inches(len(all_scores)+1,2.5)
     ax = fig.add_subplot(111)
     ax.set_xticks(range(len(all_scores)))
 
@@ -102,14 +109,18 @@ def draw_logo(all_scores):
     seaborn.despine(ax=ax, offset=30, trim=True)
     ax.set_xticklabels(range(1,len(all_scores)+1), rotation=90)
     ax.set_yticklabels(np.arange(0,3,1))
-    plt.show()
+    #plt.show()
+    plt.savefig('figures/logo_'+str(identifier)+"_"+str(run)+"_"+str(k), dpi=600)
+    plt.close()
 
 
 
 
 def logoprinter():
-    for i in logoform:
-        draw_logo(i)
+    for r in range(1, numofruns+1):
+        for i in logoform[r]:
+            for j in range(0, len(logoform[r][i])):
+                draw_logo(logoform[r][i][j], r, i)
 
 
 logoprinter()
