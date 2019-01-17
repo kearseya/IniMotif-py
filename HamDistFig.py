@@ -1,6 +1,8 @@
-from KmerKounter import kmercount
-from KmerKounter import numofruns
-from KmerKounter import hash2kmer
+from test import identifier
+
+from test import kmercount
+from test import numofruns
+from test import hash2kmer
 from KmerKounter import kmer2hash
 from KmerKounter import revcompwanted
 from KmerKounter import mink
@@ -54,7 +56,7 @@ def multihammer(mink, maxk):
         hammer(k)
 
 multihammer(mink, maxk)
-print(khams)
+#print(khams)
 
 
 def top6(run, k):
@@ -184,38 +186,41 @@ def scatter(run, k):
         top6x = top6plotx(run, x, k)
         top6y = top6ploty(run, x, k)
 
-        plt.scatter(xaxis, yaxis, color = '0.75', alpha=0.7)
+        plt.scatter(xaxis, yaxis, color = '0.75', alpha=0.7, s=1)
 
         count = len(top6x)
 
         for i in range(0, count):
-            plt.scatter(top6x[i], top6y[i], label=split[run][x][i], color=colours[c])
+            plt.scatter(top6x[i], top6y[i], label=split[run][x][i], color=colours[c], s=3)
             labels.append((str(hash2kmer(split[run][x][i],k)+' '+str(khams[run][k][x][(split[run][x][i])]))))
             c += 1
 
         for p, j in enumerate(split[run][x]):
-            #print(p)
+            
             xp = top6x[p]
             yp = top6y[p]
-            #print(j)
-            #print(xp)
-            #print(yp)
-            plt.annotate(str(hash2kmer(j,k) + ' ' + str(khams[run][k][x][j])), (float(xp), float(yp)), color=colours[cc])
+
+            if (p % 2)+x == x:
+                plt.annotate(str(hash2kmer(j,k) + ' ' + str(khams[run][k][x][j])), (float(xp), float(yp)+0.6), color=colours[cc], fontsize=5)
+            if (p % 2)+x != x:
+                plt.annotate(str(hash2kmer(j,k) + ' ' + str(khams[run][k][x][j])), (float(xp), float(yp)-0.6), color=colours[cc], fontsize=5)
             cc += 1
 
     for z in colours[::2]:
         labelcolours.append(z)
 
-    print(handels)
-    print(labels)
-    leg = plt.legend(labels[::2])
+
+    leg = plt.legend(labels[::2], fontsize=7)
     for i in range(0,6):
         leg.legendHandles[i].set_color(labelcolours[i])
+        leg.legendHandles[i]._sizes = [8]
 
     plt.xlabel("Hamming distance")
     plt.ylabel("Kmer count")
     plt.title("Run number:"+' '+str(run)+'\n'+'K: '+str(k)+'\n'+'Total kmers: '+str(len(runlists[run][k])))
-    plt.show()
+    #plt.show()
+    plt.savefig('figures/hamdist_'+str(identifier)+"_"+str(run)+"_"+str(k), dpi=600)
+    plt.close()
 
 def plotrange(runs, mink, maxk):
     for r in range(1,runs+1):
