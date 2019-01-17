@@ -1,17 +1,19 @@
+from KmerKounter import identifier
+
 import numpy as np
 import matplotlib.pyplot as plt
 from itertools import groupby
 from collections import Counter
 from collections import OrderedDict
 
-from KmerKount import numofruns
-from KmerKount import kmercount
-from KmerKount import barcodechecker
-from KmerKount import lvalues
-from KmerKount import mink
-from KmerKount import maxk
-from KmerKount import filenames
-from KmerKount import revcompwanted
+from KmerKounter import numofruns
+from KmerKounter import kmercount
+from KmerKounter import barcodechecker
+from KmerKounter import lvalues
+from KmerKounter import mink
+from KmerKounter import maxk
+from KmerKounter import filenames
+from KmerKounter import revcompwanted
 
 
 
@@ -313,10 +315,8 @@ def plotter(runnum, k):
         label=('Forward strands', 'Reverse strands')
         bar.legend(loc = 1)
 
-    plt.show()
-
-
-#plotter()
+    plt.savefig('figures/pos_'+str(identifier)+"_"+str(runnum)+"_"+str(k), dpi=600)
+    plt.close()
 
 
 
@@ -407,29 +407,3 @@ print(LSeqNum)
 
 
 
-"""
-for x in range(0, len(poslist)):
-    for i in poslist[x]:
-        fseq = hash2kmer(i,k)
-        rseq = kmer2hash(revComp(fseq))
-        fseqcount = posdict[x][i]
-    #    print(fseqcount)
-        try:
-            rseqcount = posdict[x][rseq]
-            #print(rseqcount)
-        except:
-            rseqcount = 0
-    #    print(rseqcount)
-
-        #print(rtotal)
-        bias = (((fseqcount)-(rseqcount))/((fseqcount)+(rseqcount)))
-        #print(bias)
-        #print(fseqbias)
-        fseqbias[x].append(bias)
-        #print(fseqbias)
-print(fseqbias)
-for x in range(0,len(poslist)):
-    fseqbiasval = (sum(fseqbias[x])/len(fseqbias[x]))
-    fseqvals.append(fseqbiasval)
-return fseqvals
-"""
