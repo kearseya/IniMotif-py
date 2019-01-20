@@ -268,7 +268,6 @@ def addrun():
     dicthammer()
     startpwm()
     pwmmaker()
-    print(pwm)
 
 
 
