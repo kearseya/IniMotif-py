@@ -9,6 +9,7 @@ def setidentity():
 setidentity()
 
 
+
 Html_file=open(str(htmlname), "w")
 
 title = """
@@ -39,7 +40,7 @@ h2 {
   font-size: 35px
 }
 
-/* Style the header */
+
 header {
   background-color: #666;
   padding: 10px;
@@ -66,7 +67,6 @@ def runheader():
     return runheaders
 
 runheaders = runheader()
-print(runheaders)
 
 
 def results():
@@ -78,12 +78,13 @@ def results():
 
     for x in range(1, numofruns+1):
         for k in range(mink, maxk+1):
-            string = """<tr><td><p>K = """+str(k)+"""</p><img src="figures/logo_"""+str(identifier)+"_"+str(x)+"_"+str(k)+""".png"><img src="figures/hamdist_"""+str(identifier)+"_"+str(x)+"_"+str(k)+""".png"><img src="figures/pos_"""+str(identifier)+"_"+str(x)+"_"+str(k)+""".png"></td></tr>"""
+            string = """<tr><td><p style="background-color: lightgrey; color: #333; padding: 30px;">K = """+str(k)+"""</p><img src="figures/logo_"""+str(identifier)+"_"+str(x)+"_"+str(k)+""".png"><img src="figures/hamdist_"""+str(identifier)+"_"+str(x)+"_"+str(k)+""".png" width=2000px hight=1200px><img src="figures/pos_"""+str(identifier)+"_"+str(x)+"_"+str(k)+""".png" width=2000px hight=1200px></td></tr>"""
             html_strs[x][k].append(string)
 
     return html_strs
 
 html_strs = results()
+
 
 def kmerfrequency():
     html_kmerfreq = []
@@ -96,11 +97,7 @@ def formatter():
         for k in range(mink, maxk+1):
             Html_file.write(html_strs[r][k][0])
 
-
-
-
 formatter()
-
 
 Html_file.close()
 
