@@ -27,7 +27,6 @@ dictinit()
 def logopos(a,t,c,g):
     upos =  [('A', a), ('T', t), ('C', c), ('G', g)]
     pos = sorted(upos, key=lambda x:x[1])
-    print(pos)
     return pos
 
 
