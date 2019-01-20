@@ -50,13 +50,7 @@ def colours1(k):
             colours.append(keys[i])
     return colours
 
-"""
-def makexaxis2():
-    xaxis = ([])
-    for i in range(-1, len(kmercount)+1):
-        xaxis.append(i)
-    return xaxis
-"""
+
 
 def makeyaxis1a(i, k):
     yaxis1a = ([])
