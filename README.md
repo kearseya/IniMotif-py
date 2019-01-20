@@ -3,7 +3,7 @@ IniMotif in python
 
  ====================================
 
-Creator:        Alex Kearsey <br />
+Creator:        Alex Kearsey <br /> <br />
 With help from:	<br /> Dr Lu Cheng <br />
                 Joel Southgate <br />
                 WebLogo source code <br />
