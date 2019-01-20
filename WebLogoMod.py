@@ -6,6 +6,7 @@ plt.style.use('seaborn-ticks')
 from matplotlib import transforms
 import matplotlib.patheffects
 import numpy as np
+#import operator
 
 from KmerKounter import pwm
 from KmerKounter import numofruns
@@ -24,18 +25,17 @@ dictinit()
 
 
 def logopos(a,t,c,g):
-    pos =  [('T', t), ('G', g), ('A', a), ('C', c)]
-    pos.sort(key = lambda x: x[1], reverse = False)
+    upos =  [('A', a), ('T', t), ('C', c), ('G', g)]
+    pos = sorted(upos, key=lambda x:x[1])
+    print(pos)
     return pos
-
 
 
 def kmerpwm(runnum, k):
     kmerpwm = []
     for i in range(1,k+1):
-        kmerpwm.append(logopos(pwm[runnum][k][i]["T"],pwm[runnum][k][i]["G"],pwm[runnum][k][i]["A"],pwm[runnum][k][i]["C"]))
+        kmerpwm.append(logopos(pwm[runnum][k][i]["A"],pwm[runnum][k][i]["T"],pwm[runnum][k][i]["C"],pwm[runnum][k][i]["G"]))
     return kmerpwm
-
 
 
 def allmaker(numofruns, mink, maxk):
@@ -44,8 +44,6 @@ def allmaker(numofruns, mink, maxk):
             logoform[z][j].append(kmerpwm(z,j))
 
 allmaker(numofruns, mink, maxk)
-
-#print(logoform)
 
 
 
