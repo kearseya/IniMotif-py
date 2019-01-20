@@ -1,19 +1,12 @@
 # IniMotif-py
 IniMotif in python
 
- _____       _ __  __       _   _  __  <br />
-|_   _|     (_)  \/  |     | | (_)/ _| <br />
-  | |  _ __  _| \  / | ___ | |_ _| |_  <br />
-  | | | '_ \| | |\/| |/ _ \| __| |  _| <br />
- _| |_| | | | | |  | | (_) | |_| | |   <br />
-|_____|_| |_|_|_|  |_|\___/ \__|_|_|   <br />
- <br />
  ====================================
 
-Creator: 	Alex Kearsey <br />
-With help from:	Dr Lu Cheng <br />
-		Joel Southgate <br />
-		WebLogo source code <br />
+Creator:________Alex Kearsey_
+With help from:	Dr Lu Cheng_
+________________Joel Southgate_
+________________WebLogo source code_
 
 Python scripts for extracting motif from SELEXseq data.
 
