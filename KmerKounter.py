@@ -3,8 +3,9 @@ from collections import Counter
 from collections import OrderedDict
 import numpy as np
 #import sys
-#import os
+import os
 
+#cwd = os.getcwd()
 
 def kmer2hash(kmer):
     """
@@ -61,11 +62,10 @@ def revComp(seq):
 
 identifier = str(input("Identifier:"))
 
+datafile = input("Path to data directory:")
 
 numofruns = int(input("Number of runs:"))
-#FileName = "NF1-2"
-#l = 33
-#runnum = 1
+
 revcompwanted = bool(input("Reverse compliment:"))
 
 """
@@ -73,7 +73,7 @@ FileName = input("Fasta File Name:")
 runnum = int(input("Run number:"))
 l = int(input("Read lengths:"))
 """
-#seqdict = ["NA",{},{},{},{},{},{},{},{},{},{}]
+
 runlists = []
 kmercount = []
 hamlist = []
@@ -174,8 +174,6 @@ def RangeKmerList(mink,maxk):
     for i in range(mink,maxk+1):
         CreateKmerList(FileName, runnum, i)
 
-#RangeKmerList(6,8)
-
 
 
 def KmerCounter():
@@ -188,8 +186,6 @@ def KmerCounter():
         sortdict = OrderedDict(sort)
         sortdict2 = {**sortdict}
         kmercount[runnum][i].update(sortdict2)
-
-#KmerCounter()
 
 
 
@@ -211,8 +207,6 @@ def listhammer():
             if hamming_distance(consensus, values) <= 1:
                 hamlist[runnum][i].append(kmer2hash(values))
 
-#listhammer()
-
 
 
 def dicthammer():
@@ -224,7 +218,6 @@ def dicthammer():
         test = { z : (kmercount[runnum][i][z]/M) for z in test }
         hamdict[runnum][i].update(test)
 
-#dicthammer()
 
 
 
@@ -236,8 +229,6 @@ def startpwm():
             pwm[runnum][i][j].update({"C":0})
             pwm[runnum][i][j].update({"G":0})
             pwm[runnum][i][j].update({"T":0})
-
-#startpwm()
 
 
 
@@ -255,13 +246,12 @@ def pwmmaker():
                 elif kmer[j-1] == "G":
                     pwm[runnum][i][j]["G"] += hamdict[runnum][i][x]
 
-#pwmmaker()
-
 
 
 def addrun():
     global FileName
-    FileName = input("Fasta File Name:")
+    FileName1 = input("Fasta File Name:")
+    FileName = os.path.join(datafile, FileName1)
     global runnum
     runnum = int(input("Run number:"))
     filenames.update({runnum:FileName})
@@ -278,6 +268,7 @@ def addrun():
     dicthammer()
     startpwm()
     pwmmaker()
+    print(pwm)
 
 
 
@@ -298,8 +289,8 @@ addingall(numofruns)
 print('Generating Logos')
 import WebLogo
 print('Generating Hamming distance figures')
-import hamdistfig
+import HamDistFig
 print('Generating Position bias figures')
-import postionbar
+import PostionBias
 print('Generating Kmer frequency figures')
-import kmerfreq
+import KmerFreq
