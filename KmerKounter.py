@@ -43,7 +43,7 @@ def hash2kmer(hashkey, k):
 def seq2hash(kmer):
     k = len(kmer)
     base = {'A': 0, 'C': 1, 'G': 2, 'T': 3, 'a': 0, 'c': 1, 'g': 2, 't': 3}
-    kh = np.zeros(1,dtype='uint32')
+    kh = np.zeros(1,dtype='uint64')
     kh = base[kmer[0]]
     for tb in kmer[1:]:
         kh = kh<<2
@@ -80,6 +80,8 @@ hamlist = []
 hamdict = []
 pwm = []
 filenames = {}
+ufilenames = {}
+filenames1 = {}
 lvalues = {}
 
 def dictinit(numofruns):
@@ -162,6 +164,7 @@ def CreateKmerList(FileName, runnum, k):
         if revcompwanted == True:
             if len(line) == l and "N" not in line:
                 for x in range(0,((len(line)+1)-k)-(2*avg)):
+                    kmers = str(line[x+avg:x+k+avg])
                     rkmers = revComp(line[x+avg:x+k+avg])
                     if len(rkmers) > 0 and (line.count(kmers) + line.count(rkmers)) == 1:
                         runlists[runnum][k].append(kmer2hash(rkmers))
@@ -249,11 +252,14 @@ def pwmmaker():
 
 
 def addrun():
+    global FileName1
     global FileName
     FileName1 = input("Fasta File Name:")
     FileName = os.path.join(datafile, FileName1)
     global runnum
     runnum = int(input("Run number:"))
+    filenames1.update({runnum:FileName1})
+    ufilenames.update({FileName:runnum})
     filenames.update({runnum:FileName})
     global l
     l = int(input("Read lengths:"))
@@ -278,7 +284,6 @@ def addingall(n):
 
 addingall(numofruns)
 
-
 #print(runlists)
 #print(kmercount)
 #print(hamlist)
@@ -290,6 +295,6 @@ import WebLogo
 print('Generating Hamming distance figures')
 import HamDistFig
 print('Generating Position bias figures')
-import PostionBias
+import PositionBias
 print('Generating Kmer frequency figures')
 import KmerFreq
