@@ -2,11 +2,23 @@ from KmerKounter import identifier
 from KmerKounter import numofruns
 from KmerKounter import mink
 from KmerKounter import maxk
+from KmerKounter import filenames1
+
+from PositionBias import TSeqNums
+from PositionBias import LSeqNums
+from PositionBias import Barcodevalues
+from PositionBias import numofkmers
+from PositionBias import numofuniquekmers
+from PositionBias import numoftfbs
+from PositionBias import numoftfbsseq
+from PositionBias import seqbias
+
 
 def setidentity():
     global htmlname
     htmlname = identifier+'.html'
 setidentity()
+
 
 
 
@@ -87,7 +99,15 @@ html_strs = results()
 
 
 def kmerfrequency():
-    html_kmerfreq = []
+    html_kmerfreq = {}
+    for k in range(mink, maxk+1):
+        html_kmerfreq.update({k:[]})
+        string = """<p style="background-color: lightgrey; color: #333; padding: 30px;">K = """+str(k)+"""</p>"""+"""<img src="figures/kmerfreq_"""+str(identifier)+"_"+str(k)+""".png" width=3000px height=3000px>"""
+        html_kmerfreq[k].append(string)
+
+    return html_kmerfreq
+
+html_kmerfreq = kmerfrequency()
 
 
 
@@ -97,7 +117,38 @@ def formatter():
         for k in range(mink, maxk+1):
             Html_file.write(html_strs[r][k][0])
 
+def kmerfreqformatter():
+    Html_file.write("""<h1 style="background-color: #3c3c3c; padding: 20px; color: white;"> Kmer frequency </h1>""")
+    for i in range(mink, maxk+1):
+        Html_file.write(html_kmerfreq[i][0])
+
 formatter()
+kmerfreqformatter()
+
+def tablemaker():
+    Html_file.write("""<h1 style="background-color: #3c3c3c; padding: 20px; color: white;"> Numbers </h1><br>""")
+    for r in range(1, numofruns+1):
+        Html_file.write("<table cellpadding=10><tr><td><h2>"+str(r)+": "+str(filenames1[r])+"</h2></td></tr>"+"<tr><td>Total sequences:</td><td>"+str(TSeqNums[r])+"</td></tr>"+"<tr><td>Passed sequences:</td><td>"+str(LSeqNums[r])+"</td></tr>"+"</h2></td></tr>"+"<tr><td>Barcode:</td><td>"+str(Barcodevalues[r])+"""</td></tr><tr><td style="background-color:lightgrey;"></td>""")
+        for k in range(mink, maxk+1):
+            Html_file.write("""<td style="background-color:lightgrey;"><b>K"""+str(k)+"</b></td>")
+        Html_file.write("<tr><td>Total kmers</td>")
+        for k in range(mink, maxk+1):
+            Html_file.write("<td>"+str(numofkmers[r][k])+"</td>")
+        Html_file.write("</tr><tr><td>Unique kmers</td>")
+        for k in range(mink, maxk+1):
+            Html_file.write("<td>"+str(numofuniquekmers[r][k])+" ("+str( round(((numofuniquekmers[r][k]/(4**k))*100),2)) +"%)"+"</td>")
+        Html_file.write("</tr><tr><td>TFBS</td>")
+        for k in range(mink, maxk+1):
+            Html_file.write("<td>"+str(numoftfbs[r][k])+"</td>")
+        Html_file.write("</tr><tr><td>Sequences w/ TFBS</td>")
+        for k in range(mink, maxk+1):
+            Html_file.write("<td>"+str(numoftfbsseq[r][k])+" ("+str(round(((numoftfbsseq[r][k]/LSeqNums[r])*100), 2))+"%)"+"</td>")
+        Html_file.write("</tr><tr><td>Sequence bias</td>")
+        for k in range(mink, maxk+1):
+            Html_file.write("<td>"+str(round((sum(seqbias[r][k])/len(seqbias[r][k])),7))+"</td>")
+        Html_file.write("</table>")
+
+tablemaker()
 
 Html_file.close()
 
