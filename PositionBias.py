@@ -7,12 +7,14 @@ from collections import Counter
 from collections import OrderedDict
 
 from KmerKounter import numofruns
+from KmerKounter import runlists
 from KmerKounter import kmercount
 from KmerKounter import barcodechecker
 from KmerKounter import lvalues
 from KmerKounter import mink
 from KmerKounter import maxk
 from KmerKounter import filenames
+from KmerKounter import ufilenames
 from KmerKounter import revcompwanted
 
 
@@ -49,7 +51,7 @@ def hash2kmer(hashkey, k):
 
     return arr.tostring().decode("utf-8")
 
-
+"""
 def addrun():
     global FileName
     FileName = input("Fasta File Name:")
@@ -59,8 +61,7 @@ def addrun():
     l = int(input("Read lengths:"))
     global k
     k = int(input("K:"))
-
-#addrun()
+"""
 
 
 revnuc = {'A':'T','T':'A','G':'C','C':'G','N':'N'}
@@ -114,30 +115,20 @@ def hamming_distance(s1, s2):
 
 
 def listhammer(runnum, k):
-    for i in kmercount[runnum]:
-        hamminglist2[runnum][k] = []
-        #hconsensus = (list(kmercount[runnum][i].keys())[0])
-        hconsensus = max(kmercount[runnum][i], key=lambda key: kmercount[runnum][i][key])
-        consensus = hash2kmer(hconsensus, i)
-        for x in list(kmercount[runnum][i].keys()):
-            values = hash2kmer(x,i)
-            rvalues = revComp(values)
-            ham = hamming_distance(consensus, values)
-            rham = hamming_distance(consensus, rvalues)
-            if ham or rham <= 2:
+    hamminglist2[runnum][k] = []
+    hconsensus = max(kmercount[runnum][k], key=lambda key: kmercount[runnum][k][key])
+    consensus = hash2kmer(hconsensus, k)
+    for x in list(kmercount[runnum][k].keys()):
+        values = hash2kmer(x,k)
+        rvalues = revComp(values)
+        ham = hamming_distance(consensus, values)
+        rham = hamming_distance(consensus, rvalues)
+        if ham <= 2:
+            if kmer2hash(values) not in hamminglist2[runnum][k]:
                 hamminglist2[runnum][k].append(kmer2hash(values))
-
-    if revcompwanted == True:
-        for i in kmercount[runnum]:
-            #hamminglist2[runnum][k] = []
-            #hconsensus = (list(kmercount[runnum][i].keys())[0])
-            hconsensus = max(kmercount[runnum][i], key=lambda key: kmercount[runnum][i][key])
-            consensus = hash2kmer(hconsensus, i)
-            rconsensus = revComp(consensus)
-            for x in list(kmercount[runnum][i].keys()):
-                values = hash2kmer(x,i)
-                if hamming_distance(rconsensus, values) <= 2:
-                    hamminglist2[runnum][k].append(kmer2hash(values))
+        if rham <= 2:
+            if kmer2hash(rvalues) not in hamminglist2[runnum][k]:
+                hamminglist2[runnum][k].append(kmer2hash(rvalues))
 
 
 
@@ -148,39 +139,6 @@ def multilisthammer(numofruns, mink, maxk):
             listhammer(x, i)
 
 multilisthammer(numofruns, mink, maxk)
-
-
-
-
-"""
-def FindTotal(FileName, k, runnum):
-    fastaFileName = open(FileName, "r")
-    avg = barcodechecker(FileName)
-    total = 0
-    for line in fastaFileName:
-        line = line.strip()
-        if line.startswith(">"):
-            continue
-        if len(line) == l:
-            for x in range(0,((len(line)+1)-k)-(2*avg)):
-                kmers = str(line[x+avg:x+k+avg])
-                if len(kmers) > 0 and line.count(kmers) == 1:
-                    hkmers = kmer2hash(kmers)
-                    if hkmers in hamminglist2[runnum][k]:
-                        total += 1
-
-        if revcompwanted == True:
-            #total = total*2
-            if len(line) == l:
-                for x in range(0,((len(line)+1)-k)-(2*avg)):
-                    rkmers = revComp(line[x+avg:x+k+avg])
-                    if len(rkmers) > 0 and (line.count(rkmers) + line.count(kmers)) == 1:
-                        hrkmers = kmer2hash(rkmers)
-                        if hrkmers in hamminglist2[runnum][k]:
-                            total += 1
-
-    return total
-"""
 
 
 
@@ -202,6 +160,7 @@ def CreatePosList(FileName, k, runnum):
         if revcompwanted == True:
             if len(line) == lvalues[runnum] and "N" not in line:
                 for x in range(0,((len(line)+1)-k)-(2*avg)):
+                    kmers = str(line[x+avg:x+k+avg])
                     rkmers = revComp(line[x+avg:x+k+avg])
                     if len(rkmers) > 0 and (line.count(rkmers) + line.count(kmers)) == 1:
                         hrkmers = kmer2hash(rkmers)
@@ -232,7 +191,6 @@ def FindTotal(runnum, k):
 def fseqbias(runnum, k, total):
     fseqbias = []
     for i in poslist[runnum][k]:
-        #print(poslist[runnum][k][i])
         fseqbias.append(len(poslist[runnum][k][i])/total)
     return fseqbias
 
@@ -308,7 +266,7 @@ def plotter(runnum, k):
         bar.set_xticks(xaxis)
         bar.bar(fxaxis, fseq, width, label = 'Forward strands')
         bar.bar(rxaxis, rseq, width, label = 'Reverse strands')
-        bar.axhline(y=raverage, xmin=0.01, xmax=0.99, linestyle='dashed', color = 'black')
+        bar.axhline(y=raverage, xmin=0.01, xmax=0.99, linestyle='dashed', color = 'black', linewidth = 0.75)
         bar.text((len(xaxis)-5), 0.55, "Average = "+str(round(raverage, 4)))
 
         handels=('Forward strands', 'Reverse strands')
@@ -330,54 +288,7 @@ plotrange(numofruns, mink, maxk)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-"""
-            try:
-                ftotal = kmercount[x+1][k][i]
-                #print(ftotal)
-            except:
-                continue
-            #print(ftotal)
-            try:
-                rtotal = kmercount[x+1][k][rseq]
-                #print(rtotal)
-            except:
-                continue
-"""
-
-
-def TSeqCounter(FileName, k):
-    global TSeqNum
+def TSeqCounter(FileName):
     TSeqNum = 0
     fastaFileName = open(FileName, "r")
     for line in fastaFileName:
@@ -385,25 +296,121 @@ def TSeqCounter(FileName, k):
         if line.startswith(">"):
             continue
         TSeqNum += 1
+    return TSeqNum
 
-def LSeqCounter(FileName, k):
-    global LSeqNum
+def LSeqCounter(FileName):
     LSeqNum = 0
+    l = lvalues[(ufilenames[FileName])]
     fastaFileName = open(FileName, "r")
     for line in fastaFileName:
         line = line.strip()
         if line.startswith(">"):
             continue
-        if len(line) == l:
+        if len(line) == l and "N" not in line:
             LSeqNum += 1
-    #return SeqNum
-"""
-TSeqCounter(FileName, k)
-LSeqCounter(FileName, k)
-print(TSeqNum)
-print(LSeqNum)
-"""
+    return LSeqNum
+
+
+TSeqNums = {}
+LSeqNums = {}
+Barcodevalues = {}
+
+
+def allTLSeqCounter():
+    for i in range(1, numofruns+1):
+        x = TSeqCounter(filenames[i])
+        y = LSeqCounter(filenames[i])
+        b = barcodechecker(filenames[i])
+        TSeqNums.update({i:x})
+        LSeqNums.update({i:y})
+        Barcodevalues.update({i:b})
+
+allTLSeqCounter()
+
+numofkmers = {}
+numofuniquekmers = {}
+numoftfbs = {}
+
+def numberofukmers():
+    for i in range(1, numofruns+1):
+        numofkmers.update({i:{}})
+        numofuniquekmers.update({i:{}})
+        numoftfbs.update({i:{}})
+    for i in range(1, numofruns+1):
+        for k in range(mink, maxk+1):
+            numofkmers[i].update({k:len(runlists[i][k])})
+            numofuniquekmers[i].update({k:len(kmercount[i][k])})
+            numoftfbs[i].update({k:len(hamminglist2[i][k])})
+
+numberofukmers()
+
+numoftfbsseq = {}
+
+def seqwtfbsfinder(FileName, k):
+    TFBSSeqNum = 0
+    l = lvalues[(ufilenames[FileName])]
+    fastaFileName = open(FileName, "r")
+    avg = barcodechecker(FileName)
+    for line in fastaFileName:
+        c = 0
+        line = line.strip()
+        if line.startswith(">"):
+            continue
+        if len(line) == l and "N" not in line:
+            for x in range(0,((len(line)+1)-k)-(2*avg)):
+                kmers = str(line[x+avg:x+k+avg])
+                if len(kmers) > 0 and line.count(kmers) == 1:
+                    hkmer = kmer2hash(kmers)
+                    if hkmer in hamminglist2[(ufilenames[FileName])][k]:
+                        if c == 0:
+                            TFBSSeqNum += 1
+                            c += 1
+
+        else:
+            continue
+
+        if revcompwanted == True:
+            if len(line) == l and "N" not in line:
+                for x in range(0,((len(line)+1)-k)-(2*avg)):
+                    rkmers = revComp(line[x+avg:x+k+avg])
+                    if len(rkmers) > 0 and (line.count(kmers) + line.count(rkmers)) == 1:
+                         hkmer = kmer2hash(rkmers)
+                         if hkmer in hamminglist2[(ufilenames[FileName])][k]:
+                             if c == 0:
+                                 TFBSSeqNum += 1
+                                 c += 1
+            else:
+                continue
+    return TFBSSeqNum
+
+def numoftfbsseqs():
+    for i in range(1, numofruns+1):
+        numoftfbsseq.update({i:{}})
+    for r in range(1, numofruns+1):
+        for k in range(mink, maxk+1):
+            numoftfbsseq[r].update({k:seqwtfbsfinder(filenames[r], k)})
+
+numoftfbsseqs()
 
 
 
+def seqbiasfinder():
+    seqbias = {}
+    for r in range(1, numofruns+1):
+        seqbias.update({r:{}})
+        for k in range(mink, maxk+1):
+            seqbias[r].update({k:[]})
+            for x in kmercount[r][k]:
+                try:
+                    forward = kmercount[r][k][x]
+                    reverse = kmercount[r][k][kmer2hash(revComp(hash2kmer(x,k)))]
+                    seqbiasval = ((forward-reverse)/(forward+reverse))
+                    if seqbiasval > 0:
+                        seqbias[r][k].append(seqbiasval)
+                    if seqbiasval < 0:
+                        seqbias[r][k].append(val*(-1))
+                except:
+                    continue
+    return seqbias
 
+seqbias = seqbiasfinder()
