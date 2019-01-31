@@ -124,7 +124,7 @@ def draw_logo(all_scores, run, k):
 
 
     ax.set_yticks(range(0,3))
-    ax.sey_ylabel("bits")
+    ax.set_ylabel("bits")
 
 
     seaborn.despine(ax=ax, offset=30, trim=True)
