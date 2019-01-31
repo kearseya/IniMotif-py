@@ -6,12 +6,32 @@ plt.style.use('seaborn-ticks')
 from matplotlib import transforms
 import matplotlib.patheffects
 import numpy as np
+import math
 #import operator
 
+from KmerKounter import hamlist
 from KmerKounter import pwm
 from KmerKounter import numofruns
 from KmerKounter import mink
 from KmerKounter import maxk
+
+
+def En(n):
+    Enn = ((1/math.log(2))*((4-1)/(2*n)))
+    return Enn
+
+def Shannon(runnum, k, pos):
+    bases = ["A", "T", "C", "G"]
+    Hi = 0
+    for b in bases:
+        f = pwm[runnum][k][pos][b]
+        Hi += -(f*math.log2(f))
+    return Hi
+
+def Ri(runnum, k, i):
+    n = len(hamlist[runnum][k])
+    Rii = math.copysign((math.log2(4)-(Shannon(runnum, k, i) + En(n))), 1)
+    return Rii
 
 
 logoform = []
@@ -33,8 +53,11 @@ def logopos(a,t,c,g):
 def kmerpwm(runnum, k):
     kmerpwm = []
     for i in range(1,k+1):
-        kmerpwm.append(logopos(pwm[runnum][k][i]["A"],pwm[runnum][k][i]["T"],pwm[runnum][k][i]["C"],pwm[runnum][k][i]["G"]))
+        kmerpwm.append(logopos(pwm[runnum][k][i]["A"]*Ri(runnum, k, i),pwm[runnum][k][i]["T"]*Ri(runnum, k, i),pwm[runnum][k][i]["C"]*Ri(runnum, k, i),pwm[runnum][k][i]["G"]*Ri(runnum, k, i)))
     return kmerpwm
+
+
+
 
 
 def allmaker(numofruns, mink, maxk):
@@ -101,6 +124,7 @@ def draw_logo(all_scores, run, k):
 
 
     ax.set_yticks(range(0,3))
+    ax.sey_ylabel("bits")
 
 
     seaborn.despine(ax=ax, offset=30, trim=True)
