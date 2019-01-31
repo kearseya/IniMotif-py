@@ -16,6 +16,10 @@ from KmerKounter import mink
 from KmerKounter import maxk
 
 
+type = input("Frequency (f) or Bits (b)?:")
+
+#print(pwm)
+
 def En(n):
     Enn = ((1/math.log(2))*((4-1)/(2*n)))
     return Enn
@@ -53,7 +57,10 @@ def logopos(a,t,c,g):
 def kmerpwm(runnum, k):
     kmerpwm = []
     for i in range(1,k+1):
-        kmerpwm.append(logopos(pwm[runnum][k][i]["A"]*Ri(runnum, k, i),pwm[runnum][k][i]["T"]*Ri(runnum, k, i),pwm[runnum][k][i]["C"]*Ri(runnum, k, i),pwm[runnum][k][i]["G"]*Ri(runnum, k, i)))
+        if type == "f":
+            kmerpwm.append(logopos(pwm[runnum][k][i]["A"],pwm[runnum][k][i]["T"],pwm[runnum][k][i]["C"],pwm[runnum][k][i]["G"]))
+        if type == "b":
+            kmerpwm.append(logopos(pwm[runnum][k][i]["A"]*Ri(runnum, k, i),pwm[runnum][k][i]["T"]*Ri(runnum, k, i),pwm[runnum][k][i]["C"]*Ri(runnum, k, i),pwm[runnum][k][i]["G"]*Ri(runnum, k, i)))
     return kmerpwm
 
 
@@ -124,8 +131,10 @@ def draw_logo(all_scores, run, k):
 
 
     ax.set_yticks(range(0,3))
-    ax.set_ylabel("bits")
-
+    if type == "f":
+        ax.set_ylabel("frequency")
+    if type == "b":
+        ax.set_ylabel("bits")
 
     seaborn.despine(ax=ax, offset=30, trim=True)
     ax.set_xticklabels(range(1,len(all_scores)+1), rotation=90)
