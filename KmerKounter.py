@@ -66,7 +66,7 @@ datafile = input("Path to data directory:")
 
 numofruns = int(input("Number of runs:"))
 
-revcompwanted = bool(input("Reverse compliment:"))
+revcompwanted = bool(input("Reverse compliment (True or False):"))
 
 """
 FileName = input("Fasta File Name:")
