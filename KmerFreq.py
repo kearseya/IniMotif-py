@@ -50,7 +50,13 @@ def colours1(k):
             colours.append(keys[i])
     return colours
 
-
+"""
+def makexaxis2():
+    xaxis = ([])
+    for i in range(-1, len(kmercount)+1):
+        xaxis.append(i)
+    return xaxis
+"""
 
 def makeyaxis1a(i, k):
     yaxis1a = ([])
@@ -189,19 +195,22 @@ def grapher(k):
         for i in kmercount[l][k]:
             num = kmercount[l][k][i]
             rkmer = kmer2hash(revComp(hash2kmer(i,k)))
-            rnum = kmercount[l][k][rkmer]
-            if num > rnum:
-                if i in top6s:
-                    c += 1
-                    yaxis1c = makeyaxis1c(i, k)
-                    top.plot(xaxis, yaxis1c, color=colourslist[c], linewidth=2, marker="*", markevery=None, zorder=int(kmercount[l][k][i]))
-                if i in colours:
-                    yaxis1b = makeyaxis1b(i, k)
-                    top.plot(xaxis, yaxis1b, linewidth=1,  marker=".", markevery=None, zorder=int(kmercount[l][k][i]))
-                if i not in top6s:
-                    if i not in colours:
-                        yaxis1a = makeyaxis1a(i, k)
-                        top.plot(xaxis, yaxis1a, color = '0.75', linestyle='--', linewidth=0.5, marker="x", markevery=None, alpha=0.5, zorder=0)
+            try:
+                rnum = kmercount[l][k][rkmer]
+                if num > rnum:
+                    if i in top6s:
+                        c += 1
+                        yaxis1c = makeyaxis1c(i, k)
+                        top.plot(xaxis, yaxis1c, color=colourslist[c], linewidth=2, marker="s", markevery=None, zorder=int(kmercount[l][k][i]))
+                    if i in colours:
+                        yaxis1b = makeyaxis1b(i, k)
+                        top.plot(xaxis, yaxis1b, linewidth=1,  marker=".", markevery=None, zorder=int(kmercount[l][k][i]))
+                    if i not in top6s:
+                        if i not in colours:
+                            yaxis1a = makeyaxis1a(i, k)
+                            top.plot(xaxis, yaxis1a, color = '0.75', linestyle='--', linewidth=0.5, marker="x", markevery=None, alpha=0.5, zorder=0)
+            except:
+                continue
 
 
     for l in range(1, len(kmercount)):
@@ -210,19 +219,22 @@ def grapher(k):
         for i in kmercount[l][k]:
             num = kmercount[l][k][i]
             rkmer = kmer2hash(revComp(hash2kmer(i,k)))
-            rnum = kmercount[l][k][rkmer]
-            if num > rnum:
-                if i in top6s:
-                    c += 1
-                    yaxis2c = makeyaxis2c(i, k)
-                    bottom.plot(xaxis, yaxis2c, color=colourslist[c], linewidth=2, marker="*", markevery=None, zorder=int(kmercount[l][k][i]))
-                if i in colours:
-                    yaxis2b = makeyaxis2b(i, k)
-                    bottom.plot(xaxis, yaxis2b, linewidth=1,  marker=".", markevery=None, zorder=int(kmercount[l][k][i]))
-                if i not in top6s:
-                    if i not in colours:
-                        yaxis2a = makeyaxis2a(i, k)
-                        bottom.plot(xaxis, yaxis2a, color = '0.75', linestyle='--', linewidth=0.5, marker="x", markevery=None, alpha=0.8, zorder=0)
+            try:
+                rnum = kmercount[l][k][rkmer]
+                if num > rnum:
+                    if i in top6s:
+                        c += 1
+                        yaxis2c = makeyaxis2c(i, k)
+                        bottom.plot(xaxis, yaxis2c, color=colourslist[c], linewidth=2, marker="s", markevery=None, zorder=int(kmercount[l][k][i]))
+                    if i in colours:
+                        yaxis2b = makeyaxis2b(i, k)
+                        bottom.plot(xaxis, yaxis2b, linewidth=1,  marker=".", markevery=None, zorder=int(kmercount[l][k][i]))
+                    if i not in top6s:
+                        if i not in colours:
+                            yaxis2a = makeyaxis2a(i, k)
+                            bottom.plot(xaxis, yaxis2a, color = '0.75', linestyle='--', linewidth=0.5, marker="x", markevery=None, alpha=0.8, zorder=0)
+            except:
+                continue
 
 
     ymint, ymaxt = top.get_ylim()
