@@ -18,7 +18,7 @@ def setidentity():
     global htmlname
     htmlname = identifier+'.html'
 setidentity()
-
+#print(identifier, htmlname)
 
 
 
@@ -102,13 +102,15 @@ def kmerfrequency():
     html_kmerfreq = {}
     for k in range(mink, maxk+1):
         html_kmerfreq.update({k:[]})
+        #print(html_kmerfreq)
+        #html_kmerfreq.update({k:[]})
         string = """<p style="background-color: lightgrey; color: #333; padding: 30px;">K = """+str(k)+"""</p>"""+"""<img src="figures/kmerfreq_"""+str(identifier)+"_"+str(k)+""".png" width=3000px height=3000px>"""
         html_kmerfreq[k].append(string)
 
     return html_kmerfreq
 
 html_kmerfreq = kmerfrequency()
-
+#print(html_kmerfreq)
 
 
 def formatter():
