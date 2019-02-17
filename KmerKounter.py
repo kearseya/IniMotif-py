@@ -291,7 +291,7 @@ addingall(numofruns)
 #print(pwm)
 
 print('Generating Logos')
-import WebLogo
+import WebLogoMod
 print('Generating Hamming distance figures')
 import HamDistFig
 print('Generating Position bias figures')
