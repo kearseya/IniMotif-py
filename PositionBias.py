@@ -116,6 +116,8 @@ def hamming_distance(s1, s2):
 
 def listhammer(runnum, k):
     hamminglist2[runnum][k] = []
+    #for i in kmercount[runnum]:
+        #hconsensus = (list(kmercount[runnum][i].keys())[0])
     hconsensus = max(kmercount[runnum][k], key=lambda key: kmercount[runnum][k][key])
     consensus = hash2kmer(hconsensus, k)
     for x in list(kmercount[runnum][k].keys()):
@@ -130,6 +132,22 @@ def listhammer(runnum, k):
             if kmer2hash(rvalues) not in hamminglist2[runnum][k]:
                 hamminglist2[runnum][k].append(kmer2hash(rvalues))
 
+"""
+    if revcompwanted == True:
+        #for i in kmercount[runnum]:
+            #hconsensus = (list(kmercount[runnum][i].keys())[0])
+        hconsensus = max(kmercount[runnum][k], key=lambda key: kmercount[runnum][k][key])
+        consensus = hash2kmer(hconsensus, k)
+        rconsensus = revComp(consensus)
+        for x in list(kmercount[runnum][k].keys()):
+            values = hash2kmer(x,k)
+            rvalues = revComp(values)
+            ham = hamming_distance(consensus, values)
+            rham = hamming_distance(consensus, rvalues)
+            if ham <= 2 or rham <= 2:
+                if kmer2hash(rvalues) not in hamminglist2[runnum][k]:
+                    hamminglist2[runnum][k].append(kmer2hash(rvalues))
+"""
 
 
 
@@ -139,6 +157,39 @@ def multilisthammer(numofruns, mink, maxk):
             listhammer(x, i)
 
 multilisthammer(numofruns, mink, maxk)
+
+
+
+
+"""
+def FindTotal(FileName, k, runnum):
+    fastaFileName = open(FileName, "r")
+    avg = barcodechecker(FileName)
+    total = 0
+    for line in fastaFileName:
+        line = line.strip()
+        if line.startswith(">"):
+            continue
+        if len(line) == l:
+            for x in range(0,((len(line)+1)-k)-(2*avg)):
+                kmers = str(line[x+avg:x+k+avg])
+                if len(kmers) > 0 and line.count(kmers) == 1:
+                    hkmers = kmer2hash(kmers)
+                    if hkmers in hamminglist2[runnum][k]:
+                        total += 1
+
+        if revcompwanted == True:
+            #total = total*2
+            if len(line) == l:
+                for x in range(0,((len(line)+1)-k)-(2*avg)):
+                    rkmers = revComp(line[x+avg:x+k+avg])
+                    if len(rkmers) > 0 and (line.count(rkmers) + line.count(kmers)) == 1:
+                        hrkmers = kmer2hash(rkmers)
+                        if hrkmers in hamminglist2[runnum][k]:
+                            total += 1
+
+    return total
+"""
 
 
 
