@@ -196,7 +196,7 @@ def scatter(run, k):
             c += 1
 
         for p, j in enumerate(split[run][x]):
-            
+
             xp = top6x[p]
             yp = top6y[p]
 
