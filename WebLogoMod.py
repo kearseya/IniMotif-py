@@ -16,7 +16,7 @@ from KmerKounter import mink
 from KmerKounter import maxk
 
 
-type = input("Frequency (f) or Bits (b)?:")
+type = input("Bits (b) or Frequency (f)?:")
 
 #print(pwm)
 
