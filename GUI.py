@@ -104,7 +104,6 @@ maximumkvaluesinputs.grid(row=1, column=4)
 def autofiller():
     usage =+ 1
     if usage%2 != 0:
-        print(usage%2)
         add_rows()
     if int(numberofrunsinput.get()) != 0:
         readval = int(readlengthsinputs.get())
