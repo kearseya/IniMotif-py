@@ -58,10 +58,11 @@ numberofrunsinput = Entry(initialdetailsframe, textvariable=IntVar())
 numberofrunsinput.delete(0)
 numberofrunsinput.grid(row=2, column=1)
 
-reversecomplimentwantedlabel = Label(initialdetailsframe, text="Reverse compliment: ")
-reversecomplimentwantedlabel.grid(row=3, column=0, sticky="e")
-reversecomplimentwantedcheckbox = Checkbutton(initialdetailsframe)
-reversecomplimentwantedcheckbox.grid(row=3, column=1)
+reversecomplementwantedlabel = Label(initialdetailsframe, text="Reverse compliment: ")
+reversecomplementwantedlabel.grid(row=3, column=0, sticky="e")
+reversecomplementwanted = BooleanVar()
+reversecomplementwantedcheckbox = Checkbutton(initialdetailsframe, variable=reversecomplementwanted)
+reversecomplementwantedcheckbox.grid(row=3, column=1)
 
 formchangebutton = Button(initialdetailsframe, text="Enter", pady=1, command=add_rows)
 formchangebutton.grid(row=2, column=2)
@@ -122,12 +123,52 @@ def autofiller():
                     work.insert(0, string=maxkvalue)
 
 
+def makeorderedinputlist():
+    inputlist = []
+    inputlist.append(str(identifiernameinput.get()))
+    inputlist.append(str(pathtodirectoryinput.get()))
+    inputlist.append(int(numberofrunsinput.get()))
+    inputlist.append(str(reversecomplementwanted.get()))
+    inputlist.append(str(filenamesinputs.get()))
+    inputlist.append(int(runnumbersinputs.get()))
+    inputlist.append(int(readlengthsinputs.get()))
+    inputlist.append(int(minimimkvaluesinputs.get()))
+    inputlist.append(int(maximumkvaluesinputs.get()))
+    for x in range(0, int(numberofrunsinput.get())-1):
+        for j in range(0,5):
+            position = efflist[(x*5)+j]
+            if j == 0:
+                inputlist.append(position.get())
+            if j > 0:
+                inputlist.append(position.get())
+    return inputlist
+
 
 autofilldetailslabel = Label(window, text="Autofill: ")
 autofilldetailslabel.pack(side=LEFT, anchor="n")
 autofilldetailscheckbox = Button(window, command=autofiller)
 autofilldetailscheckbox.pack(side=LEFT, anchor="n")
 
+
+submitdetailscheckbox = Button(window, command=makeorderedinputlist, text="SUBMIT")
+submitdetailscheckbox.pack(side=RIGHT, anchor="n")
+
+
+
 window.mainloop()
 
 
+
+
+"""
+def on_entry_click(event):
+    #function that gets called whenever entry is clicked#
+    if entry.get() == 'Enter your user name...':
+       entry.delete(0, "end") # delete all the text in the entry
+       entry.insert(0, '') #Insert blank for user input
+       entry.config(fg = 'black')
+def on_focusout(event):
+    if entry.get() == '':
+        entry.insert(0, 'Enter your username...')
+        entry.config(fg = 'grey')
+"""
