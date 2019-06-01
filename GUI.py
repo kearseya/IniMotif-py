@@ -138,9 +138,9 @@ def makeorderedinputlist():
         for j in range(0,5):
             position = efflist[(x*5)+j]
             if j == 0:
-                inputlist.append(position.get())
+                inputlist.append(str(position.get()))
             if j > 0:
-                inputlist.append(position.get())
+                inputlist.append(int(position.get()))
     return inputlist
 
 
