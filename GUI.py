@@ -1,5 +1,6 @@
 from tkinter import *
 
+
 usage = 0
 
 def add_rows():
@@ -59,13 +60,18 @@ numberofrunsinput.delete(0)
 numberofrunsinput.grid(row=2, column=1)
 
 reversecomplementwantedlabel = Label(initialdetailsframe, text="Reverse compliment: ")
-reversecomplementwantedlabel.grid(row=3, column=0, sticky="e")
+reversecomplementwantedlabel.grid(row=3, column=0, sticky="e", padx=(20,0))
 reversecomplementwanted = BooleanVar()
 reversecomplementwantedcheckbox = Checkbutton(initialdetailsframe, variable=reversecomplementwanted)
 reversecomplementwantedcheckbox.grid(row=3, column=1)
 
 formchangebutton = Button(initialdetailsframe, text="Enter", pady=1, command=add_rows)
-formchangebutton.grid(row=2, column=2)
+formchangebutton.grid(row=2, column=2, padx=10)
+
+inimotifimage = PhotoImage(file='figures/GUIgraphics/tobylogo.png')
+inimotifimagelabel = Label(initialdetailsframe, image=inimotifimage)
+inimotifimagelabel.grid(row=1, column=3, padx=20)
+
 
 variableinputform = Frame(window)
 variableinputform.pack()
@@ -124,6 +130,7 @@ def autofiller():
 
 
 def makeorderedinputlist():
+    global inputlist
     inputlist = []
     inputlist.append(str(identifiernameinput.get()))
     inputlist.append(str(pathtodirectoryinput.get()))
@@ -141,18 +148,18 @@ def makeorderedinputlist():
                 inputlist.append(str(position.get()))
             if j > 0:
                 inputlist.append(int(position.get()))
+    print(inputlist)
     return inputlist
 
 
-autofilldetailslabel = Label(window, text="Autofill: ")
-autofilldetailslabel.pack(side=LEFT, anchor="n")
-autofilldetailscheckbox = Button(window, command=autofiller)
-autofilldetailscheckbox.pack(side=LEFT, anchor="n")
+#autofilldetailslabel = Label(window, text="Autofill: ")
+#autofilldetailslabel.pack(side=LEFT, anchor="n", text="Autofill")
+autofilldetailscheckbox = Button(window, command=autofiller, text="Autofill")
+autofilldetailscheckbox.pack(side=LEFT, anchor="n", padx=20, pady=20)
 
 
 submitdetailscheckbox = Button(window, command=makeorderedinputlist, text="SUBMIT")
-submitdetailscheckbox.pack(side=RIGHT, anchor="n")
-
+submitdetailscheckbox.pack(side=RIGHT, anchor="n", padx=20, pady=20)
 
 
 window.mainloop()
