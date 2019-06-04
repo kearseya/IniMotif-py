@@ -15,8 +15,16 @@ from KmerKounter import numofruns
 from KmerKounter import mink
 from KmerKounter import maxk
 
+def inputtype():
+    global type
+    try:
+        from GUI import logotype
+        if len(logotype) > 1:
+            type = logotype[0]
+    except:
+        type = input("Bits (b) or Frequency (f)?:")
 
-type = input("Bits (b) or Frequency (f)?:")
+inputtype()
 
 #print(pwm)
 
