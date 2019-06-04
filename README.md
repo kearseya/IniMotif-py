@@ -10,4 +10,4 @@ With help from:	<br /> Dr Lu Cheng <br />
 
 Python scripts for extracting TF motif from SELEXseq data.
 
-To run, open the HTMLmaker.py in python3 and follow input prompts.
+To run, open the HTMLmaker.py in python3 and enter data into the pop up window.
