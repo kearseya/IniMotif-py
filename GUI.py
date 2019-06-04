@@ -65,6 +65,14 @@ reversecomplementwanted = BooleanVar()
 reversecomplementwantedcheckbox = Checkbutton(initialdetailsframe, variable=reversecomplementwanted)
 reversecomplementwantedcheckbox.grid(row=3, column=1)
 
+logoformatlabel = Label(initialdetailsframe, text="Logo format: ")
+logoformatlabel.grid(row=4, column=0, sticky="e")
+logoformatlist = ["bits", "frequency"]
+valuefordrop = StringVar()
+valuefordrop.set(logoformatlist[0])
+logoformatdropdown = OptionMenu(initialdetailsframe, valuefordrop, "bits", "frequency")
+logoformatdropdown.grid(row=4, column=1)
+
 formchangebutton = Button(initialdetailsframe, text="Enter", pady=1, command=add_rows)
 formchangebutton.grid(row=2, column=2, padx=10)
 
@@ -148,7 +156,8 @@ def makeorderedinputlist():
                 inputlist.append(str(position.get()))
             if j > 0:
                 inputlist.append(int(position.get()))
-    print(inputlist)
+    global logotype
+    logotype = str(valuefordrop.get())
     return inputlist
 
 
