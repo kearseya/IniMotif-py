@@ -54,19 +54,34 @@ def seq2hash(kmer):
 
 revnuc = {'A':'T','T':'A','G':'C','C':'G','N':'N'}
 
+from GUI import inputlist
+
 def revComp(seq):
     rev = ''
     for i in range(len(seq) - 1,-1,-1):
         rev += revnuc[seq[i]]
     return rev
 
-identifier = str(input("Identifier:"))
+def initialinput():
+    print(inputlist)
+    global identifier
+    global datafile
+    global numofruns
+    global revcompwanted
+    try:
+        if len(inputlist) > 1:
+            identifier = str(inputlist[0])
+            datafile = inputlist[1]
+            numofruns = int(inputlist[2])
+            revcompwanted = bool(inputlist[3])
+    except:
+        print("Command line input required")
+        identifier = str(input("Identifier:"))
+        datafile = input("Path to data directory:")
+        numofruns = int(input("Number of runs:"))
+        revcompwanted = bool(input("Reverse compliment (any key, leave blank for False):"))
 
-datafile = input("Path to data directory:")
-
-numofruns = int(input("Number of runs:"))
-
-revcompwanted = bool(input("Reverse compliment (any key, leave blank for False):"))
+initialinput()
 
 """
 FileName = input("Fasta File Name:")
@@ -251,7 +266,7 @@ def pwmmaker():
 
 
 
-def addrun():
+def addruncl():
     global FileName1
     global FileName
     FileName1 = input("Fasta File Name:")
@@ -275,11 +290,43 @@ def addrun():
     startpwm()
     pwmmaker()
 
+def addrungui():
+    try:
+        if len(inputlist) > 1:
+            global FileName1
+            global FileName
+            global runnum
+            global l
+            global mink
+            global maxk
+            for x in range(0, numofruns+1):
+                FileName1 = str(inputlist[(x*5)+4])
+                FileName = os.path.join(datafile, FileName1)
+                runnum = int(inputlist[(x*5)+5])
+                filenames1.update({runnum:FileName1})
+                ufilenames.update({FileName:runnum})
+                filenames.update({runnum:FileName})
+                l = int(inputlist[(x*5)+6])
+                lvalues.update({runnum:l})
+                mink = int(inputlist[(x*5)+7])
+                maxk = int(inputlist[(x*5)+8])
+                RangeKmerList(mink,maxk)
+                KmerCounter()
+                listhammer()
+                dicthammer()
+                startpwm()
+                pwmmaker()
+    except:
+        print("Command line input required")
 
 
 def addingall(n):
-    for _ in range(n):
-        addrun()
+    try:
+        if len(inputlist) > 1:
+            addrungui()
+    except:
+        for _ in range(n):
+            addruncl()
 
 
 addingall(numofruns)
