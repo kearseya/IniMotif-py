@@ -17,7 +17,6 @@ Open the HTMLmaker.py in python3 and enter data into the pop up window.
 ```bash
 $ python3 HTMLmaker.py
 ```
-<br />
 * On Windows <br />
 ```bash
 > python3 HTMLmaker.py
