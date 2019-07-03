@@ -14,14 +14,14 @@ To run <br />
 Open the HTMLmaker.py in python3 and enter data into the pop up window.
 
 ..* On Mac/Linux <br />
-'''bash
+```bash
 $ python3 HTMLmaker.py
-'''
+```
 <br />
 ..* On Windows <br />
-'''sh
+```sh
 > python3 HTMLmaker.py
-'''
+```
 <br />
 
 
