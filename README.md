@@ -3,10 +3,10 @@ IniMotif in python
 
  ====================================
 
-Creator:        Alex Kearsey <br /> <br />
-With help from:	<br /> Dr Lu Cheng <br />
-                Joel Southgate <br />
-                WebLogo source code <br />
+⋅⋅*Alex Kearsey 
+⋅⋅*Dr Lu Cheng
+⋅⋅*Joel Southgate
+⋅⋅*WebLogo source code
 
 Python scripts for extracting TF motif from SELEXseq data.
 
