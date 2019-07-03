@@ -51,7 +51,7 @@ def seq2hash(kmer):
     return kh
 """
 
-
+bases = ['A', 'C', 'G', 'T']
 revnuc = {'A':'T','T':'A','G':'C','C':'G','N':'N'}
 
 from GUI import inputlist
@@ -89,7 +89,7 @@ runnum = int(input("Run number:"))
 l = int(input("Read lengths:"))
 """
 
-runlists = []
+kmercombinations = []
 kmercount = []
 hamlist = []
 hamdict = []
@@ -101,7 +101,6 @@ lvalues = {}
 
 def dictinit(numofruns):
     for _ in range(numofruns + 1):
-        runlists.append({})
         kmercount.append({})
         hamlist.append({})
         hamdict.append({})
@@ -158,7 +157,7 @@ def barcodechecker(FileName):
     return avg
 
 
-
+"""
 def CreateKmerList(FileName, runnum, k):
     runlists[runnum][k] = []
     fastaFileName = open(FileName, "r")
@@ -193,7 +192,6 @@ def RangeKmerList(mink,maxk):
         CreateKmerList(FileName, runnum, i)
 
 
-
 def KmerCounter():
     for x in list(runlists[runnum]):
         kmercount[runnum][x] = {}
@@ -204,7 +202,43 @@ def KmerCounter():
         sortdict = OrderedDict(sort)
         sortdict2 = {**sortdict}
         kmercount[runnum][i].update(sortdict2)
+"""
 
+def Combinations(mink, maxk):
+    for k in range(mink, maxk+1):
+        kmercombinations.append({})
+        kmercombinations[k] = [''.join(p) for p in itertools.product(bases, repeat=k)]
+        kmercount[runnum][k] = {}
+        for i in range(0, len(kmercombinations[k])):
+            kmercount[runnum][k][kmercombinations[k][i]] = 0
+
+def KmerCounter(FileName, runnum, k):
+    fastaFileName = open(FileName, "r")
+    avg = barcodechecker(FileName)
+    for line in fastaFileName:
+        line = line.strip()
+        if line.startswith(">"):
+            continue
+        if len(line) == l and "N" not in line:
+            for x in range(0,((len(line)+1)-k)-(2*avg)):
+                kmers = str(line[x+avg:x+k+avg])
+                if len(kmers) > 0 and line.count(kmers) == 1:
+                    if kmers in kmercombinations[k]:
+                        kmercount[runnum][k][kmers] += 1
+        else:
+            continue
+
+
+        if revcompwanted == True:
+            if len(line) == l and "N" not in line:
+                for x in range(0,((len(line)+1)-k)-(2*avg)):
+                    kmers = str(line[x+avg:x+k+avg])
+                    rkmers = revComp(line[x+avg:x+k+avg])
+                    if len(rkmers) > 0 and (line.count(kmers) + line.count(rkmers)) == 1:
+                        if rkmers in kmercombinations[k]:
+                            kmercount[runnum][k][rkmers] += 1
+            else:
+                continue
 
 
 def hamming_distance(s1, s2):
@@ -310,7 +344,7 @@ def addrungui():
                 lvalues.update({runnum:l})
                 mink = int(inputlist[(x*5)+7])
                 maxk = int(inputlist[(x*5)+8])
-                RangeKmerList(mink,maxk)
+                Combinations(mink,maxk)
                 KmerCounter()
                 listhammer()
                 dicthammer()
