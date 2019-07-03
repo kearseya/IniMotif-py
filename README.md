@@ -10,7 +10,7 @@ IniMotif in python
 
 Python scripts for extracting TF motif from SELEXseq data.
 
-To run <br />
+To run: <br />
 Open the HTMLmaker.py in python3 and enter data into the pop up window.
 
 * On Mac/Linux <br />
@@ -22,6 +22,7 @@ $ python3 HTMLmaker.py
 > python3 HTMLmaker.py
 ```
 <br />
+And exit the GUI window.
 
 
 
