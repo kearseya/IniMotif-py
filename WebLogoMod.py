@@ -12,8 +12,13 @@ import math
 from KmerKounter import hamlist
 from KmerKounter import pwm
 from KmerKounter import numofruns
+
+from KmerKounter import inputlist
+
+"""
 from KmerKounter import mink
 from KmerKounter import maxk
+"""
 
 def inputtype():
     global type
@@ -49,8 +54,11 @@ def Ri(runnum, k, i):
 logoform = []
 
 def dictinit():
-    for r in range(0, numofruns+1):
+    for r in range(0, numofruns):
         logoform.append({})
+        print(((r)*5)+7)
+        mink = int(inputlist[(r*5)+7])
+        maxk = int(inputlist[(r*5)+8])
         for k in range(mink, maxk+1):
             logoform[r].update({k:[]})
 dictinit()
@@ -75,14 +83,17 @@ def kmerpwm(runnum, k):
 
 
 
-def allmaker(numofruns, mink, maxk):
+def allmaker(numofruns):
     for z in range(1, numofruns+1):
+        mink = int(inputlist[((z-1)*5)+7])
+        maxk = int(inputlist[((z-1)*5)+8])
         for j in range(mink,maxk+1):
-            logoform[z][j].append(kmerpwm(z,j))
+            logoform[z-1][j].append(kmerpwm(z,j))
 
-allmaker(numofruns, mink, maxk)
+allmaker(numofruns)
 
 
+#print(logoform)
 
 
 COLOR_SCHEME = {'G': 'orange',
