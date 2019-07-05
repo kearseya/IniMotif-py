@@ -81,8 +81,6 @@ def kmerpwm(runnum, k):
 
 
 
-
-
 def allmaker(numofruns):
     for z in range(1, numofruns+1):
         mink = int(inputlist[((z-1)*5)+7])
