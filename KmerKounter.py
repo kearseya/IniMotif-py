@@ -1,4 +1,4 @@
-from itertools import groupby
+import itertools
 from collections import Counter
 from collections import OrderedDict
 import numpy as np
@@ -55,6 +55,7 @@ bases = ['A', 'C', 'G', 'T']
 revnuc = {'A':'T','T':'A','G':'C','C':'G','N':'N'}
 
 from GUI import inputlist
+#print(inputlist)
 
 def revComp(seq):
     rev = ''
@@ -63,7 +64,7 @@ def revComp(seq):
     return rev
 
 def initialinput():
-    print(inputlist)
+    #print(inputlist)
     global identifier
     global datafile
     global numofruns
@@ -89,7 +90,7 @@ runnum = int(input("Run number:"))
 l = int(input("Read lengths:"))
 """
 
-kmercombinations = []
+kmercombinations = {}
 kmercount = []
 hamlist = []
 hamdict = []
@@ -204,11 +205,11 @@ def KmerCounter():
         kmercount[runnum][i].update(sortdict2)
 """
 
-def Combinations(mink, maxk):
+
+def Combinations(runnum, mink, maxk):
     for k in range(mink, maxk+1):
-        kmercombinations.append({})
-        kmercombinations[k] = [''.join(p) for p in itertools.product(bases, repeat=k)]
         kmercount[runnum][k] = {}
+        kmercombinations[k] = [''.join(p) for p in itertools.product(bases, repeat=k)]
         for i in range(0, len(kmercombinations[k])):
             kmercount[runnum][k][kmercombinations[k][i]] = 0
 
@@ -240,6 +241,10 @@ def KmerCounter(FileName, runnum, k):
             else:
                 continue
 
+def RangeKmerCounter(FileName, runnum, mink, maxk):
+    for i in range(mink,maxk+1):
+        KmerCounter(FileName, runnum, i)
+
 
 def hamming_distance(s1, s2):
     if len(s1) != len(s2):
@@ -248,20 +253,20 @@ def hamming_distance(s1, s2):
 
 
 
-def listhammer():
+def listhammer(runnum):
     for i in kmercount[runnum]:
         hamlist[runnum][i] = []
         #hconsensus = (list(kmercount[runnum][i].keys())[0])
         hconsensus = max(kmercount[runnum][i], key=lambda key: kmercount[runnum][i][key])
-        consensus = hash2kmer(hconsensus, i)
+        consensus = hconsensus #hash2kmer(hconsensus, i)
         for x in list(kmercount[runnum][i].keys()):
-            values = hash2kmer(x,i)
+            values = x#hash2kmer(x,i)
             if hamming_distance(consensus, values) <= 1:
-                hamlist[runnum][i].append(kmer2hash(values))
+                hamlist[runnum][i].append(values)
 
 
 
-def dicthammer():
+def dicthammer(runnum):
     for i in hamlist[runnum]:
         hamdict[runnum][i] = {}
         test = { z : kmercount[runnum][i][z] for z in hamlist[runnum][i] }
@@ -273,7 +278,7 @@ def dicthammer():
 
 
 
-def startpwm():
+def startpwm(runnum):
     for i in hamdict[runnum]:
         pwm[runnum][i] = {}
         for j in range(1,i+1):
@@ -284,10 +289,10 @@ def startpwm():
 
 
 
-def pwmmaker():
+def pwmmaker(runnum):
     for i in hamdict[runnum]:
         for x in hamdict[runnum][i]:
-            kmer = hash2kmer((x),i)
+            kmer = x #hash2kmer((x),i)
             for j in range(1,i+1):
                 if kmer[j-1] == "A":
                     pwm[runnum][i][j]["A"] += hamdict[runnum][i][x]
@@ -317,8 +322,8 @@ def addruncl():
     mink = int(input("Minimum kmer:"))
     global maxk
     maxk = int(input("Maximum kmer:"))
-    RangeKmerList(mink,maxk)
-    KmerCounter()
+    Combinations(mink, maxk)
+    RangeKmerCounter(FileName, runnum, mink, maxk)
     listhammer()
     dicthammer()
     startpwm()
@@ -333,6 +338,7 @@ def addrungui():
             global l
             global mink
             global maxk
+
             for x in range(0, numofruns+1):
                 FileName1 = str(inputlist[(x*5)+4])
                 FileName = os.path.join(datafile, FileName1)
@@ -344,12 +350,12 @@ def addrungui():
                 lvalues.update({runnum:l})
                 mink = int(inputlist[(x*5)+7])
                 maxk = int(inputlist[(x*5)+8])
-                Combinations(mink,maxk)
-                KmerCounter()
-                listhammer()
-                dicthammer()
-                startpwm()
-                pwmmaker()
+                Combinations(runnum, mink, maxk)
+                RangeKmerCounter(FileName, runnum, mink, maxk)
+                listhammer(runnum)
+                dicthammer(runnum)
+                startpwm(runnum)
+                pwmmaker(runnum)
     except:
         print("Command line input required")
 
@@ -365,7 +371,7 @@ def addingall(n):
 
 addingall(numofruns)
 
-#print(runlists)
+#print(kmercombinations)
 #print(kmercount)
 #print(hamlist)
 #print(hamdict)
