@@ -56,7 +56,6 @@ logoform = []
 def dictinit():
     for r in range(0, numofruns):
         logoform.append({})
-        print(((r)*5)+7)
         mink = int(inputlist[(r*5)+7])
         maxk = int(inputlist[(r*5)+8])
         for k in range(mink, maxk+1):
