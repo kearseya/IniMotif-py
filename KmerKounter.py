@@ -219,7 +219,6 @@ def KmerCounter(FileName, runnum, k):
     fastaFileName = open(FileName, "r")
     avg = barcodechecker(FileName)
     combinations = 4**k
-    print(combinations)
     for line in fastaFileName:
         line = line.strip()
         if line.startswith(">"):
@@ -376,10 +375,10 @@ def addingall(n):
 addingall(numofruns)
 
 #print(kmercombinations)
-print(kmercount)
-print(hamlist)
-print(hamdict)
-print(pwm)
+#print(kmercount)
+#print(hamlist)
+#print(hamdict)
+#print(pwm)
 
 print('Generating Logos')
 import WebLogoMod
