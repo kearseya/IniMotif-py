@@ -7,15 +7,16 @@ from collections import Counter
 from collections import OrderedDict
 
 from KmerKounter import numofruns
-from KmerKounter import runlists
 from KmerKounter import kmercount
 from KmerKounter import barcodechecker
 from KmerKounter import lvalues
-from KmerKounter import mink
-from KmerKounter import maxk
+#from KmerKounter import mink
+#from KmerKounter import maxk
 from KmerKounter import filenames
 from KmerKounter import ufilenames
 from KmerKounter import revcompwanted
+
+from KmerKounter import inputlist
 
 
 
@@ -73,30 +74,71 @@ def revComp(seq):
     return rev
 
 
+
+def TSeqCounter(FileName):
+    TSeqNum = 0
+    fastaFileName = open(FileName, "r")
+    for line in fastaFileName:
+        line = line.strip()
+        if line.startswith(">"):
+            continue
+        TSeqNum += 1
+    return TSeqNum
+
+def LSeqCounter(FileName):
+    LSeqNum = 0
+    l = lvalues[(ufilenames[FileName])]
+    fastaFileName = open(FileName, "r")
+    for line in fastaFileName:
+        line = line.strip()
+        if line.startswith(">"):
+            continue
+        if len(line) == l and "N" not in line:
+            LSeqNum += 1
+    return LSeqNum
+
+
+TSeqNums = {}
+LSeqNums = {}
+Barcodevalues = {}
+
+
+def allTLSeqCounter():
+    for i in range(1, numofruns+1):
+        x = TSeqCounter(filenames[i])
+        y = LSeqCounter(filenames[i])
+        b = barcodechecker(filenames[i])
+        TSeqNums.update({i:x})
+        LSeqNums.update({i:y})
+        Barcodevalues.update({i:b})
+
+allTLSeqCounter()
+
+
 poslist = []
 rposlist = []
 
 hamminglist2 = []
 
 
-def listinit(mink, maxk):
+def listinit():
     l = lvalues[1]
     for i in range(0,numofruns+1):
         poslist.append({})
         rposlist.append({})
-        try:
-            avg = barcodechecker(filenames[i])
-        except:
-            continue
+    for j in range(1, numofruns+1):
+        avg = Barcodevalues[j]
+        mink = int(inputlist[((j-1)*5)+7])
+        maxk = int(inputlist[((j-1)*5)+8])
         for k in range(mink, maxk+1):
-            poslist[i].update({k:{}})
-            rposlist[i].update({k:{}})
+            poslist[j].update({k:{}})
+            rposlist[j].update({k:{}})
             for x in range(0,(l+1-k-(2*avg))):
-                poslist[i][k].update({x:[]})
-                rposlist[i][k].update({x:[]})
+                poslist[j][k].update({x:[]})
+                rposlist[j][k].update({x:[]})
 
 
-listinit(mink,maxk)
+listinit()
 
 
 def hamdictinit(numofruns):
@@ -151,12 +193,14 @@ def listhammer(runnum, k):
 
 
 
-def multilisthammer(numofruns, mink, maxk):
+def multilisthammer(numofruns):
     for x in range(1, numofruns+1):
+        mink = int(inputlist[((x-1)*5)+7])
+        maxk = int(inputlist[((x-1)*5)+8])
         for i in range(mink, maxk+1):
             listhammer(x, i)
 
-multilisthammer(numofruns, mink, maxk)
+multilisthammer(numofruns)
 
 
 
@@ -219,12 +263,14 @@ def CreatePosList(FileName, k, runnum):
                             rposlist[runnum][k][x].append(hrkmers)
 
 
-def multiPosList(numofruns, mink, maxk):
+def multiPosList(numofruns):
     for x in range(1, numofruns+1):
+        mink = int(inputlist[((x-1)*5)+7])
+        maxk = int(inputlist[((x-1)*5)+8])
         for i in range(mink, maxk+1):
             CreatePosList(filenames[x],i,x)
 
-multiPosList(numofruns, mink, maxk)
+multiPosList(numofruns)
 
 
 
@@ -329,54 +375,16 @@ def plotter(runnum, k):
 
 
 
-def plotrange(numofruns, mink, maxk):
+def plotrange(numofruns):
     for r in range(1,numofruns+1):
+        mink = int(inputlist[((r-1)*5)+7])
+        maxk = int(inputlist[((r-1)*5)+8])
         for k in range(mink, maxk+1):
             plotter(r, k)
 
-plotrange(numofruns, mink, maxk)
+plotrange(numofruns)
 
 
-
-
-def TSeqCounter(FileName):
-    TSeqNum = 0
-    fastaFileName = open(FileName, "r")
-    for line in fastaFileName:
-        line = line.strip()
-        if line.startswith(">"):
-            continue
-        TSeqNum += 1
-    return TSeqNum
-
-def LSeqCounter(FileName):
-    LSeqNum = 0
-    l = lvalues[(ufilenames[FileName])]
-    fastaFileName = open(FileName, "r")
-    for line in fastaFileName:
-        line = line.strip()
-        if line.startswith(">"):
-            continue
-        if len(line) == l and "N" not in line:
-            LSeqNum += 1
-    return LSeqNum
-
-
-TSeqNums = {}
-LSeqNums = {}
-Barcodevalues = {}
-
-
-def allTLSeqCounter():
-    for i in range(1, numofruns+1):
-        x = TSeqCounter(filenames[i])
-        y = LSeqCounter(filenames[i])
-        b = barcodechecker(filenames[i])
-        TSeqNums.update({i:x})
-        LSeqNums.update({i:y})
-        Barcodevalues.update({i:b})
-
-allTLSeqCounter()
 
 numofkmers = {}
 numofuniquekmers = {}
@@ -388,8 +396,10 @@ def numberofukmers():
         numofuniquekmers.update({i:{}})
         numoftfbs.update({i:{}})
     for i in range(1, numofruns+1):
+        mink = int(inputlist[((i-1)*5)+7])
+        maxk = int(inputlist[((i-1)*5)+8])
         for k in range(mink, maxk+1):
-            numofkmers[i].update({k:len(runlists[i][k])})
+            numofkmers[i].update({k:sum(kmercount[i][k].values())})
             numofuniquekmers[i].update({k:len(kmercount[i][k])})
             numoftfbs[i].update({k:len(hamminglist2[i][k])})
 
@@ -438,6 +448,8 @@ def numoftfbsseqs():
     for i in range(1, numofruns+1):
         numoftfbsseq.update({i:{}})
     for r in range(1, numofruns+1):
+        mink = int(inputlist[((r-1)*5)+7])
+        maxk = int(inputlist[((r-1)*5)+8])
         for k in range(mink, maxk+1):
             numoftfbsseq[r].update({k:seqwtfbsfinder(filenames[r], k)})
 
@@ -449,6 +461,8 @@ def seqbiasfinder():
     seqbias = {}
     for r in range(1, numofruns+1):
         seqbias.update({r:{}})
+        mink = int(inputlist[((r-1)*5)+7])
+        maxk = int(inputlist[((r-1)*5)+8])
         for k in range(mink, maxk+1):
             seqbias[r].update({k:[]})
             for x in kmercount[r][k]:
