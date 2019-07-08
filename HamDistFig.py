@@ -5,9 +5,9 @@ from KmerKounter import numofruns
 from KmerKounter import hash2kmer
 from KmerKounter import kmer2hash
 from KmerKounter import revcompwanted
-from KmerKounter import mink
-from KmerKounter import maxk
-from KmerKounter import runlists
+#from KmerKounter import mink
+#from KmerKounter import maxk
+from KmerKounter import inputlist
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -33,35 +33,39 @@ def hamming_distance(s1, s2):
 
 
 khams = []
-def hammer(k):
+def hammer(run, k):
     for _ in range(numofruns + 1):
         khams.append({})
-    for j in range(1,len(kmercount)):
-        khams[j][k] = {k: {} for k in range(k+1)}
-        hconsensus = max(kmercount[j][k], key=lambda key: kmercount[j][k][key])
-        consensus = hash2kmer(hconsensus, k)
-        for x in list(kmercount[j][k].keys()):
-            values = hash2kmer(x,k)
-            rvalues = revComp(values)
-            ham = hamming_distance(consensus, values)
-            rham = hamming_distance(consensus, rvalues)
-            if ham <= rham:
-                khams[j][k][ham].update({x:kmercount[j][k][x]})
-            if ham > rham:
-                khams[j][k][rham].update({x:kmercount[j][k][x]})
+
+    khams[run][k] = {k: {} for k in range(k+1)}
+    hconsensus = max(kmercount[run][k], key=lambda key: kmercount[run][k][key])
+    consensus = hash2kmer(hconsensus, k)
+    for x in list(kmercount[run][k].keys()):
+        values = hash2kmer(x,k)
+        rvalues = revComp(values)
+        ham = hamming_distance(consensus, values)
+        rham = hamming_distance(consensus, rvalues)
+        if ham <= rham:
+            khams[run][k][ham].update({x:kmercount[run][k][x]})
+        if ham > rham:
+            khams[run][k][rham].update({x:kmercount[run][k][x]})
     return khams
 
-def multihammer(mink, maxk):
-    for k in range (mink, maxk+1):
-        hammer(k)
+def multihammer():
+    for z in range(1, numofruns+1):
+        mink = int(inputlist[((z-1)*5)+7])
+        maxk = int(inputlist[((z-1)*5)+8])
+        for k in range (mink, maxk+1):
+            hammer(z, k)
 
-multihammer(mink, maxk)
+multihammer()
 #print(khams)
 
 
 def top6(run, k):
     top6s = []
-    keys = list(kmercount[run][k].keys())
+    keys = list(kmercount[run][k].keys())[:12]
+    print(keys)
     topvalpos = 0
     while len(top6s) <= 11:
         next = keys[topvalpos]
@@ -217,14 +221,16 @@ def scatter(run, k):
 
     plt.xlabel("Hamming distance")
     plt.ylabel("Kmer count")
-    plt.title("Run number:"+' '+str(run)+'\n'+'K: '+str(k)+'\n'+'Total kmers: '+str(len(runlists[run][k])))
+    plt.title("Run number:"+' '+str(run)+'\n'+'K: '+str(k)+'\n'+'Total kmers: '+str(sum(kmercount[run][k].values())))
     #plt.show()
     plt.savefig('figures/hamdist_'+str(identifier)+"_"+str(run)+"_"+str(k), dpi=600)
     plt.close()
 
-def plotrange(runs, mink, maxk):
+def plotrange(runs):
     for r in range(1,runs+1):
+        mink = int(inputlist[((r-1)*5)+7])
+        maxk = int(inputlist[((r-1)*5)+8])
         for k in range(mink, maxk+1):
             scatter(r, k)
 
-plotrange(numofruns, mink, maxk)
+plotrange(numofruns)
