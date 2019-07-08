@@ -1,6 +1,7 @@
 #%matplotlib inline
 from KmerKounter import identifier
 import seaborn
+import matplotlib
 import matplotlib.pyplot as plt
 plt.style.use('seaborn-ticks')
 from matplotlib import transforms
@@ -14,6 +15,8 @@ from KmerKounter import pwm
 from KmerKounter import numofruns
 
 from KmerKounter import inputlist
+
+matplotlib.use('AGG')
 
 """
 from KmerKounter import mink
@@ -31,6 +34,7 @@ def inputtype():
 
 inputtype()
 
+#print("PWM")
 #print(pwm)
 
 def En(n):
@@ -42,7 +46,10 @@ def Shannon(runnum, k, pos):
     Hi = 0
     for b in bases:
         f = pwm[runnum][k][pos][b]
-        Hi += -(f*math.log2(f))
+        try:
+            Hi += -(f*math.log2(f))
+        except:
+            continue
     return Hi
 
 def Ri(runnum, k, i):
@@ -85,11 +92,13 @@ def allmaker(numofruns):
         mink = int(inputlist[((z-1)*5)+7])
         maxk = int(inputlist[((z-1)*5)+8])
         for j in range(mink,maxk+1):
+            #print(kmerpwm(z,j))
             logoform[z-1][j].append(kmerpwm(z,j))
 
 allmaker(numofruns)
 
 
+#print("Logoform")
 #print(logoform)
 
 
@@ -111,9 +120,9 @@ class Scale(matplotlib.patheffects.RendererBase):
 
 def draw_logo(all_scores, run, k):
     fig = plt.figure()
-    fig.set_size_inches(len(all_scores)+1,2.5)
+    fig.set_size_inches(k+(k*0.2), 2)
     ax = fig.add_subplot(111)
-    ax.set_xticks(range(len(all_scores)))
+    ax.set_xticks(range(k))
 
     xshift = 0
     trans_offset = transforms.offset_copy(ax.transAxes,
@@ -161,12 +170,11 @@ def draw_logo(all_scores, run, k):
 
 
 
-
 def logoprinter():
     for r in range(1, numofruns+1):
-        for i in logoform[r]:
-            for j in range(0, len(logoform[r][i])):
-                draw_logo(logoform[r][i][j], r, i)
+        for i in logoform[r-1]:
+            for j in range(0, len(logoform[r-1][i])):
+                draw_logo(logoform[r-1][i][j], r, i)
 
 
 logoprinter()
