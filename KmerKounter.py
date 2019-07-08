@@ -90,7 +90,7 @@ runnum = int(input("Run number:"))
 l = int(input("Read lengths:"))
 """
 
-kmercombinations = {}
+#kmercombinations = {}
 kmercount = []
 hamlist = []
 hamdict = []
@@ -209,13 +209,17 @@ def KmerCounter():
 def Combinations(runnum, mink, maxk):
     for k in range(mink, maxk+1):
         kmercount[runnum][k] = {}
-        kmercombinations[k] = [''.join(p) for p in itertools.product(bases, repeat=k)]
-        for i in range(0, len(kmercombinations[k])):
-            kmercount[runnum][k][kmercombinations[k][i]] = 0
+        #kmercombinations[k] = [''.join(p)) for p in itertools.product(bases, repeat=k]
+        for i in range(0, 4**k):
+            kmercount[runnum][k][i] = 0
+
+
 
 def KmerCounter(FileName, runnum, k):
     fastaFileName = open(FileName, "r")
     avg = barcodechecker(FileName)
+    combinations = 4**k
+    print(combinations)
     for line in fastaFileName:
         line = line.strip()
         if line.startswith(">"):
@@ -224,8 +228,8 @@ def KmerCounter(FileName, runnum, k):
             for x in range(0,((len(line)+1)-k)-(2*avg)):
                 kmers = str(line[x+avg:x+k+avg])
                 if len(kmers) > 0 and line.count(kmers) == 1:
-                    if kmers in kmercombinations[k]:
-                        kmercount[runnum][k][kmers] += 1
+                    if kmer2hash(kmers) < combinations:
+                        kmercount[runnum][k][kmer2hash(kmers)] += 1
         else:
             continue
 
@@ -236,8 +240,8 @@ def KmerCounter(FileName, runnum, k):
                     kmers = str(line[x+avg:x+k+avg])
                     rkmers = revComp(line[x+avg:x+k+avg])
                     if len(rkmers) > 0 and (line.count(kmers) + line.count(rkmers)) == 1:
-                        if rkmers in kmercombinations[k]:
-                            kmercount[runnum][k][rkmers] += 1
+                        if kmer2hash(rkmers) < combinations:
+                            kmercount[runnum][k][kmer2hash(rkmers)] += 1
             else:
                 continue
 
@@ -258,11 +262,11 @@ def listhammer(runnum):
         hamlist[runnum][i] = []
         #hconsensus = (list(kmercount[runnum][i].keys())[0])
         hconsensus = max(kmercount[runnum][i], key=lambda key: kmercount[runnum][i][key])
-        consensus = hconsensus #hash2kmer(hconsensus, i)
+        consensus = hash2kmer(hconsensus, i)
         for x in list(kmercount[runnum][i].keys()):
-            values = x#hash2kmer(x,i)
+            values = hash2kmer(x,i)
             if hamming_distance(consensus, values) <= 1:
-                hamlist[runnum][i].append(values)
+                hamlist[runnum][i].append(x)
 
 
 
@@ -292,7 +296,7 @@ def startpwm(runnum):
 def pwmmaker(runnum):
     for i in hamdict[runnum]:
         for x in hamdict[runnum][i]:
-            kmer = x #hash2kmer((x),i)
+            kmer = hash2kmer((x),i)
             for j in range(1,i+1):
                 if kmer[j-1] == "A":
                     pwm[runnum][i][j]["A"] += hamdict[runnum][i][x]
@@ -322,7 +326,7 @@ def addruncl():
     mink = int(input("Minimum kmer:"))
     global maxk
     maxk = int(input("Maximum kmer:"))
-    Combinations(mink, maxk)
+    Combinations(runnum, mink, maxk)
     RangeKmerCounter(FileName, runnum, mink, maxk)
     listhammer()
     dicthammer()
@@ -372,10 +376,10 @@ def addingall(n):
 addingall(numofruns)
 
 #print(kmercombinations)
-#print(kmercount)
-#print(hamlist)
-#print(hamdict)
-#print(pwm)
+print(kmercount)
+print(hamlist)
+print(hamdict)
+print(pwm)
 
 print('Generating Logos')
 import WebLogoMod
