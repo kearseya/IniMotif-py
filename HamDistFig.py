@@ -76,15 +76,14 @@ def top12maker(numofruns):
             top12[x][k] = [j[0] for j in top12t[x][k]]
 
 top12maker(numofruns)
-
+#print(top12t)
 #print(top12)
 
+top6all = []
 
-"""
 def top6(run, k):
     top6s = []
-    keys = list(kmercount[run][k].keys())[:12]
-    #print(keys)
+    keys = top12[run][k]
     topvalpos = 0
     while len(top6s) <= 11:
         next = keys[topvalpos]
@@ -98,13 +97,26 @@ def top6(run, k):
 
         topvalpos += 1
     return top6s
-"""
+
+def top6maker(numofruns):
+    for _ in range(0, numofruns+1):
+        top6all.append({})
+    for x in range(1, numofruns+1):
+        mink = int(inputlist[((x-1)*5)+7])
+        maxk = int(inputlist[((x-1)*5)+8])
+        for k in range(mink, maxk+1):
+            top6all[x][k] = top6(x, k)
+
+top6maker(numofruns)
+
+#print(top6all)
+
 
 def top6plotx(run, p, k):
     x = []
     keys = [*khams[run][k][p].keys()]
     vals = []
-    top6s = top12[run][k]
+    top6s = top6all[run][k]
     for i in top6s:
         if i in keys:
             vals.append(i)
@@ -117,7 +129,7 @@ def top6ploty(run, x, k):
     y = []
     values = [*khams[run][k][x].keys()]
     vals = []
-    top6s = top12[run][k]
+    top6s = top6all[run][k]
     for i in top6s:
         if i in values:
             vals.append(i)
@@ -132,7 +144,7 @@ def top6ploty(run, x, k):
 def top6split(run, x, k):
     values = [*khams[run][k][x].keys()]
     vals = []
-    top6s = top12[run][k]
+    top6s = top6all[run][k]
     for i in top6s:
         if i in values:
             vals.append(i)
@@ -153,7 +165,7 @@ def top6splitter(run, k):
 def xaxismaker(run, p, k):
     x = []
     keys = [*khams[run][k][p].keys()]
-    top6s = top12[run][k]
+    top6s = top6all[run][k]
     for i in top6s:
         if i in keys:
             keys.remove(i)
@@ -166,7 +178,7 @@ def xaxismaker(run, p, k):
 def yaxismaker(run, x, k):
     y = []
     values = [*khams[run][k][x].keys()]
-    top6s = top12[run][k]
+    top6s = top6all[run][k]
     for i in top6s:
         if i in values:
             values.remove(i)
