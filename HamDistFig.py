@@ -61,11 +61,30 @@ def multihammer():
 multihammer()
 #print(khams)
 
+top12t = []
+top12 = []
 
+def top12maker(numofruns):
+    for _ in range(0, numofruns+1):
+        top12t.append({})
+        top12.append({})
+    for x in range(1, numofruns+1):
+        mink = int(inputlist[((x-1)*5)+7])
+        maxk = int(inputlist[((x-1)*5)+8])
+        for k in range(mink, maxk+1):
+            top12t[x][k] = list(sorted(kmercount[x][k].items(), key=lambda x: x[1], reverse=True))[:12]
+            top12[x][k] = [j[0] for j in top12t[x][k]]
+
+top12maker(numofruns)
+
+#print(top12)
+
+
+"""
 def top6(run, k):
     top6s = []
     keys = list(kmercount[run][k].keys())[:12]
-    print(keys)
+    #print(keys)
     topvalpos = 0
     while len(top6s) <= 11:
         next = keys[topvalpos]
@@ -79,12 +98,13 @@ def top6(run, k):
 
         topvalpos += 1
     return top6s
+"""
 
 def top6plotx(run, p, k):
     x = []
     keys = [*khams[run][k][p].keys()]
     vals = []
-    top6s = top6(run, k)
+    top6s = top12[run][k]
     for i in top6s:
         if i in keys:
             vals.append(i)
@@ -97,7 +117,7 @@ def top6ploty(run, x, k):
     y = []
     values = [*khams[run][k][x].keys()]
     vals = []
-    top6s = top6(run, k)
+    top6s = top12[run][k]
     for i in top6s:
         if i in values:
             vals.append(i)
@@ -112,7 +132,7 @@ def top6ploty(run, x, k):
 def top6split(run, x, k):
     values = [*khams[run][k][x].keys()]
     vals = []
-    top6s = top6(run, k)
+    top6s = top12[run][k]
     for i in top6s:
         if i in values:
             vals.append(i)
@@ -133,7 +153,7 @@ def top6splitter(run, k):
 def xaxismaker(run, p, k):
     x = []
     keys = [*khams[run][k][p].keys()]
-    top6s = top6(run, k)
+    top6s = top12[run][k]
     for i in top6s:
         if i in keys:
             keys.remove(i)
@@ -146,7 +166,7 @@ def xaxismaker(run, p, k):
 def yaxismaker(run, x, k):
     y = []
     values = [*khams[run][k][x].keys()]
-    top6s = top6(run, k)
+    top6s = top12[run][k]
     for i in top6s:
         if i in values:
             values.remove(i)
@@ -173,7 +193,7 @@ colours = ['C0', 'C0', 'C1', 'C1', 'C2', 'C2', 'C3', 'C3', 'C4', 'C4', 'C5', 'C5
 
 
 def scatter(run, k):
-    top6(run, k)
+    #top6(run, k)
     split = top6splitter(run, k)
     labels = []
     handels = []
