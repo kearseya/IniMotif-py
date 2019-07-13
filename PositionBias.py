@@ -239,7 +239,7 @@ def FindTotal(FileName, k, runnum):
 
 def CreatePosList(FileName, k, runnum):
     fastaFileName = open(FileName, "r")
-    avg = barcodechecker(FileName)
+    avg = Barcodevalues[runnum]
     for line in fastaFileName:
         line = line.strip()
         if line.startswith(">"):
@@ -411,7 +411,7 @@ def seqwtfbsfinder(FileName, k):
     TFBSSeqNum = 0
     l = lvalues[(ufilenames[FileName])]
     fastaFileName = open(FileName, "r")
-    avg = barcodechecker(FileName)
+    avg = Barcodevalues[(ufilenames[FileName])]
     for line in fastaFileName:
         c = 0
         line = line.strip()
