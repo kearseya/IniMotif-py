@@ -6,6 +6,7 @@ IniMotif in python
 ⋅⋅*Alex Kearsey 
 ⋅⋅*Dr Lu Cheng
 ⋅⋅*Joel Southgate
+⋅⋅*Anna Price
 ⋅⋅*WebLogo source code
 
 Python scripts for extracting TF motif from SELEXseq data.
