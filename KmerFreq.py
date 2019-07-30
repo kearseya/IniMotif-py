@@ -8,6 +8,9 @@ from KmerKounter import hash2kmer
 from KmerKounter import revnuc
 from KmerKounter import revComp
 
+from KmerKounter import numofruns
+from HamDistFig import top6all
+
 import matplotlib.pyplot as plt
 from matplotlib.transforms import TransformedBbox, Bbox
 import numpy as np
@@ -17,11 +20,11 @@ import math
 
 def makexaxis():
     xaxis = ([])
-    for i in range(len(kmercount)-1):
+    for i in range(numofruns):
         xaxis.append(i)
     return xaxis
 
-
+"""
 def top6(k):
     top6s = []
     keys = list(kmercount[(len(kmercount)-1)][k].keys())
@@ -38,11 +41,11 @@ def top6(k):
 
         topvalpos += 1
     return top6s
-
+"""
 
 def colours1(k):
     colours = []
-    top6s = top6(k)
+    top6s = top6all[numofruns][k]
     l = (len(kmercount)-1)
     keys = list(kmercount[l][k].keys())
     for i in range(50):
@@ -61,7 +64,7 @@ def makexaxis2():
 def makeyaxis1a(i, k):
     yaxis1a = ([])
     rkmer = kmer2hash(revComp(hash2kmer(i,k)))
-    top6s = top6(k)
+    top6s = top6all[numofruns][k]
     colours = colours1(k)
     for l in range(1, (len(kmercount))):
         total = sum(kmercount[l][k].values())
@@ -93,7 +96,7 @@ def makeyaxis1b(i, k):
 def makeyaxis1c(i, k):
     yaxis1c = ([])
     rkmer = kmer2hash(revComp(hash2kmer(i,k)))
-    top6s = top6(k)
+    top6s = top6all[numofruns][k]
     for l in range(1, (len(kmercount))):
         total = sum(kmercount[l][k].values())
         if i in top6s:
@@ -109,7 +112,7 @@ def makeyaxis1c(i, k):
 def makeyaxis2a(i, k):
     yaxis2a = ([])
     rkmer = kmer2hash(revComp(hash2kmer(i,k)))
-    top6s = top6(k)
+    top6s = top6all[numofruns][k]
     colours = colours1(k)
     for l in range(1, (len(kmercount))):
         total = sum(kmercount[l][k].values())
@@ -137,7 +140,7 @@ def makeyaxis2b(i, k):
 def makeyaxis2c(i, k):
     yaxis2c = ([])
     rkmer = kmer2hash(revComp(hash2kmer(i,k)))
-    top6s = top6(k)
+    top6s = top6all[numofruns][k]
     for l in range(1, (len(kmercount))):
         total = sum(kmercount[l][k].values())
         if i in top6s:
@@ -161,7 +164,7 @@ def grapher(k):
 
     xaxis = makexaxis()
     last = (len(xaxis)-1)
-    top6s = top6(k)
+    top6s = top6all[numofruns][k]
     colours = colours1(k)
 
     fig = plt.figure(figsize=(10,10))
