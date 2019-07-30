@@ -76,6 +76,7 @@ def top12maker(numofruns):
             top12[x][k] = [j[0] for j in top12t[x][k]]
 
 top12maker(numofruns)
+
 #print(top12t)
 #print(top12)
 
