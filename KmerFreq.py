@@ -44,7 +44,7 @@ def top6(k):
     return top6s
 """
 
-print(top6all)
+#print(top6all)
 """
 def colours1(k):
     colours = []
@@ -185,11 +185,7 @@ def grapher(k):
     xaxis = makexaxis()
     last = (len(xaxis)-1)
     top6s = top6all[numofruns][k]
-    #colour = colours[k]
-    print("Top6s")
-    print(top6s)
-    print("colours")
-    print(colours[k])
+    #colourp = colours[k]
 
     fig = plt.figure(figsize=(10,10))
     grid = plt.GridSpec(2,3,wspace=0.4,hspace=0.3)
