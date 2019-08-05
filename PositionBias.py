@@ -357,7 +357,7 @@ def plotter(runnum, k):
         bar.set_xticks(xaxis)
         bar.bar(xaxis, fseq)
         bar.axhline(y=average, xmin=0.01, xmax=0.99, linestyle='dashed', color='black')
-        bar.text((len(xaxis)-0.8), 0.55, "Average = "+str(round(average, 4)))
+        bar.text((len(xaxis)-5), 0.65, "Average = "+str(round(average, 4)))
 
     if revcompwanted == True:
         bar.set_xticks(xaxis)
