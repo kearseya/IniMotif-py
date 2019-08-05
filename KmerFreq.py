@@ -7,6 +7,7 @@ from KmerKounter import kmer2hash
 from KmerKounter import hash2kmer
 from KmerKounter import revnuc
 from KmerKounter import revComp
+from KmerKounter import revcompwanted
 
 from KmerKounter import numofruns
 from HamDistFig import top6all
@@ -43,7 +44,7 @@ def top6(k):
     return top6s
 """
 
-#print(top6all)
+print(top6all)
 """
 def colours1(k):
     colours = []
@@ -184,7 +185,11 @@ def grapher(k):
     xaxis = makexaxis()
     last = (len(xaxis)-1)
     top6s = top6all[numofruns][k]
-    #colourp = colours[k]
+    #colour = colours[k]
+    print("Top6s")
+    print(top6s)
+    print("colours")
+    print(colours[k])
 
     fig = plt.figure(figsize=(10,10))
     grid = plt.GridSpec(2,3,wspace=0.4,hspace=0.3)
@@ -211,46 +216,96 @@ def grapher(k):
 
     colourslist = ['C0', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7']
 
-    for l in range(1, (numofruns+1)):
-        #total = sum(kmercount[l][k].values())
-        for i in kmercount[l][k]:
-            num = kmercount[l][k][i]
-            rkmer = kmer2hash(revComp(hash2kmer(i,k)))
-            try:
-                rnum = kmercount[l][k][rkmer]
-                if num > rnum:
-                    if i in top6s:
-                        yaxis1c = makeyaxis1c(i, k)
-                        top.plot(xaxis, yaxis1c, color=colourslist[(top6s.index(i)//2)], linewidth=2, marker="s", markevery=None, zorder=int(kmercount[l][k][i]))
-                    if i in colours[k]:
-                        yaxis1b = makeyaxis1b(i, k)
-                        top.plot(xaxis, yaxis1b, linewidth=1,  marker=".", markevery=None, zorder=int(kmercount[l][k][i]))
-                    if i not in top6s or colours[k]:
-                        yaxis1a = makeyaxis1a(i, k)
-                        top.plot(xaxis, yaxis1a, color = '0.75', linestyle='--', linewidth=0.5, marker="x", markevery=None, alpha=0.5, zorder=0)
-            except:
-                continue
+    if revcompwanted == False:
+        for l in range(1, (numofruns+1)):
+            #total = sum(kmercount[l][k].values())
+            for i in kmercount[l][k]:
+                num = kmercount[l][k][i]
+                rkmer = kmer2hash(revComp(hash2kmer(i,k)))
+                try:
+                    rnum = kmercount[l][k][rkmer]
+                    if num > rnum:
+                        if i in top6s:
+                            yaxis1c = makeyaxis1c(i, k)
+                            top.plot(xaxis, yaxis1c, color=colourslist[(top6s.index(i)//2)], linewidth=2, marker="s", markevery=None, zorder=int(kmercount[l][k][i]))
+                        if i in colours[k]:
+                            yaxis1b = makeyaxis1b(i, k)
+                            top.plot(xaxis, yaxis1b, linewidth=1,  marker=".", markevery=None, zorder=int(kmercount[l][k][i]))
+                        if i not in top6s or colours[k]:
+                            yaxis1a = makeyaxis1a(i, k)
+                            top.plot(xaxis, yaxis1a, color = '0.75', linestyle='--', linewidth=0.5, marker="x", markevery=None, alpha=0.5, zorder=0)
+                except:
+                    continue
 
 
-    for l in range(1, (numofruns+1)):
-        #total = sum(kmercount[l][k].values())
-        for i in kmercount[l][k]:
-            num = kmercount[l][k][i]
-            rkmer = kmer2hash(revComp(hash2kmer(i,k)))
-            try:
-                rnum = kmercount[l][k][rkmer]
-                if num > rnum:
-                    if i in top6s:
-                        yaxis2c = makeyaxis2c(i, k)
-                        bottom.plot(xaxis, yaxis2c, color=colourslist[(top6s.index(i)//2)], linewidth=2, marker="s", markevery=None, zorder=int(kmercount[l][k][i]))
-                    if i in colours[k]:
-                        yaxis2b = makeyaxis2b(i, k)
-                        bottom.plot(xaxis, yaxis2b, linewidth=1,  marker=".", markevery=None, zorder=int(kmercount[l][k][i]))
-                    if i not in top6s or colours[k]:
-                        yaxis2a = makeyaxis2a(i, k)
-                        bottom.plot(xaxis, yaxis2a, color = '0.75', linestyle='--', linewidth=0.5, marker="x", markevery=None, alpha=0.8, zorder=0)
-            except:
-                continue
+        for l in range(1, (numofruns+1)):
+            #total = sum(kmercount[l][k].values())
+            for i in kmercount[l][k]:
+                num = kmercount[l][k][i]
+                rkmer = kmer2hash(revComp(hash2kmer(i,k)))
+                try:
+                    rnum = kmercount[l][k][rkmer]
+                    if num > rnum:
+                        if i in top6s:
+                            yaxis2c = makeyaxis2c(i, k)
+                            bottom.plot(xaxis, yaxis2c, color=colourslist[(top6s.index(i)//2)], linewidth=2, marker="s", markevery=None, zorder=int(kmercount[l][k][i]))
+                        if i in colours[k]:
+                            yaxis2b = makeyaxis2b(i, k)
+                            bottom.plot(xaxis, yaxis2b, linewidth=1,  marker=".", markevery=None, zorder=int(kmercount[l][k][i]))
+                        if i not in top6s or colours[k]:
+                            yaxis2a = makeyaxis2a(i, k)
+                            bottom.plot(xaxis, yaxis2a, color = '0.75', linestyle='--', linewidth=0.5, marker="x", markevery=None, alpha=0.8, zorder=0)
+                except:
+                    continue
+
+
+    if revcompwanted == True:
+        for l in range(1, (numofruns+1)):
+            #total = sum(kmercount[l][k].values())
+            alreadytop = []
+            for i in kmercount[l][k]:
+                num = kmercount[l][k][i]
+                rkmer = kmer2hash(revComp(hash2kmer(i,k)))
+                try:
+                    rnum = kmercount[l][k][rkmer]
+                    if num >= rnum:
+                        alreadytop.append(rkmer)
+                        if i not in alreadytop:
+                            if i in top6s:
+                                yaxis1c = makeyaxis1c(i, k)
+                                top.plot(xaxis, yaxis1c, color=colourslist[(top6s.index(i)//2)], linewidth=2, marker="s", markevery=None, zorder=int(kmercount[l][k][i]))
+                            if i in colours[k]:
+                                yaxis1b = makeyaxis1b(i, k)
+                                top.plot(xaxis, yaxis1b, linewidth=1,  marker=".", markevery=None, zorder=int(kmercount[l][k][i]))
+                            if i not in top6s or colours[k]:
+                                yaxis1a = makeyaxis1a(i, k)
+                                top.plot(xaxis, yaxis1a, color = '0.75', linestyle='--', linewidth=0.5, marker="x", markevery=None, alpha=0.5, zorder=0)
+                except:
+                    continue
+
+
+        for l in range(1, (numofruns+1)):
+            #total = sum(kmercount[l][k].values())
+            alreadybottom = []
+            for i in kmercount[l][k]:
+                num = kmercount[l][k][i]
+                rkmer = kmer2hash(revComp(hash2kmer(i,k)))
+                try:
+                    rnum = kmercount[l][k][rkmer]
+                    if num >= rnum:
+                        alreadybottom.append(rkmer)
+                        if i not in alreadybottom:
+                            if i in top6s:
+                                yaxis2c = makeyaxis2c(i, k)
+                                bottom.plot(xaxis, yaxis2c, color=colourslist[(top6s.index(i)//2)], linewidth=2, marker="s", markevery=None, zorder=int(kmercount[l][k][i]))
+                            if i in colours[k]:
+                                yaxis2b = makeyaxis2b(i, k)
+                                bottom.plot(xaxis, yaxis2b, linewidth=1,  marker=".", markevery=None, zorder=int(kmercount[l][k][i]))
+                            if i not in top6s or colours[k]:
+                                yaxis2a = makeyaxis2a(i, k)
+                                bottom.plot(xaxis, yaxis2a, color = '0.75', linestyle='--', linewidth=0.5, marker="x", markevery=None, alpha=0.8, zorder=0)
+                except:
+                    continue
 
 
     ymint, ymaxt = top.get_ylim()
