@@ -74,7 +74,7 @@ def initialinput():
             identifier = str(inputlist[0])
             datafile = inputlist[1]
             numofruns = int(inputlist[2])
-            revcompwanted = bool(inputlist[3])
+            revcompwanted = inputlist[3]
     except:
         print("Command line input required")
         identifier = str(input("Identifier:"))
@@ -373,6 +373,23 @@ def addingall(n):
 
 
 addingall(numofruns)
+
+
+#print(inputlist)
+
+
+def removezeros():
+    for x in range(1, numofruns+1):
+         mink = int(inputlist[((x-1)*5)+7])
+         maxk = int(inputlist[((x-1)*5)+8])
+         for k in range(mink, maxk+1):
+             for i in range(0, 4**k):
+                 if kmercount[x][k][i] == 0:
+                     del kmercount[x][k][i]
+
+removezeros()
+
+
 
 #print(kmercombinations)
 #print(kmercount)
