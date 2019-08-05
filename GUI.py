@@ -143,7 +143,7 @@ def makeorderedinputlist():
     inputlist.append(str(identifiernameinput.get()))
     inputlist.append(str(pathtodirectoryinput.get()))
     inputlist.append(int(numberofrunsinput.get()))
-    inputlist.append(str(reversecomplementwanted.get()))
+    inputlist.append(bool(reversecomplementwanted.get()))
     inputlist.append(str(filenamesinputs.get()))
     inputlist.append(int(runnumbersinputs.get()))
     inputlist.append(int(readlengthsinputs.get()))
