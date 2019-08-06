@@ -77,25 +77,27 @@ def top12maker(numofruns):
 
 top12maker(numofruns)
 
-#print(top12t)
-#print(top12)
-
 top6all = []
 
 def top6(run, k):
     top6s = []
-    keys = top12[run][k]
+    #keys = top12[run][k]
     topvalpos = 0
     while len(top6s) <= 11:
-        next = keys[topvalpos]
+        next = top12[run][k][topvalpos]
         nkmer = hash2kmer(next, k)
         nrkmer = revComp(nkmer)
         nhrkmer = kmer2hash(nrkmer)
         if next not in top6s:
             top6s.append(next)
+            #print("k "+str(k)+" len "+str(len(top6s))+" kmer "+str(next))
+        if next == nhrkmer:
+            if len(top6s) <= 11:
+                top6s.append(nhrkmer)
         if nhrkmer not in top6s:
-            top6s.append(nhrkmer)
-
+            if len(top6s) <= 11:
+                top6s.append(nhrkmer)
+                #print("k "+str(k)+" len "+str(len(top6s))+" kmer "+str(nhrkmer))
         topvalpos += 1
     return top6s
 
@@ -110,7 +112,6 @@ def top6maker(numofruns):
 
 top6maker(numofruns)
 
-#print(top6all)
 
 
 def top6plotx(run, p, k):
@@ -146,9 +147,13 @@ def top6split(run, x, k):
     values = [*khams[run][k][x].keys()]
     vals = []
     top6s = top6all[run][k]
-    for i in top6s:
+    for i in top6s[::2]:
         if i in values:
             vals.append(i)
+            rk = kmer2hash(revComp(hash2kmer(i,k)))
+            vals.append(rk)
+            if rk not in khams[run][k][x]:
+                khams[run][k][x][rk] = 0
     return vals
 
 
@@ -203,14 +208,17 @@ print(topx)
 """
 
 colours = ['C0', 'C0', 'C1', 'C1', 'C2', 'C2', 'C3', 'C3', 'C4', 'C4', 'C5', 'C5', 'C6', 'C6', 'C7', 'C7']
+labelcolours = ['C0', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7']
 
+#print("khams")
+#print(khams)
 
 def scatter(run, k):
     #top6(run, k)
     split = top6splitter(run, k)
     labels = []
     handels = []
-    labelcolours = []
+    #labelcolours = []
     #greys = [0.6, 0.75, 0.9]
     c = 0
     cc = 0
@@ -227,10 +235,12 @@ def scatter(run, k):
 
         count = len(top6x)
 
+
         for i in range(0, count):
             plt.scatter(top6x[i], top6y[i], label=split[run][x][i], color=colours[c], s=3)
             labels.append((str(hash2kmer(split[run][x][i],k)+' '+str(khams[run][k][x][(split[run][x][i])]))))
             c += 1
+
 
         for p, j in enumerate(split[run][x]):
 
@@ -243,9 +253,8 @@ def scatter(run, k):
                 plt.annotate(str(hash2kmer(j,k) + ' ' + str(khams[run][k][x][j])), (float(xp), float(yp)-0.6), color=colours[cc], fontsize=5)
             cc += 1
 
-    for z in colours[::2]:
-        labelcolours.append(z)
-
+    #for z in colours[::2]:
+        #labelcolours.append(z)
 
     leg = plt.legend(labels[::2], fontsize=7)
     for i in range(0,6):
