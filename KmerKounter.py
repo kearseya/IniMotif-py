@@ -69,18 +69,27 @@ def initialinput():
     global datafile
     global numofruns
     global revcompwanted
+    global mink
+    global maxk
+    global extype
     try:
-        if len(inputlist) > 1:
+        if len(inputlist) > 0:
             identifier = str(inputlist[0])
             datafile = inputlist[1]
             numofruns = int(inputlist[2])
             revcompwanted = inputlist[3]
+            mink = int(inputlist[4])
+            maxk = int(inputlist[5])
+            extype = inputlist[6]
+
     except:
         print("Command line input required")
-        identifier = str(input("Identifier:"))
-        datafile = input("Path to data directory:")
-        numofruns = int(input("Number of runs:"))
-        revcompwanted = bool(input("Reverse compliment (any key, leave blank for False):"))
+        identifier = str(input("Identifier: "))
+        datafile = input("Path to data directory: ")
+        numofruns = int(input("Number of runs: "))
+        revcompwanted = bool(input("Reverse compliment (any key, leave blank for False): "))
+        extype = str(input("Experiment type: "))
+
 
 initialinput()
 
@@ -339,26 +348,22 @@ def addrungui():
             global FileName
             global runnum
             global l
-            global mink
-            global maxk
-
-            for x in range(0, numofruns+1):
-                FileName1 = str(inputlist[(x*5)+4])
-                FileName = os.path.join(datafile, FileName1)
-                runnum = int(inputlist[(x*5)+5])
-                filenames1.update({runnum:FileName1})
-                ufilenames.update({FileName:runnum})
-                filenames.update({runnum:FileName})
-                l = int(inputlist[(x*5)+6])
-                lvalues.update({runnum:l})
-                mink = int(inputlist[(x*5)+7])
-                maxk = int(inputlist[(x*5)+8])
-                Combinations(runnum, mink, maxk)
-                RangeKmerCounter(FileName, runnum, mink, maxk)
-                listhammer(runnum)
-                dicthammer(runnum)
-                startpwm(runnum)
-                pwmmaker(runnum)
+            if extype == "SELEX":
+                for x in range(0, numofruns):
+                    FileName1 = str(inputlist[(x*2)+7])
+                    FileName = os.path.join(datafile, FileName1)
+                    runnum = x+1
+                    filenames1.update({runnum:FileName1})
+                    ufilenames.update({FileName:runnum})
+                    filenames.update({runnum:FileName})
+                    l = int(inputlist[(x*2)+8])
+                    lvalues.update({runnum:l})
+                    Combinations(runnum, mink, maxk)
+                    RangeKmerCounter(FileName, runnum, mink, maxk)
+                    listhammer(runnum)
+                    dicthammer(runnum)
+                    startpwm(runnum)
+                    pwmmaker(runnum)
     except:
         print("Command line input required")
 
@@ -380,8 +385,6 @@ addingall(numofruns)
 
 def removezeros():
     for x in range(1, numofruns+1):
-         mink = int(inputlist[((x-1)*5)+7])
-         maxk = int(inputlist[((x-1)*5)+8])
          for k in range(mink, maxk+1):
              for i in range(0, 4**k):
                  if kmercount[x][k][i] == 0:
