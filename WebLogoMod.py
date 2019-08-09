@@ -13,6 +13,8 @@ import math
 from KmerKounter import hamlist
 from KmerKounter import pwm
 from KmerKounter import numofruns
+from KmerKounter import mink
+from KmerKounter import maxk
 
 from KmerKounter import inputlist
 
@@ -63,8 +65,6 @@ logoform = []
 def dictinit():
     for r in range(0, numofruns):
         logoform.append({})
-        mink = int(inputlist[(r*5)+7])
-        maxk = int(inputlist[(r*5)+8])
         for k in range(mink, maxk+1):
             logoform[r].update({k:[]})
 dictinit()
@@ -89,8 +89,8 @@ def kmerpwm(runnum, k):
 
 def allmaker(numofruns):
     for z in range(1, numofruns+1):
-        mink = int(inputlist[((z-1)*5)+7])
-        maxk = int(inputlist[((z-1)*5)+8])
+        #mink = int(inputlist[((z-1)*5)+7])
+        #maxk = int(inputlist[((z-1)*5)+8])
         for j in range(mink,maxk+1):
             #print(kmerpwm(z,j))
             logoform[z-1][j].append(kmerpwm(z,j))
