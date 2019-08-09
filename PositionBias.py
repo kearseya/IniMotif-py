@@ -10,8 +10,8 @@ from KmerKounter import numofruns
 from KmerKounter import kmercount
 from KmerKounter import barcodechecker
 from KmerKounter import lvalues
-#from KmerKounter import mink
-#from KmerKounter import maxk
+from KmerKounter import mink
+from KmerKounter import maxk
 from KmerKounter import filenames
 from KmerKounter import ufilenames
 from KmerKounter import revcompwanted
@@ -128,8 +128,8 @@ def listinit():
         rposlist.append({})
     for j in range(1, numofruns+1):
         avg = Barcodevalues[j]
-        mink = int(inputlist[((j-1)*5)+7])
-        maxk = int(inputlist[((j-1)*5)+8])
+        #mink = int(inputlist[((j-1)*5)+7])
+        #maxk = int(inputlist[((j-1)*5)+8])
         for k in range(mink, maxk+1):
             poslist[j].update({k:{}})
             rposlist[j].update({k:{}})
@@ -195,8 +195,8 @@ def listhammer(runnum, k):
 
 def multilisthammer(numofruns):
     for x in range(1, numofruns+1):
-        mink = int(inputlist[((x-1)*5)+7])
-        maxk = int(inputlist[((x-1)*5)+8])
+        #mink = int(inputlist[((x-1)*5)+7])
+        #maxk = int(inputlist[((x-1)*5)+8])
         for i in range(mink, maxk+1):
             listhammer(x, i)
 
@@ -265,8 +265,8 @@ def CreatePosList(FileName, k, runnum):
 
 def multiPosList(numofruns):
     for x in range(1, numofruns+1):
-        mink = int(inputlist[((x-1)*5)+7])
-        maxk = int(inputlist[((x-1)*5)+8])
+        #mink = int(inputlist[((x-1)*5)+7])
+        #maxk = int(inputlist[((x-1)*5)+8])
         for i in range(mink, maxk+1):
             CreatePosList(filenames[x],i,x)
 
@@ -376,9 +376,9 @@ def plotter(runnum, k):
 
 
 def plotrange(numofruns):
-    for r in range(1,numofruns+1):
-        mink = int(inputlist[((r-1)*5)+7])
-        maxk = int(inputlist[((r-1)*5)+8])
+    for r in range(1, numofruns+1):
+        #mink = int(inputlist[((r-1)*5)+7])
+        #maxk = int(inputlist[((r-1)*5)+8])
         for k in range(mink, maxk+1):
             plotter(r, k)
 
@@ -396,8 +396,8 @@ def numberofukmers():
         numofuniquekmers.update({i:{}})
         numoftfbs.update({i:{}})
     for i in range(1, numofruns+1):
-        mink = int(inputlist[((i-1)*5)+7])
-        maxk = int(inputlist[((i-1)*5)+8])
+        #mink = int(inputlist[((i-1)*5)+7])
+        #maxk = int(inputlist[((i-1)*5)+8])
         for k in range(mink, maxk+1):
             numofkmers[i].update({k:sum(kmercount[i][k].values())})
             numofuniquekmers[i].update({k:len(kmercount[i][k])})
@@ -448,8 +448,8 @@ def numoftfbsseqs():
     for i in range(1, numofruns+1):
         numoftfbsseq.update({i:{}})
     for r in range(1, numofruns+1):
-        mink = int(inputlist[((r-1)*5)+7])
-        maxk = int(inputlist[((r-1)*5)+8])
+        #mink = int(inputlist[((r-1)*5)+7])
+        #maxk = int(inputlist[((r-1)*5)+8])
         for k in range(mink, maxk+1):
             numoftfbsseq[r].update({k:seqwtfbsfinder(filenames[r], k)})
 
@@ -461,8 +461,8 @@ def seqbiasfinder():
     seqbias = {}
     for r in range(1, numofruns+1):
         seqbias.update({r:{}})
-        mink = int(inputlist[((r-1)*5)+7])
-        maxk = int(inputlist[((r-1)*5)+8])
+        #mink = int(inputlist[((r-1)*5)+7])
+        #maxk = int(inputlist[((r-1)*5)+8])
         for k in range(mink, maxk+1):
             seqbias[r].update({k:[]})
             for x in kmercount[r][k]:
