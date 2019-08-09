@@ -5,8 +5,8 @@ from KmerKounter import numofruns
 from KmerKounter import hash2kmer
 from KmerKounter import kmer2hash
 from KmerKounter import revcompwanted
-#from KmerKounter import mink
-#from KmerKounter import maxk
+from KmerKounter import mink
+from KmerKounter import maxk
 from KmerKounter import inputlist
 
 import matplotlib.pyplot as plt
@@ -53,8 +53,8 @@ def hammer(run, k):
 
 def multihammer():
     for z in range(1, numofruns+1):
-        mink = int(inputlist[((z-1)*5)+7])
-        maxk = int(inputlist[((z-1)*5)+8])
+        #mink = int(inputlist[((z-1)*5)+7])
+        #maxk = int(inputlist[((z-1)*5)+8])
         for k in range (mink, maxk+1):
             hammer(z, k)
 
@@ -69,8 +69,8 @@ def top12maker(numofruns):
         top12t.append({})
         top12.append({})
     for x in range(1, numofruns+1):
-        mink = int(inputlist[((x-1)*5)+7])
-        maxk = int(inputlist[((x-1)*5)+8])
+        #mink = int(inputlist[((x-1)*5)+7])
+        #maxk = int(inputlist[((x-1)*5)+8])
         for k in range(mink, maxk+1):
             top12t[x][k] = list(sorted(kmercount[x][k].items(), key=lambda x: x[1], reverse=True))[:12]
             top12[x][k] = [j[0] for j in top12t[x][k]]
@@ -105,8 +105,8 @@ def top6maker(numofruns):
     for _ in range(0, numofruns+1):
         top6all.append({})
     for x in range(1, numofruns+1):
-        mink = int(inputlist[((x-1)*5)+7])
-        maxk = int(inputlist[((x-1)*5)+8])
+        #mink = int(inputlist[((x-1)*5)+7])
+        #maxk = int(inputlist[((x-1)*5)+8])
         for k in range(mink, maxk+1):
             top6all[x][k] = top6(x, k)
 
@@ -270,8 +270,8 @@ def scatter(run, k):
 
 def plotrange(runs):
     for r in range(1,runs+1):
-        mink = int(inputlist[((r-1)*5)+7])
-        maxk = int(inputlist[((r-1)*5)+8])
+        #mink = int(inputlist[((r-1)*5)+7])
+        #maxk = int(inputlist[((r-1)*5)+8])
         for k in range(mink, maxk+1):
             scatter(r, k)
 
