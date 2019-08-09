@@ -14,7 +14,7 @@ import numpy as np
 import math
 import random
 
-
+from adjustText import adjust_text
 
 revnuc = {'A':'T','T':'A','G':'C','C':'G','N':'N'}
 
@@ -222,7 +222,7 @@ def scatter(run, k):
     #greys = [0.6, 0.75, 0.9]
     c = 0
     cc = 0
-
+    texts = []
     for x in khams[run][k]:
 
         xaxis = xaxismaker(run, x, k)
@@ -247,12 +247,15 @@ def scatter(run, k):
             xp = top6x[p]
             yp = top6y[p]
 
-            if (p % 2)+x == x:
-                plt.annotate(str(hash2kmer(j,k) + ' ' + str(khams[run][k][x][j])), (float(xp), float(yp)+0.6), color=colours[cc], fontsize=5)
-            if (p % 2)+x != x:
-                plt.annotate(str(hash2kmer(j,k) + ' ' + str(khams[run][k][x][j])), (float(xp), float(yp)-0.6), color=colours[cc], fontsize=5)
-            cc += 1
+            texts.append(plt.text(float(xp), float(yp-0.3), str(hash2kmer(j,k) + ' ' + str(khams[run][k][x][j])),color=colours[cc], fontsize=5))
 
+            #if (p % 2)+x == x:
+                #plt.annotate(str(hash2kmer(j,k) + ' ' + str(khams[run][k][x][j])), (float(xp), float(yp)+0.6), color=colours[cc], fontsize=5)
+            #if (p % 2)+x != x:
+                #plt.annotate(str(hash2kmer(j,k) + ' ' + str(khams[run][k][x][j])), (float(xp), float(yp)-0.6), color=colours[cc], fontsize=5)
+
+            cc += 1
+    adjust_text(texts, lw=0.5)
     #for z in colours[::2]:
         #labelcolours.append(z)
 
