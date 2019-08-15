@@ -90,8 +90,14 @@ def makeyaxis1a(i, k):
     for l in range(1, (numofruns+1)):
         total = sum(kmercount[l][k].values())
         if i not in top6s or colours[k]:
-            num =  kmercount[l][k][i]
-            rnum = kmercount[l][k][rkmer]
+            try:
+                num =  kmercount[l][k][i]
+            except:
+                num = 0
+            try:
+                rnum = kmercount[l][k][rkmer]
+            except:
+                rnum = 0
             f = (num+rnum)/total
             freq = (f/(1-f))
             yaxis1a.append(math.log10(freq))
@@ -106,8 +112,14 @@ def makeyaxis1b(i, k):
     for l in range(1, (numofruns+1)):
         total = sum(kmercount[l][k].values())
         if i in colours[k]:
-            num =  kmercount[l][k][i]
-            rnum = kmercount[l][k][rkmer]
+            try:
+                num =  kmercount[l][k][i]
+            except:
+                num = 0
+            try:
+                rnum = kmercount[l][k][rkmer]
+            except:
+                rnum = 0
             f = (num+rnum)/total
             freq = (f/(1-f))
             yaxis1b.append(math.log10(freq))
@@ -121,8 +133,14 @@ def makeyaxis1c(i, k):
     for l in range(1, (numofruns+1)):
         total = sum(kmercount[l][k].values())
         if i in top6s:
-            num =  kmercount[l][k][i]
-            rnum = kmercount[l][k][rkmer]
+            try:
+                num =  kmercount[l][k][i]
+            except:
+                num = 0
+            try:
+                rnum = kmercount[l][k][rkmer]
+            except:
+                rnum = 0
             f = (num+rnum)/total
             freq = (f/(1-f))
             yaxis1c.append(math.log10(freq))
@@ -138,8 +156,14 @@ def makeyaxis2a(i, k):
     for l in range(1, (numofruns+1)):
         total = sum(kmercount[l][k].values())
         if i not in top6s or colours[k]:
-            num =  kmercount[l][k][i]
-            rnum = kmercount[l][k][rkmer]
+            try:
+                num =  kmercount[l][k][i]
+            except:
+                num = 0
+            try:
+                rnum = kmercount[l][k][rkmer]
+            except:
+                rnum = 0
             yaxis2a.append((num+rnum)/total)
     return yaxis2a
 
@@ -151,8 +175,14 @@ def makeyaxis2b(i, k):
     for l in range(1, (numofruns+1)):
         total = sum(kmercount[l][k].values())
         if i in colours[k]:
-            num =  kmercount[l][k][i]
-            rnum = kmercount[l][k][rkmer]
+            try:
+                num =  kmercount[l][k][i]
+            except:
+                num = 0
+            try:
+                rnum = kmercount[l][k][rkmer]
+            except:
+                rnum = 0
             yaxis2b.append((num+rnum)/total)
     return yaxis2b
 
@@ -164,8 +194,14 @@ def makeyaxis2c(i, k):
     for l in range(1, (numofruns+1)):
         total = sum(kmercount[l][k].values())
         if i in top6s:
-            num =  kmercount[l][k][i]
-            rnum = kmercount[l][k][rkmer]
+            try:
+                num =  kmercount[l][k][i]
+            except:
+                num = 0
+            try:
+                rnum = kmercount[l][k][rkmer]
+            except:
+                rnum = 0
             yaxis2c.append((num+rnum)/total)
     return yaxis2c
 
