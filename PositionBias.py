@@ -78,11 +78,14 @@ def revComp(seq):
 def TSeqCounter(FileName):
     TSeqNum = 0
     fastaFileName = open(FileName, "r")
-    for line in fastaFileName:
-        line = line.strip()
-        if line.startswith(">"):
-            continue
-        TSeqNum += 1
+    line = fastaFileName.readline()
+    if line.startswith(">"):
+        devision = 2
+    if line.startswith("@"):
+        devision = 4
+    for linenum, lines in enumerate(fastaFileName):
+        pass
+    TSeqNum = int((linenum+2)//devision)
     return TSeqNum
 
 def LSeqCounter(FileName):
@@ -91,10 +94,14 @@ def LSeqCounter(FileName):
     fastaFileName = open(FileName, "r")
     for line in fastaFileName:
         line = line.strip()
-        if line.startswith(">"):
+        if line.startswith(">") or line.startswith("@"):
             continue
         if len(line) == l and "N" not in line:
             LSeqNum += 1
+        if line.startswith("+"):
+            next(fastaFileName)
+        else:
+            continue
     return LSeqNum
 
 
@@ -240,18 +247,31 @@ def FindTotal(FileName, k, runnum):
 def CreatePosList(FileName, k, runnum):
     fastaFileName = open(FileName, "r")
     avg = Barcodevalues[runnum]
+    combinations = 4**k
     for line in fastaFileName:
         line = line.strip()
-        if line.startswith(">"):
+        if line.startswith(">") or line.startswith("@"):
             continue
         if len(line) == lvalues[runnum] and "N" not in line:
             for x in range(0,((len(line)+1)-k)-(2*avg)):
                 kmers = str(line[x+avg:x+k+avg])
                 if len(kmers) > 0 and line.count(kmers) == 1:
                     hkmers = kmer2hash(kmers)
-                    if hkmers in hamminglist2[runnum][k]:
-                        poslist[runnum][k][x].append(hkmers)
-
+                    if hkmers < combinations:
+                        if hkmers in hamminglist2[runnum][k]:
+                            poslist[runnum][k][x].append(hkmers)
+                            if revcompwanted == True:
+                                rkmers = revComp(kmers)
+                                if len(rkmers) > 0 and (line.count(kmers) + line.count(rkmers)) <= 2:
+                                    hrkmers = kmer2hash(rkmers)
+                                    if hrkmers < combinations:
+                                        if hrkmers in hamminglist2[runnum][k]:
+                                            rposlist[runnum][k][x].append(hrkmers)
+        if line.startswith("+"):
+            next(fastaFileName)
+        else:
+            continue
+"""
         if revcompwanted == True:
             if len(line) == lvalues[runnum] and "N" not in line:
                 for x in range(0,((len(line)+1)-k)-(2*avg)):
@@ -261,7 +281,7 @@ def CreatePosList(FileName, k, runnum):
                         hrkmers = kmer2hash(rkmers)
                         if hrkmers in hamminglist2[runnum][k]:
                             rposlist[runnum][k][x].append(hrkmers)
-
+"""
 
 def multiPosList(numofruns):
     for x in range(1, numofruns+1):
@@ -415,7 +435,7 @@ def seqwtfbsfinder(FileName, k):
     for line in fastaFileName:
         c = 0
         line = line.strip()
-        if line.startswith(">"):
+        if line.startswith(">") or line.startswith("@"):
             continue
         if len(line) == l and "N" not in line:
             for x in range(0,((len(line)+1)-k)-(2*avg)):
@@ -426,10 +446,22 @@ def seqwtfbsfinder(FileName, k):
                         if c == 0:
                             TFBSSeqNum += 1
                             c += 1
+                            if revcompwanted == True:
+                                rkmers = revComp(kmers)
+                                if len(rkmers) > 0 and (line.count(kmers) + line.count(rkmers)) <= 2:
+                                    hrkmers = kmer2hash(rkmers)
+                                    if hrkmers < combinations:
+                                        if hrkmers in hamminglist2[(ufilenames[FileName])][k]:
+                                            if c <= 1:
+                                                TFBSSeqNum += 1
+                                                c += 1
 
+        if line.startswith("+"):
+            next(fastaFileName)
         else:
             continue
-
+    return TFBSSeqNum
+"""
         if revcompwanted == True:
             if len(line) == l and "N" not in line:
                 for x in range(0,((len(line)+1)-k)-(2*avg)):
@@ -442,7 +474,8 @@ def seqwtfbsfinder(FileName, k):
                                  c += 1
             else:
                 continue
-    return TFBSSeqNum
+"""
+
 
 def numoftfbsseqs():
     for i in range(1, numofruns+1):
