@@ -20,7 +20,6 @@ def kmer2hash(kmer):
     for tb in kmer[1:]:
         kh = kh<<2
         kh += base[tb]
-
     return kh
 
 def hash2kmer(hashkey, k):
@@ -31,12 +30,10 @@ def hash2kmer(hashkey, k):
     base = np.array('ACGT', 'c')
     arr = np.chararray(k)
     mask = 0b11
-
     arr[-1]=base[ mask & hashkey]
     for i in range(2,k+1):
         hashkey = (hashkey>>2)
         arr[-i]=base[mask & hashkey]
-
     return arr.tostring().decode("utf-8")
 
 """
@@ -55,7 +52,7 @@ bases = ['A', 'C', 'G', 'T']
 revnuc = {'A':'T','T':'A','G':'C','C':'G','N':'N'}
 
 from GUI import inputlist
-#print(inputlist)
+print(inputlist)
 
 def revComp(seq):
     rev = ''
@@ -150,18 +147,24 @@ addseqdict(FileName, 1)
 def barcodechecker(FileName):
     bar = []
     fastaFileName = open(FileName, "r")
-    for line in fastaFileName:
-        line = line.strip()
-        if line.startswith(">"):
-            continue
-        for i in range(6):
-            start = line[0:i]
-            end = revComp(line[len(line)-i : len(line)])
-            if start == end:
-                x = i
+    while len(bar) <= 500:
+        for line in fastaFileName:
+            line = line.strip()
+            if line.startswith(">") or line.startswith("@"):
+                continue
+            if len(line) == l and "N" not in line:
+                for i in range(6):
+                    start = line[0:i]
+                    end = revComp(line[len(line)-i : len(line)])
+                    if start == end:
+                        x = i
+                    else:
+                        break
+                bar.append(x)
+            if line.startswith("+"):
+                next(fastaFileName)
             else:
-                break
-        bar.append(x)
+                continue
     favg = (sum(bar)/len(bar))
     avg = round(favg)
     return avg
@@ -215,22 +218,23 @@ def KmerCounter():
 """
 
 
-def Combinations(runnum, mink, maxk):
-    for k in range(mink, maxk+1):
-        kmercount[runnum][k] = {}
-        #kmercombinations[k] = [''.join(p)) for p in itertools.product(bases, repeat=k]
-        for i in range(0, 4**k):
-            kmercount[runnum][k][i] = 0
+def Combinations(mink, maxk):
+    for runnum in range(1, numofruns+1):
+        for k in range(mink, maxk+1):
+            kmercount[runnum][k] = {}
+            #kmercombinations[k] = [''.join(p)) for p in itertools.product(bases, repeat=k]
+            for i in range(0, 4**k):
+                kmercount[runnum][k][i] = 0
 
+Combinations(mink, maxk)
 
-
-def KmerCounter(FileName, runnum, k):
+def KmerCounterSELEX(FileName, runnum, k):
     fastaFileName = open(FileName, "r")
     avg = barcodechecker(FileName)
     combinations = 4**k
     for line in fastaFileName:
         line = line.strip()
-        if line.startswith(">"):
+        if line.startswith(">") or line.startswith("@"):
             continue
         if len(line) == l and "N" not in line:
             for x in range(0,((len(line)+1)-k)-(2*avg)):
@@ -238,10 +242,17 @@ def KmerCounter(FileName, runnum, k):
                 if len(kmers) > 0 and line.count(kmers) == 1:
                     if kmer2hash(kmers) < combinations:
                         kmercount[runnum][k][kmer2hash(kmers)] += 1
+                        if revcompwanted == True:
+                            rkmers = revComp(kmers)
+                            if len(rkmers) > 0 and (line.count(kmers) + line.count(rkmers)) <= 2:
+                                if kmer2hash(rkmers) < combinations:
+                                    kmercount[runnum][k][kmer2hash(rkmers)] += 1
+        if line.startswith("+"):
+            next(fastaFileName)
         else:
             continue
 
-
+"""
         if revcompwanted == True:
             if len(line) == l and "N" not in line:
                 for x in range(0,((len(line)+1)-k)-(2*avg)):
@@ -252,10 +263,54 @@ def KmerCounter(FileName, runnum, k):
                             kmercount[runnum][k][kmer2hash(rkmers)] += 1
             else:
                 continue
-
-def RangeKmerCounter(FileName, runnum, mink, maxk):
+"""
+def RangeKmerCounterSELEX(FileName, runnum, mink, maxk):
     for i in range(mink,maxk+1):
-        KmerCounter(FileName, runnum, i)
+        KmerCounterSELEX(FileName, runnum, i)
+
+
+
+
+
+def KmerCounterChipDNA(FileName, runnum, k):
+    fastaFileName = open(FileName, "r")
+    avg = barcodechecker(FileName)
+    combinations = 4**k
+    for line in fastaFileName:
+        line = line.strip()
+        if line.startswith(">") or line.startswith("@"):
+            continue
+        for x in range(0,((len(line)+1)-k)-(2*avg)):
+            kmers = str(line[x+avg:x+k+avg])
+            try:
+                if kmer2hash(kmers) < combinations:
+                    kmercount[runnum][k][kmer2hash(kmers)] += 1
+                    if revcompwanted == True:
+                        rkmers = kmer2hash(revComp(kmers))
+                        kmercount[runnum][k][kmer2hash(rkmers)] += 1
+            except:
+                continue
+        if line.startswith("+"):
+            next(fastaFileName)
+        else:
+            continue
+"""
+        if revcompwanted == True:
+            for x in range(0,(len(line)+1)-k)):
+                kmers = str(line[x:x+k])
+                rkmers = revComp(line[x:x+k])
+                if len(rkmers) > 0 and (line.count(kmers) + line.count(rkmers)) == 1:
+                    if kmer2hash(rkmers) < combinations:
+
+            else:
+                continue
+"""
+def RangeKmerCounterChipDNA(FileName, runnum, mink, maxk):
+    for i in range(mink,maxk+1):
+        KmerCounterChipDNA(FileName, runnum, i)
+
+
+
 
 
 def hamming_distance(s1, s2):
@@ -334,7 +389,7 @@ def addruncl():
     mink = int(input("Minimum kmer:"))
     global maxk
     maxk = int(input("Maximum kmer:"))
-    Combinations(runnum, mink, maxk)
+    #Combinations(runnum, mink, maxk)
     RangeKmerCounter(FileName, runnum, mink, maxk)
     listhammer()
     dicthammer()
@@ -353,13 +408,29 @@ def addrungui():
                     FileName1 = str(inputlist[(x*2)+7])
                     FileName = os.path.join(datafile, FileName1)
                     runnum = x+1
+                    #print("runnum: "+str(runnum)+" FileName: "+str(FileName)+" Mink: "+str(mink)+" Maxk: "+str(maxk))
                     filenames1.update({runnum:FileName1})
                     ufilenames.update({FileName:runnum})
                     filenames.update({runnum:FileName})
                     l = int(inputlist[(x*2)+8])
                     lvalues.update({runnum:l})
+                    #Combinations(runnum, mink, maxk)
+                    #print("combo")
+                    RangeKmerCounterSELEX(FileName, runnum, mink, maxk)
+                    listhammer(runnum)
+                    dicthammer(runnum)
+                    startpwm(runnum)
+                    pwmmaker(runnum)
+            if extype == "ChIP" or "DNase":
+                for x in range(0, numofruns):
+                    FileName1 = str(inputlist[x+7])
+                    FileName = os.path.join(datafile, FileName1)
+                    runnum = x+1
+                    filenames1.update({runnum:FileName1})
+                    ufilenames.update({FileName:runnum})
+                    filenames.update({runnum:FileName})
                     Combinations(runnum, mink, maxk)
-                    RangeKmerCounter(FileName, runnum, mink, maxk)
+                    RangeKmerCounterChipDNA(FileName, runnum, mink, maxk)
                     listhammer(runnum)
                     dicthammer(runnum)
                     startpwm(runnum)
@@ -395,16 +466,28 @@ removezeros()
 
 
 #print(kmercombinations)
+
+#print("kmercount")
 #print(kmercount)
+#print("consensus 4")
+#print("hamlist")
 #print(hamlist)
+#print("hamdict")
 #print(hamdict)
+#print("pwm")
 #print(pwm)
+
 
 print('Generating Logos')
 import WebLogoMod
+
 print('Generating Hamming distance figures')
 import HamDistFig
-print('Generating Position bias figures')
-import PositionBias
-print('Generating Kmer frequency figures')
-import KmerFreq
+
+if extype == "SELEX" or "ATAC":
+    print('Generating Position bias figures')
+    import PositionBias
+
+if numofruns > 1:
+    print('Generating Kmer frequency figures')
+    import KmerFreq
