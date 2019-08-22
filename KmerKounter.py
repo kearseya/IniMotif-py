@@ -421,8 +421,11 @@ def KmerCounterSELEXmulti(FileName, k):
         filetype = "fastq"
     for sequence in SeqIO.parse(FileName, filetype):
         line = str(sequence.seq)
-        runnum = barcodes5[line[:barfiveslice]]
-        l = lvalues[runnum]
+        try:
+            runnum = barcodes5[line[:barfiveslice]]
+            l = lvalues[runnum]
+        except:
+            continue
         if len(line) == l and "N" not in line:
             if line[:barfiveslice] in barcodeslist5:
                 done = []
