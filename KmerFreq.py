@@ -8,6 +8,7 @@ from KmerKounter import hash2kmer
 from KmerKounter import revnuc
 from KmerKounter import revComp
 from KmerKounter import revcompwanted
+from KmerKounter import startround
 
 from KmerKounter import numofruns
 from HamDistFig import top6all
@@ -63,9 +64,9 @@ def colours1():
     global colours
     colours = {}
     for k in range(mink, maxk+1):
-        top6s = top6all[numofruns][k]
+        top6s = top6all[numofruns+startround-1][k]
         #consensusnum = kmercount[numofruns][k][top6s[0]]
-        colours[k] = list(sorted(kmercount[numofruns][k].items(), key=lambda x: x[1], reverse=True))[:62]
+        colours[k] = list(sorted(kmercount[numofruns+startround-1][k].items(), key=lambda x: x[1], reverse=True))[:62]
         colours[k] = [j[0] for j in colours[k]]
         for i in top6s:
             if i in colours[k]:
@@ -87,7 +88,7 @@ def makeyaxis1a(i, k):
     rkmer = kmer2hash(revComp(hash2kmer(i,k)))
     top6s = top6all[numofruns][k]
     #colours = colours[k]
-    for l in range(1, (numofruns+1)):
+    for l in range(startround, (numofruns+startround)):
         total = sum(kmercount[l][k].values())
         if i not in top6s or colours[k]:
             try:
@@ -109,7 +110,7 @@ def makeyaxis1b(i, k):
     yaxis1b = ([])
     rkmer = kmer2hash(revComp(hash2kmer(i,k)))
     #colours = colours[k]
-    for l in range(1, (numofruns+1)):
+    for l in range(startround, (numofruns+startround)):
         total = sum(kmercount[l][k].values())
         if i in colours[k]:
             try:
@@ -130,7 +131,7 @@ def makeyaxis1c(i, k):
     yaxis1c = ([])
     rkmer = kmer2hash(revComp(hash2kmer(i,k)))
     top6s = top6all[numofruns][k]
-    for l in range(1, (numofruns+1)):
+    for l in range(startround, (numofruns+startround)):
         total = sum(kmercount[l][k].values())
         if i in top6s:
             try:
@@ -153,7 +154,7 @@ def makeyaxis2a(i, k):
     rkmer = kmer2hash(revComp(hash2kmer(i,k)))
     top6s = top6all[numofruns][k]
     #colours = colours[k]
-    for l in range(1, (numofruns+1)):
+    for l in range(startround, (numofruns+startround)):
         total = sum(kmercount[l][k].values())
         if i not in top6s or colours[k]:
             try:
@@ -172,7 +173,7 @@ def makeyaxis2b(i, k):
     yaxis2b = ([])
     rkmer = kmer2hash(revComp(hash2kmer(i,k)))
     #colours = colours[k]
-    for l in range(1, (numofruns+1)):
+    for l in range(startround, (numofruns+startround)):
         total = sum(kmercount[l][k].values())
         if i in colours[k]:
             try:
@@ -191,7 +192,7 @@ def makeyaxis2c(i, k):
     yaxis2c = ([])
     rkmer = kmer2hash(revComp(hash2kmer(i,k)))
     top6s = top6all[numofruns][k]
-    for l in range(1, (numofruns+1)):
+    for l in range(startround, (numofruns+startround)):
         total = sum(kmercount[l][k].values())
         if i in top6s:
             try:
@@ -209,7 +210,7 @@ def makeyaxis2c(i, k):
 
 def makeyaxis3(k):
     yaxis3 = ([])
-    for l in range(1, (numofruns+1)):
+    for l in range(startround, (numofruns+startround)):
         total = sum(kmercount[l][k].values())
         yaxis3.append(total)
     return yaxis3
@@ -316,7 +317,7 @@ def grapher(k):
                     continue
 
 
-        for l in range(1, (numofruns+1)):
+        for l in range(startround, (numofruns+startround)):
             #total = sum(kmercount[l][k].values())
             alreadybottom = []
             for i in kmercount[l][k]:
