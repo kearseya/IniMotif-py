@@ -8,6 +8,7 @@ from KmerKounter import revcompwanted
 from KmerKounter import mink
 from KmerKounter import maxk
 from KmerKounter import inputlist
+from KmerKounter import startround
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -37,7 +38,7 @@ khams = []
 def hammer():
     for _ in range(numofruns + 1):
         khams.append({})
-    for run in range(1, numofruns+1):
+    for run in range(startround, (numofruns+startround)):
         for k in range(mink, maxk+1):
             khams[run][k] = {k: {} for k in range(k+1)}
             #print("run "+str(run)+" k "+str(k))
@@ -174,7 +175,7 @@ def top6(run, k):
 def top6maker(numofruns):
     for _ in range(0, numofruns+1):
         top6all.append({})
-    for x in range(1, numofruns+1):
+    for x in range(startround, (numofruns+startround)):
         #mink = int(inputlist[((x-1)*5)+7])
         #maxk = int(inputlist[((x-1)*5)+8])
         for k in range(mink, maxk+1):
@@ -343,7 +344,7 @@ def scatter(run, k):
     plt.close()
 
 def plotrange(runs):
-    for r in range(1,runs+1):
+    for r in range(startround,runs+1):
         #mink = int(inputlist[((r-1)*5)+7])
         #maxk = int(inputlist[((r-1)*5)+8])
         for k in range(mink, maxk+1):
