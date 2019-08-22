@@ -350,8 +350,11 @@ def CreatePosListmulti(FileName, k):
         filetype = "fastq"
     for sequence in SeqIO.parse(FileName, filetype):
         line = str(sequence.seq)
-        runnum = barcodes5[line[:barfiveslice]]
-        l = lvalues[runnum]
+        try:
+            runnum = barcodes5[line[:barfiveslice]]
+            l = lvalues[runnum]
+        except:
+            continue
         c = 0
         if len(line) == l and "N" not in line:
             LSeqNums[runnum] += 1
