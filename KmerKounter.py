@@ -2,6 +2,7 @@ import itertools
 from collections import Counter
 from collections import OrderedDict
 import numpy as np
+from Bio import SeqIO
 #import sys
 import os
 
@@ -52,7 +53,10 @@ bases = ['A', 'C', 'G', 'T']
 revnuc = {'A':'T','T':'A','G':'C','C':'G','N':'N'}
 
 from GUI import inputlist
-print(inputlist)
+#print(inputlist)
+from GUI import startround
+from GUI import multiround
+from GUI import knownbarcode
 
 def revComp(seq):
     rev = ''
@@ -60,34 +64,160 @@ def revComp(seq):
         rev += revnuc[seq[i]]
     return rev
 
+
+
+def fiveprimerfinder(listin):
+    primer = 0
+    for i in range(len(listin[0])):
+        truefor = 0
+        for x in range(len(listin)):
+            if listin[0][i:] == listin[x][i:]:
+                truefor += 1
+                if truefor == len(listin):
+                    primer += 1
+    return primer
+
+def threeprimerfinder(listin):
+    primer = 0
+    for i in range(len(listin[0])):
+        truefor = 0
+        for x in range(len(listin)):
+            if listin[0][i:] == listin[x][i:]:
+                truefor += 1
+                if truefor == len(listin):
+                    primer += 1
+    return primer
+
+
+
 def initialinput():
     #print(inputlist)
     global identifier
-    global datafile
+    global datadir
     global numofruns
     global revcompwanted
     global mink
     global maxk
     global extype
-    try:
-        if len(inputlist) > 0:
-            identifier = str(inputlist[0])
-            datafile = inputlist[1]
-            numofruns = int(inputlist[2])
-            revcompwanted = inputlist[3]
-            mink = int(inputlist[4])
-            maxk = int(inputlist[5])
-            extype = inputlist[6]
+    #try:
+        #if len(inputlist) > 1:
+    identifier = str(inputlist[0])
+    datadir = inputlist[1]
+    numofruns = int(inputlist[2])
+    revcompwanted = inputlist[3]
+    mink = int(inputlist[4])
+    maxk = int(inputlist[5])
+    extype = inputlist[6]
 
+    if multiround == True:
+        global files
+        files = []
+        for x in range(numofruns):
+            if len(inputlist[(x*2)+7]) > 0:
+                files.append(inputlist[(x*2)+7])
+        #print("Files")
+        #print(files)
+
+    if knownbarcode == True:
+        global barcodeprimers53
+        barcodeprimers53 = {}
+        for x in range(startround, (numofruns+startround)):
+            barcodeprimers53[x] = (inputlist[(((x-startround)*2)+(numofruns*2)+7)], inputlist[(((x-startround)*2)+(numofruns*2)+8)])
+        #print("barprim53")
+        #print(barcodeprimers53)
+
+        barcodeprimers5 = []
+        for x in barcodeprimers53:
+            barcodeprimers5.append(barcodeprimers53[x][0])
+        #print("barcodeprimers5")
+        #print(barcodeprimers5)
+        len5 = []
+        for i in barcodeprimers5:
+            len5.append(len(i))
+        #print("len5")
+        #print(len5)
+        max5 = max(len5)
+        min5 = min(len5)
+        if max5 == min5:
+            primer5len = fiveprimerfinder(barcodeprimers5)
+            #print("primer5len")
+            #print(primer5len)
+        barcodeprimers3 = []
+        for x in barcodeprimers53:
+            barcodeprimers3.append(barcodeprimers53[x][1])
+        #print("barcodeprimers3")
+        #print(barcodeprimers3)
+        len3 = []
+        for i in barcodeprimers3:
+            len3.append(len(i))
+        #print("len3")
+        #print(len3)
+        max3 = max(len3)
+        min3 = min(len3)
+        if max3 == min3:
+            primer3len = threeprimerfinder(barcodeprimers3)
+            #print("primer3len")
+            #print(primer3len)
+
+        global barcodes5
+        barcodes5 = {}
+        global barcodeslist5
+        barcodeslist5 = []
+        for x in barcodeprimers53:
+            barcodes5[barcodeprimers53[x][0][:-primer5len]] = x
+            barcodeslist5.append(barcodeprimers53[x][0][:-primer5len])
+        #print("barcodes5")
+        #print(barcodes5)
+        #print("barcodeslist5")
+        #print(barcodeslist5)
+        list5 = []
+        for i in barcodes5:
+            list5.append(len(i))
+        #print("list5")
+        #print(list5)
+        global barfiveslice
+        barfiveslice = min(list5)
+        #print("barfiveslice")
+        #print(barfiveslice)
+        global primer5
+        primer5 = barcodeprimers5[0][primer5len:]
+        #print("primer5")
+        #print(primer5)
+        global barcodes3
+        barcodes3 = {}
+        for x in barcodeprimers53:
+            barcodes3[barcodeprimers53[x][1][-primer3len:]] = x
+        #print("barcodes3")
+        #print(barcodes3)
+        list3 = []
+        for i in barcodes3:
+            list3.append(len(i))
+        #print("list3")
+        #print(list3)
+        global barthreeslice
+        barthreeslice = min(list3)
+        #print("barthreeslice")
+        #print(barthreeslice)
+        global primer3
+        primer3 = barcodeprimers3[0][:primer3len]
+        #print("primer3")
+        #print(primer3)
+
+"""
     except:
         print("Command line input required")
         identifier = str(input("Identifier: "))
-        datafile = input("Path to data directory: ")
+        datadir = input("Path to data directory: ")
         numofruns = int(input("Number of runs: "))
         revcompwanted = bool(input("Reverse compliment (any key, leave blank for False): "))
         extype = str(input("Experiment type: "))
-
-
+        global startroundcl
+        global multiroundcl
+        global knownbarcodecl
+        startroundcl = int(input("Start round: "))
+        multiroundcl = bool(input("Multiple rounds per file(s): "))
+        konwnbarcodecl = bool(input("Known barcodes/primers: "))
+"""
 initialinput()
 
 """
@@ -107,7 +237,7 @@ filenames1 = {}
 lvalues = {}
 
 def dictinit(numofruns):
-    for _ in range(numofruns + 1):
+    for _ in range(numofruns + startround):
         kmercount.append({})
         hamlist.append({})
         hamdict.append({})
@@ -153,7 +283,7 @@ def barcodechecker(FileName):
             if line.startswith(">") or line.startswith("@"):
                 continue
             if len(line) == l and "N" not in line:
-                for i in range(6):
+                for i in range(12):
                     start = line[0:i]
                     end = revComp(line[len(line)-i : len(line)])
                     if start == end:
@@ -171,50 +301,46 @@ def barcodechecker(FileName):
 
 
 """
-def CreateKmerList(FileName, runnum, k):
-    runlists[runnum][k] = []
-    fastaFileName = open(FileName, "r")
-    avg = barcodechecker(FileName)
-    for line in fastaFileName:
-        line = line.strip()
-        if line.startswith(">"):
-            continue
-        if len(line) == l and "N" not in line:
-            for x in range(0,((len(line)+1)-k)-(2*avg)):
-                kmers = str(line[x+avg:x+k+avg])
-                if len(kmers) > 0 and line.count(kmers) == 1:
-                    runlists[runnum][k].append(kmer2hash(kmers))
-        else:
-            continue
-
-
-        if revcompwanted == True:
+for hiding in hiding:
+    def CreateKmerList(FileName, runnum, k):
+        runlists[runnum][k] = []
+        fastaFileName = open(FileName, "r")
+        avg = barcodechecker(FileName)
+        for line in fastaFileName:
+            line = line.strip()
+            if lineinsert.startswith(">"):
+                continue
             if len(line) == l and "N" not in line:
                 for x in range(0,((len(line)+1)-k)-(2*avg)):
                     kmers = str(line[x+avg:x+k+avg])
-                    rkmers = revComp(line[x+avg:x+k+avg])
-                    if len(rkmers) > 0 and (line.count(kmers) + line.count(rkmers)) == 1:
-                        runlists[runnum][k].append(kmer2hash(rkmers))
+                    if len(kmers) > 0 and line.count(kmers) == 1:
+                        runlists[runnum][k].append(kmer2hash(kmers))
             else:
                 continue
+            if revcompwanted == True:
+                if len(line) == l and "N" not in line:
+                    for x in range(0,((len(line)+1)-k)-(2*avg)):
+                        kmers = str(line[x+avg:x+k+avg])
+                        rkmers = revComp(line[x+avg:x+k+avg])
+                        if len(rkmers) > 0 and (line.count(kmers) + line.count(rkmers)) == 1:
+                            runlists[runnum][k].append(kmer2hash(rkmers))
+                else:
+                    continue
 
+    def RangeKmerList(mink,maxk):
+        for i in range(mink,maxk+1):
+            CreateKmerList(FileName, runnum, i)
 
-
-def RangeKmerList(mink,maxk):
-    for i in range(mink,maxk+1):
-        CreateKmerList(FileName, runnum, i)
-
-
-def KmerCounter():
-    for x in list(runlists[runnum]):
-        kmercount[runnum][x] = {}
-    for i in runlists[runnum]:
-        kmerlistcount = Counter(runlists[runnum][i])
-        kmerlistcount2 = {**kmerlistcount}
-        sort = sorted(kmerlistcount2.items(), key=lambda x: x[1], reverse=True)
-        sortdict = OrderedDict(sort)
-        sortdict2 = {**sortdict}
-        kmercount[runnum][i].update(sortdict2)
+    def KmerCounter():
+        for x in list(runlists[runnum]):
+            kmercount[runnum][x] = {}
+        for i in runlists[runnum]:
+            kmerlistcount = Counter(runlists[runnum][i])
+            kmerlistcount2 = {**kmerlistcount}
+            sort = sorted(kmerlistcount2.items(), key=lambda x: x[1], reverse=True)
+            sortdict = OrderedDict(sort)
+            sortdict2 = {**sortdict}
+            kmercount[runnum][i].update(sortdict2)
 """
 
 
@@ -228,86 +354,206 @@ def Combinations(mink, maxk):
 
 Combinations(mink, maxk)
 
+
+
+
+
 def KmerCounterSELEX(FileName, runnum, k):
     fastaFileName = open(FileName, "r")
-    avg = barcodechecker(FileName)
+    if knownbarcode == False:
+        avg5 = barcodechecker(FileName)
+        avg3 = avg5
+    if knownbarcode == True:
+        avg5 = len(barcodeprimers53[runnum][0])
+        avg3 = len(barcodeprimers53[runnum][1])
     combinations = 4**k
-    for line in fastaFileName:
-        line = line.strip()
-        if line.startswith(">") or line.startswith("@"):
-            continue
+    firstline = fastaFileName.readline()
+    firstline = firstline.strip()
+    if firstline.startswith(">"):
+        filetype = "fasta"
+    if firstline.startswith("@"):
+        filetype = "fastq"
+    for sequence in SeqIO.parse(FileName, filetype):
+        line = str(sequence.seq)
         if len(line) == l and "N" not in line:
-            for x in range(0,((len(line)+1)-k)-(2*avg)):
-                kmers = str(line[x+avg:x+k+avg])
-                if len(kmers) > 0 and line.count(kmers) == 1:
+            done = []
+            for x in range(0,((len(line)+1)-k)-(avg5+avg3)):
+                kmers = str(line[x+avg5:x+k+avg5])
+                if kmers not in done:
                     if kmer2hash(kmers) < combinations:
                         kmercount[runnum][k][kmer2hash(kmers)] += 1
-                        if revcompwanted == True:
-                            rkmers = revComp(kmers)
-                            if len(rkmers) > 0 and (line.count(kmers) + line.count(rkmers)) <= 2:
-                                if kmer2hash(rkmers) < combinations:
-                                    kmercount[runnum][k][kmer2hash(rkmers)] += 1
-        if line.startswith("+"):
-            next(fastaFileName)
+                        done.append(kmers)
+                        #if revcompwanted == True:
+                            #rkmers = revComp(kmers)
+                            #if len(rkmers) > 0 and (line.count(kmers) + line.count(rkmers)) <= 2:
+                                #if kmer2hash(rkmers) < combinations:
+                                    #kmercount[runnum][k][kmer2hash(rkmers)] += 1
         else:
             continue
 
-"""
         if revcompwanted == True:
             if len(line) == l and "N" not in line:
-                for x in range(0,((len(line)+1)-k)-(2*avg)):
-                    kmers = str(line[x+avg:x+k+avg])
-                    rkmers = revComp(line[x+avg:x+k+avg])
-                    if len(rkmers) > 0 and (line.count(kmers) + line.count(rkmers)) == 1:
+                rdone = []
+                for x in range(0,((len(line)+1)-k)-(avg5+avg3)):
+                    kmers = str(line[x+avg5:x+k+avg5])
+                    rkmers = revComp(line[x+avg5:x+k+avg5])
+                    if kmers not in rdone:
                         if kmer2hash(rkmers) < combinations:
                             kmercount[runnum][k][kmer2hash(rkmers)] += 1
+                            rdone.append(rkmers)
             else:
                 continue
-"""
+
 def RangeKmerCounterSELEX(FileName, runnum, mink, maxk):
     for i in range(mink,maxk+1):
         KmerCounterSELEX(FileName, runnum, i)
 
 
 
+def KmerCounterSELEXmulti(FileName, k):
+    fastaFileName = open(FileName, "r")
+    combinations = 4**k
+    firstline = fastaFileName.readline()
+    firstline = firstline.strip()
+    if firstline.startswith(">"):
+        filetype = "fasta"
+    if firstline.startswith("@"):
+        filetype = "fastq"
+    for sequence in SeqIO.parse(FileName, filetype):
+        line = str(sequence.seq)
+        runnum = barcodes5[line[:barfiveslice]]
+        l = lvalues[runnum]
+        if len(line) == l and "N" not in line:
+            if line[:barfiveslice] in barcodeslist5:
+                done = []
+                for x in range(0,(l+1-k-len(barcodeprimers53[runnum][0])-len(barcodeprimers53[runnum][1]))):
+                    kmers = str(line[x+len(barcodeprimers53[runnum][0]):x+k+len(barcodeprimers53[runnum][0])])
+                    if kmers not in done:
+                        if kmer2hash(kmers) < combinations:
+                            kmercount[runnum][k][kmer2hash(kmers)] += 1
+                            done.append(kmers)
+                            #if revcompwanted == True:
+                                #rkmers = revComp(kmers)
+                                #if rkmers not in done:
+                                    #if kmer2hash(rkmers) < combinations:
+                                        #kmercount[runnum][k][kmer2hash(rkmers)] += 1
+        else:
+            continue
+
+        if revcompwanted == True:
+            if len(line) == l and "N" not in line:
+                if line[:barfiveslice] in barcodeslist5:
+                    runnum = barcodes5[line[:barfiveslice]]
+                    rdone = []
+                    for x in range(0,((len(line)+1)-k)-len(barcodeprimers53[runnum][0])-len(barcodeprimers53[runnum][1])):
+                        kmers = str(line[x+len(barcodeprimers53[runnum][0]):x+k+len(barcodeprimers53[runnum][0])])
+                        rkmers = revComp(kmers)
+                        if rkmers not in done:
+                            if kmer2hash(rkmers) < combinations:
+                                kmercount[runnum][k][kmer2hash(rkmers)] += 1
+                                rdone.append(rkmers)
+            else:
+                continue
+
+def RangeKmerCounterSELEXmulti(mink, maxk):
+    for x in files:
+        fullname = os.path.join(datadir, x)
+        for i in range(mink,maxk+1):
+            KmerCounterSELEXmulti(fullname, i)
+
+
 
 
 def KmerCounterChipDNA(FileName, runnum, k):
     fastaFileName = open(FileName, "r")
-    avg = barcodechecker(FileName)
+    if knownbarcode == False:
+        avg5 = barcodechecker(FileName)
+        avg3 = avg5
+    if knownbarcode == True:
+        avg5 = len(barcodeprimers53[runnum][0])
+        avg3 = len(barcodeprimers53[runnum][1])
     combinations = 4**k
-    for line in fastaFileName:
-        line = line.strip()
-        if line.startswith(">") or line.startswith("@"):
-            continue
-        for x in range(0,((len(line)+1)-k)-(2*avg)):
-            kmers = str(line[x+avg:x+k+avg])
+    firstline = fastaFileName.readline()
+    if firstline.startswith(">"):
+        filetype = "fasta"
+    if firstline.startswith("@"):
+        filetype = "fastq"
+    for sequence in SeqIO.parse(FileName, filetype):
+        line = str(sequence.seq)
+        for x in range(0,((len(line)+1)-k)-(avg5+avg3)):
+            kmers = str(line[x+avg5:x+k+avg5])
             try:
                 if kmer2hash(kmers) < combinations:
                     kmercount[runnum][k][kmer2hash(kmers)] += 1
-                    if revcompwanted == True:
-                        rkmers = kmer2hash(revComp(kmers))
-                        kmercount[runnum][k][kmer2hash(rkmers)] += 1
+                    #if revcompwanted == True:
+                        #rkmers = kmer2hash(revComp(kmers))
+                        #kmercount[runnum][k][kmer2hash(rkmers)] += 1
             except:
                 continue
-        if line.startswith("+"):
-            next(fastaFileName)
         else:
             continue
-"""
-        if revcompwanted == True:
-            for x in range(0,(len(line)+1)-k)):
-                kmers = str(line[x:x+k])
-                rkmers = revComp(line[x:x+k])
-                if len(rkmers) > 0 and (line.count(kmers) + line.count(rkmers)) == 1:
-                    if kmer2hash(rkmers) < combinations:
 
+        if revcompwanted == True:
+            for x in range(0,((len(line)+1)-k-(avg5+avg3))):
+                kmers = str(line[x+avg5:x+k+avg5])
+                rkmers = revComp(line[x+avg5:x+k+avg5])
+                if len(rkmers) > 0 and (line.count(kmers) + line.count(rkmers)) <= 2:
+                    if kmer2hash(rkmers) < combinations:
+                        kmercount[runnum][k][kmer2hash(rkmers)] += 1
             else:
                 continue
-"""
+
 def RangeKmerCounterChipDNA(FileName, runnum, mink, maxk):
     for i in range(mink,maxk+1):
         KmerCounterChipDNA(FileName, runnum, i)
+
+
+def KmerCounterChipDNAmulti(FileName, k):
+    fastaFileName = open(FileName, "r")
+    if knownbarcode == False:
+        avg5 = barcodechecker(FileName)
+        avg3 = avg5
+    if knownbarcode == True:
+        avg5 = len(barcodeprimers53[runnum][0])
+        avg3 = len(barcodeprimers53[runnum][1])
+    combinations = 4**k
+    firstline = fastaFileName.readline()
+    if firstline.startswith(">"):
+        filetype = "fasta"
+    if firstline.startswith("@"):
+        filetype = "fastq"
+    for sequence in SeqIO.parse(FileName, filetype):
+        line = str(sequence.seq)
+        if line[:barfiveslice] in barcodeslist5:
+            runnum = barcodes5[line[:barfiveslice]]
+            for x in range(0,((len(line)+1)-k)-(avg5+avg3)):
+                kmers = str(line[x+avg5:x+k+avg5])
+                try:
+                    if kmer2hash(kmers) < combinations:
+                        kmercount[runnum][k][kmer2hash(kmers)] += 1
+                        #if revcompwanted == True:
+                            #rkmers = kmer2hash(revComp(kmers))
+                            #kmercount[runnum][k][kmer2hash(rkmers)] += 1
+                except:
+                    continue
+            else:
+                continue
+
+            if revcompwanted == True:
+                for x in range(0,((len(line)+1)-k-(avg5+avg3))):
+                    kmers = str(line[x+avg5:x+k+avg5])
+                    rkmers = revComp(line[x+avg5:x+k+avg5])
+                    if len(rkmers) > 0 and (line.count(kmers) + line.count(rkmers)) <= 2:
+                        if kmer2hash(rkmers) < combinations:
+                            kmercount[runnum][k][kmer2hash(rkmers)] += 1
+                else:
+                    continue
+
+def RangeKmerCounterChipDNAmulti(mink, maxk):
+    for x in files:
+        fullname = os.path.join(datadir, x)
+        for i in range(mink,maxk+1):
+            KmerCounterChipDNAmulti(fullname, i)
 
 
 
@@ -372,29 +618,42 @@ def pwmmaker(runnum):
 
 
 
-def addruncl():
-    global FileName1
-    global FileName
-    FileName1 = input("Fasta File Name:")
-    FileName = os.path.join(datafile, FileName1)
-    global runnum
-    runnum = int(input("Run number:"))
-    filenames1.update({runnum:FileName1})
-    ufilenames.update({FileName:runnum})
-    filenames.update({runnum:FileName})
-    global l
-    l = int(input("Read lengths:"))
-    lvalues.update({runnum:l})
-    global mink
-    mink = int(input("Minimum kmer:"))
-    global maxk
-    maxk = int(input("Maximum kmer:"))
-    #Combinations(runnum, mink, maxk)
-    RangeKmerCounter(FileName, runnum, mink, maxk)
-    listhammer()
-    dicthammer()
-    startpwm()
-    pwmmaker()
+def addruncl(runnum):
+    global mutliround
+    multiround = bool(input("Multiple roudns per file: "))
+    #if multiround == True:
+    #    global numoffiles
+    #    numoffiles = int(input("Number of files: "))
+    #    for _ in range(numoffiles):
+    #        global FileName1
+    #        global FileName
+    #        FileName1 = input("Fasta File Name:")
+    #        FileName = os.path.join(datadir, FileName1)
+
+
+    if multiround == False:
+        global FileName1
+        global FileName
+        FileName1 = input("Fasta File Name:")
+        FileName = os.path.join(datadir, FileName1)
+        #global runnum
+        #runnum = int(input("Run number:"))
+        filenames1.update({runnum:FileName1})
+        ufilenames.update({FileName:runnum})
+        filenames.update({runnum:FileName})
+        global l
+        l = int(input("Read lengths:"))
+        lvalues.update({runnum:l})
+        #global mink
+        #mink = int(input("Minimum kmer:"))
+        #global maxk
+        #maxk = int(input("Maximum kmer:"))
+        #Combinations(runnum, mink, maxk)
+        RangeKmerCounter(FileName, runnum, mink, maxk)
+        listhammer(runnum)
+        dicthammer(runnum)
+        startpwm(runnum)
+        pwmmaker(runnum)
 
 def addrungui():
     try:
@@ -403,40 +662,59 @@ def addrungui():
             global FileName
             global runnum
             global l
-            if extype == "SELEX":
-                for x in range(0, numofruns):
-                    FileName1 = str(inputlist[(x*2)+7])
-                    FileName = os.path.join(datafile, FileName1)
-                    runnum = x+1
-                    #print("runnum: "+str(runnum)+" FileName: "+str(FileName)+" Mink: "+str(mink)+" Maxk: "+str(maxk))
-                    filenames1.update({runnum:FileName1})
-                    ufilenames.update({FileName:runnum})
-                    filenames.update({runnum:FileName})
-                    l = int(inputlist[(x*2)+8])
-                    lvalues.update({runnum:l})
-                    #Combinations(runnum, mink, maxk)
-                    #print("combo")
-                    RangeKmerCounterSELEX(FileName, runnum, mink, maxk)
-                    listhammer(runnum)
-                    dicthammer(runnum)
-                    startpwm(runnum)
-                    pwmmaker(runnum)
-            if extype == "ChIP" or "DNase":
-                for x in range(0, numofruns):
-                    FileName1 = str(inputlist[x+7])
-                    FileName = os.path.join(datafile, FileName1)
-                    runnum = x+1
-                    filenames1.update({runnum:FileName1})
-                    ufilenames.update({FileName:runnum})
-                    filenames.update({runnum:FileName})
-                    Combinations(runnum, mink, maxk)
-                    RangeKmerCounterChipDNA(FileName, runnum, mink, maxk)
-                    listhammer(runnum)
-                    dicthammer(runnum)
-                    startpwm(runnum)
-                    pwmmaker(runnum)
+            if multiround == False:
+                if extype == "SELEX":
+                    for x in range(0, numofruns):
+                        FileName1 = str(inputlist[(x*2)+7])
+                        FileName = os.path.join(datadir, FileName1)
+                        runnum = x+startround
+                        filenames1.update({runnum:FileName1})
+                        ufilenames.update({FileName:runnum})
+                        filenames.update({runnum:FileName})
+                        l = int(inputlist[(x*2)+8])
+                        lvalues.update({runnum:l})
+                        RangeKmerCounterSELEX(FileName, runnum, mink, maxk)
+                        listhammer(runnum)
+                        dicthammer(runnum)
+                        startpwm(runnum)
+                        pwmmaker(runnum)
+                if extype in ["ChIP", "DNase"]:
+                    for x in range(0, numofruns):
+                        FileName1 = str(inputlist[x+7])
+                        FileName = os.path.join(datadir, FileName1)
+                        runnum = x+1
+                        filenames1.update({runnum:FileName1})
+                        ufilenames.update({FileName:runnum})
+                        filenames.update({runnum:FileName})
+                        #Combinations(runnum, mink, maxk)
+                        RangeKmerCounterChipDNA(FileName, runnum, mink, maxk)
+                        listhammer(runnum)
+                        dicthammer(runnum)
+                        startpwm(runnum)
+                        pwmmaker(runnum)
+            if multiround == True:
+                if extype == "SELEX":
+                    for x in range(startround, (numofruns+startround)):
+                        l = int(inputlist[((x-startround)*2)+8])
+                        lvalues.update({x:l})
+                    #l = int(inputlist[8])
+                    RangeKmerCounterSELEXmulti(mink, maxk)
+                    for x in range(startround, (numofruns+startround)):
+                        listhammer(x)
+                        dicthammer(x)
+                        startpwm(x)
+                        pwmmaker(x)
+                if extype in ["ChIP", "DNase"]:
+                    RangeKmerCounterChipDNAmulti(mink, maxk)
+                    for x in range(startround, numofrounds):
+                        listhammer(x)
+                        dicthammer(x)
+                        startpwm(x)
+                        pwmmaker(x)
+
+
     except:
-        print("Command line input required")
+        print("Command line input required (removed)")
 
 
 def addingall(n):
@@ -444,8 +722,9 @@ def addingall(n):
         if len(inputlist) > 1:
             addrungui()
     except:
-        for _ in range(n):
-            addruncl()
+        for x in range(1, n+1):
+            #addruncl(x)
+            print("Removed")
 
 
 addingall(numofruns)
@@ -469,7 +748,6 @@ removezeros()
 
 #print("kmercount")
 #print(kmercount)
-#print("consensus 4")
 #print("hamlist")
 #print(hamlist)
 #print("hamdict")
