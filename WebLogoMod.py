@@ -15,6 +15,7 @@ from KmerKounter import pwm
 from KmerKounter import numofruns
 from KmerKounter import mink
 from KmerKounter import maxk
+from KmerKounter import startround
 
 from KmerKounter import inputlist
 
@@ -88,12 +89,12 @@ def kmerpwm(runnum, k):
 
 
 def allmaker(numofruns):
-    for z in range(1, numofruns+1):
+    for z in range(startround, (numofruns+startround)):
         #mink = int(inputlist[((z-1)*5)+7])
         #maxk = int(inputlist[((z-1)*5)+8])
         for j in range(mink,maxk+1):
             #print(kmerpwm(z,j))
-            logoform[z-1][j].append(kmerpwm(z,j))
+            logoform[z-startround][j].append(kmerpwm(z,j))
 
 allmaker(numofruns)
 
@@ -171,7 +172,7 @@ def draw_logo(all_scores, run, k):
 
 
 def logoprinter():
-    for r in range(1, numofruns+1):
+    for r in range(startround, numofruns+startround):
         for i in logoform[r-1]:
             for j in range(0, len(logoform[r-1][i])):
                 draw_logo(logoform[r-1][i][j], r, i)
