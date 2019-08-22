@@ -3,6 +3,10 @@ from KmerKounter import numofruns
 from KmerKounter import mink
 from KmerKounter import maxk
 from KmerKounter import filenames1
+from KmerKounter import startround
+from KmerKounter import multiround
+if multiround == True:
+    from KmerKounter import files
 
 from PositionBias import TSeqNums
 from PositionBias import LSeqNums
@@ -129,8 +133,11 @@ kmerfreqformatter()
 
 def tablemaker():
     Html_file.write("""<h1 style="background-color: #3c3c3c; padding: 20px; color: white;"> Numbers </h1><br>""")
-    for r in range(1, numofruns+1):
-        Html_file.write("<table cellpadding=10><tr><td><h2>"+str(r)+": "+str(filenames1[r])+"</h2></td></tr>"+"<tr><td>Total sequences:</td><td>"+str(TSeqNums[r])+"</td></tr>"+"<tr><td>Passed sequences:</td><td>"+str(LSeqNums[r])+"</td></tr>"+"</h2></td></tr>"+"<tr><td>Barcode:</td><td>"+str(Barcodevalues[r])+"""</td></tr><tr><td style="background-color:lightgrey;"></td>""")
+    for r in range(startround, numofruns+1):
+        if multiround == False:
+            Html_file.write("<table cellpadding=10><tr><td><h2>"+str(r)+": "+str(filenames1[r])+"</h2></td></tr>"+"<tr><td>Total sequences:</td><td>"+str(TSeqNums[r])+"</td></tr>"+"<tr><td>Passed sequences:</td><td>"+str(LSeqNums[r])+"</td></tr>"+"</h2></td></tr>"+"<tr><td>Barcode:</td><td>"+str(Barcodevalues[r])+"""</td></tr><tr><td style="background-color:lightgrey;"></td>""")
+        if multiround == True:
+            Html_file.write("<table cellpadding=10><tr><td><h2>"+str(r)+": "+str(files[0])+"</h2></td></tr>"+"<tr><td>Total sequences:</td><td>"+str(TSeqNums[r])+"</td></tr>"+"<tr><td>Passed sequences:</td><td>"+str(LSeqNums[r])+"</td></tr>"+"</h2></td></tr>"+"<tr><td>Barcode:</td><td>"+str(Barcodevalues[r])+"""</td></tr><tr><td style="background-color:lightgrey;"></td>""")
         for k in range(mink, maxk+1):
             Html_file.write("""<td style="background-color:lightgrey;"><b>K"""+str(k)+"</b></td>")
         Html_file.write("<tr><td>Total kmers</td>")
