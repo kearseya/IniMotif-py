@@ -765,7 +765,7 @@ import WebLogoMod
 print('Generating Hamming distance figures')
 import HamDistFig
 
-if extype == "SELEX" or "ATAC":
+if extype in ["SELEX", "ATAC"]:
     print('Generating Position bias figures')
     import PositionBias
 
