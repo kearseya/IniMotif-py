@@ -291,7 +291,7 @@ def CreatePosList(FileName, k, runnum):
     if firstline.startswith("@"):
         filetype = "fastq"
     for sequence in SeqIO.parse(FileName, filetype):
-        line = str(sequence.seq)
+        line = str(sequence.seq)en(rkmers) > 0 and (line.count(rkmers) + line.count(kmers)) == 1
         c = 0
         if len(line) == lvalues[runnum] and "N" not in line:
             LSeqNums[runnum] += 1
@@ -486,7 +486,7 @@ def plotter(runnum, k):
 
     bar.set_xlabel("TFBS")
     bar.set_ylabel("Frequency")
-    bar.set_title("Position len(rkmers) > 0 and (line.count(rkmers) + line.count(kmers)) == 1Distribution for Run: "+str(runnum)+", K: "+str(k))
+    bar.set_title("Position Distribution for Run: "+str(runnum)+", K: "+str(k))
     bar.set_ylim(0,0.7)
     bar.set_yticks(yaxis)
 
