@@ -52,11 +52,33 @@ def seq2hash(kmer):
 bases = ['A', 'C', 'G', 'T']
 revnuc = {'A':'T','T':'A','G':'C','C':'G','N':'N'}
 
-from GUI import inputlist
-#print(inputlist)
-from GUI import startround
-from GUI import multiround
-from GUI import knownbarcode
+def importfromgui():
+    global startround
+    global multiround
+    global knownbarcode
+    global inputlist
+    try:
+        from GUI import inputlist
+        print(inputlist)
+        from GUI import startround
+        from GUI import multiround
+        from GUI import knownbarcode
+    except:
+        inputlist = ["cl"]
+        startround = 1
+        multiround = str(input("Multiple rounds per file (y/n)?: "))
+        knownbarcode = str(input("Known barcodes (y/n)?: "))
+        if multiround in ["y", "Y", "yes", "Yes", "t", "true", "True"]:
+            multiround = True
+        else:
+            multiround = False
+        if knownbarcode in ["y", "Y", "yes", "Yes", "t", "true", "True"]:
+            knownbarcode = True
+        else:
+            knownbarcode = False
+
+importfromgui()
+
 
 def revComp(seq):
     rev = ''
@@ -99,125 +121,124 @@ def initialinput():
     global mink
     global maxk
     global extype
+    #global multiround
+    #global knownbarcode
     #try:
-        #if len(inputlist) > 1:
-    identifier = str(inputlist[0])
-    datadir = inputlist[1]
-    numofruns = int(inputlist[2])
-    revcompwanted = inputlist[3]
-    mink = int(inputlist[4])
-    maxk = int(inputlist[5])
-    extype = inputlist[6]
+    if len(inputlist) > 1:
+        identifier = str(inputlist[0])
+        datadir = inputlist[1]
+        numofruns = int(inputlist[2])
+        revcompwanted = inputlist[3]
+        mink = int(inputlist[4])
+        maxk = int(inputlist[5])
+        extype = inputlist[6]
+        if multiround == True:
+            global files
+            files = []
+            for x in range(numofruns):
+                if len(inputlist[(x*2)+7]) > 0:
+                    files.append(inputlist[(x*2)+7])
+            #print("Files")
+            #print(files)
 
-    if multiround == True:
-        global files
-        files = []
-        for x in range(numofruns):
-            if len(inputlist[(x*2)+7]) > 0:
-                files.append(inputlist[(x*2)+7])
-        #print("Files")
-        #print(files)
+        if knownbarcode == True:
+            global barcodeprimers53
+            barcodeprimers53 = {}
+            for x in range(startround, (numofruns+startround)):
+                barcodeprimers53[x] = (inputlist[(((x-startround)*2)+(numofruns*2)+7)], inputlist[(((x-startround)*2)+(numofruns*2)+8)])
+            #print("barprim53")
+            #print(barcodeprimers53)
+                barcodeprimers5 = []
+            for x in barcodeprimers53:
+                barcodeprimers5.append(barcodeprimers53[x][0])
+            #print("barcodeprimers5")
+            #print(barcodeprimers5)
+            len5 = []
+            for i in barcodeprimers5:
+                len5.append(len(i))
+            #print("len5")
+            #print(len5)
+            max5 = max(len5)
+            min5 = min(len5)
+            if max5 == min5:
+                primer5len = fiveprimerfinder(barcodeprimers5)
+                #print("primer5len")
+                #print(primer5len)
+            barcodeprimers3 = []
+            for x in barcodeprimers53:
+                barcodeprimers3.append(barcodeprimers53[x][1])
+            #print("barcodeprimers3")
+            #print(barcodeprimers3)
+            len3 = []
+            for i in barcodeprimers3:
+                len3.append(len(i))
+            #print("len3")
+            #print(len3)
+            max3 = max(len3)
+            min3 = min(len3)
+            if max3 == min3:
+                primer3len = threeprimerfinder(barcodeprimers3)
+                #print("primer3len")
+                #print(primer3len)
+            global barcodes5
+            barcodes5 = {}
+            global barcodeslist5
+            barcodeslist5 = []
+            for x in barcodeprimers53:
+                barcodes5[barcodeprimers53[x][0][:-primer5len]] = x
+                barcodeslist5.append(barcodeprimers53[x][0][:-primer5len])
+            print("barcodes5")
+            print(barcodes5)
+            print("barcodeslist5")
+            print(barcodeslist5)
+            list5 = []
+            for i in barcodes5:
+                list5.append(len(i))
+            #print("list5")
+            #print(list5)
+            global barfiveslice
+            barfiveslice = min(list5)
+            #print("barfiveslice")
+            #print(barfiveslice)
+            global primer5
+            primer5 = barcodeprimers5[0][primer5len:]
+            #print("primer5")
+            #print(primer5)
+            global barcodes3
+            barcodes3 = {}
+            for x in barcodeprimers53:
+                barcodes3[barcodeprimers53[x][1][-primer3len:]] = x
+            #print("barcodes3")
+            #print(barcodes3)
+            list3 = []
+            for i in barcodes3:
+                list3.append(len(i))
+            #print("list3")
+            #print(list3)
+            global barthreeslice
+            barthreeslice = min(list3)
+            #print("barthreeslice")
+            #print(barthreeslice)
+            global primer3
+            primer3 = barcodeprimers3[0][:primer3len]
+            #print("primer3")
+            #print(primer3)
 
-    if knownbarcode == True:
-        global barcodeprimers53
-        barcodeprimers53 = {}
-        for x in range(startround, (numofruns+startround)):
-            barcodeprimers53[x] = (inputlist[(((x-startround)*2)+(numofruns*2)+7)], inputlist[(((x-startround)*2)+(numofruns*2)+8)])
-        #print("barprim53")
-        #print(barcodeprimers53)
-
-        barcodeprimers5 = []
-        for x in barcodeprimers53:
-            barcodeprimers5.append(barcodeprimers53[x][0])
-        #print("barcodeprimers5")
-        #print(barcodeprimers5)
-        len5 = []
-        for i in barcodeprimers5:
-            len5.append(len(i))
-        #print("len5")
-        #print(len5)
-        max5 = max(len5)
-        min5 = min(len5)
-        if max5 == min5:
-            primer5len = fiveprimerfinder(barcodeprimers5)
-            #print("primer5len")
-            #print(primer5len)
-        barcodeprimers3 = []
-        for x in barcodeprimers53:
-            barcodeprimers3.append(barcodeprimers53[x][1])
-        #print("barcodeprimers3")
-        #print(barcodeprimers3)
-        len3 = []
-        for i in barcodeprimers3:
-            len3.append(len(i))
-        #print("len3")
-        #print(len3)
-        max3 = max(len3)
-        min3 = min(len3)
-        if max3 == min3:
-            primer3len = threeprimerfinder(barcodeprimers3)
-            #print("primer3len")
-            #print(primer3len)
-
-        global barcodes5
-        barcodes5 = {}
-        global barcodeslist5
-        barcodeslist5 = []
-        for x in barcodeprimers53:
-            barcodes5[barcodeprimers53[x][0][:-primer5len]] = x
-            barcodeslist5.append(barcodeprimers53[x][0][:-primer5len])
-        #print("barcodes5")
-        #print(barcodes5)
-        #print("barcodeslist5")
-        #print(barcodeslist5)
-        list5 = []
-        for i in barcodes5:
-            list5.append(len(i))
-        #print("list5")
-        #print(list5)
-        global barfiveslice
-        barfiveslice = min(list5)
-        #print("barfiveslice")
-        #print(barfiveslice)
-        global primer5
-        primer5 = barcodeprimers5[0][primer5len:]
-        #print("primer5")
-        #print(primer5)
-        global barcodes3
-        barcodes3 = {}
-        for x in barcodeprimers53:
-            barcodes3[barcodeprimers53[x][1][-primer3len:]] = x
-        #print("barcodes3")
-        #print(barcodes3)
-        list3 = []
-        for i in barcodes3:
-            list3.append(len(i))
-        #print("list3")
-        #print(list3)
-        global barthreeslice
-        barthreeslice = min(list3)
-        #print("barthreeslice")
-        #print(barthreeslice)
-        global primer3
-        primer3 = barcodeprimers3[0][:primer3len]
-        #print("primer3")
-        #print(primer3)
-
-"""
-    except:
+    else:
         print("Command line input required")
         identifier = str(input("Identifier: "))
         datadir = input("Path to data directory: ")
         numofruns = int(input("Number of runs: "))
-        revcompwanted = bool(input("Reverse compliment (any key, leave blank for False): "))
-        extype = str(input("Experiment type: "))
-        global startroundcl
-        global multiroundcl
-        global knownbarcodecl
-        startroundcl = int(input("Start round: "))
-        multiroundcl = bool(input("Multiple rounds per file(s): "))
-        konwnbarcodecl = bool(input("Known barcodes/primers: "))
-"""
+        revcompwanted = str(input("Reverse compliment (y/n)?: "))
+        if revcompwanted in ["y", "Y", "yes", "Yes", "t", "true", "True"]:
+            revcompwanted = True
+        else:
+            revcompwanted = False
+        extype = str(input("Experiment type (SELEX, ChIP, ATAC): "))
+        mink = int(input("Minimum kmer length: "))
+        maxk = int(input("Maximum kmer length: "))
+
+
 initialinput()
 
 """
@@ -621,42 +642,60 @@ def pwmmaker(runnum):
 
 
 
-def addruncl(runnum):
-    global mutliround
-    multiround = bool(input("Multiple roudns per file: "))
-    #if multiround == True:
-    #    global numoffiles
-    #    numoffiles = int(input("Number of files: "))
-    #    for _ in range(numoffiles):
-    #        global FileName1
-    #        global FileName
-    #        FileName1 = input("Fasta File Name:")
-    #        FileName = os.path.join(datadir, FileName1)
-
-
+def addruncl():
+    global FileName1
+    global FileName
+    print(multiround)
     if multiround == False:
-        global FileName1
-        global FileName
-        FileName1 = input("Fasta File Name:")
-        FileName = os.path.join(datadir, FileName1)
-        #global runnum
-        #runnum = int(input("Run number:"))
-        filenames1.update({runnum:FileName1})
-        ufilenames.update({FileName:runnum})
-        filenames.update({runnum:FileName})
-        global l
-        l = int(input("Read lengths:"))
-        lvalues.update({runnum:l})
-        #global mink
-        #mink = int(input("Minimum kmer:"))
-        #global maxk
-        #maxk = int(input("Maximum kmer:"))
-        #Combinations(runnum, mink, maxk)
-        RangeKmerCounter(FileName, runnum, mink, maxk)
-        listhammer(runnum)
-        dicthammer(runnum)
-        startpwm(runnum)
-        pwmmaker(runnum)
+        for runnum in range(1, numofruns+1):
+            FileName1 = str(input("Fasta File Name: "))
+            FileName = os.path.join(datadir, FileName1)
+            #global runnum
+            #runnum = int(input("Run number:"))
+            filenames1.update({runnum:FileName1})
+            ufilenames.update({FileName:runnum})
+            filenames.update({runnum:FileName})
+            if extype == "SELEX":
+                global l
+                l = int(input("Read lengths:"))
+                lvalues.update({runnum:l})
+                RangeKmerCounterSELEX(FileName, runnum, mink, maxk)
+                listhammer(runnum)
+                dicthammer(runnum)
+                startpwm(runnum)
+                pwmmaker(runnum)
+            if extype in ["ChIP", "DNase"]:
+                RangeKmerCounterChipDNA(FileName, runnum, mink, maxk)
+                listhammer(runnum)
+                dicthammer(runnum)
+                startpwm(runnum)
+                pwmmaker(runnum)
+    if multiround == True:
+        global numoffiles
+        numoffiles = int(input("Number of files: "))
+        global files
+        files = []
+        for _ in range(numoffiles):
+            FileName1 = input("Fasta File Name: ")
+            FileName = os.path.join(datadir, FileName1)
+            files.append(FileName)
+        if extype == "SELEX":
+            for x in range(0, numofruns):
+                l = int(input("Length of reads: "))
+                lvalues.update({(x+1):l})
+            RangeKmerCounterSELEXmulti(mink, maxk)
+            for x in range(1, numofruns+1):
+                listhammer(x)
+                dicthammer(x)
+                startpwm(x)
+                pwmmaker(x)
+        if extype in ["ChIP", "DNase"]:
+            RangeKmerCounterChipDNAmulti(mink, maxk)
+            for x in range(1, numofrounds+1):
+                listhammer(x)
+                dicthammer(x)
+                startpwm(x)
+                pwmmaker(x)
 
 def addrungui():
     try:
@@ -670,7 +709,7 @@ def addrungui():
                     for x in range(0, numofruns):
                         FileName1 = str(inputlist[(x*2)+7])
                         FileName = os.path.join(datadir, FileName1)
-                        runnum = x+startround
+                        runnum = x+1
                         filenames1.update({runnum:FileName1})
                         ufilenames.update({FileName:runnum})
                         filenames.update({runnum:FileName})
@@ -697,19 +736,19 @@ def addrungui():
                         pwmmaker(runnum)
             if multiround == True:
                 if extype == "SELEX":
-                    for x in range(startround, (numofruns+startround)):
-                        l = int(inputlist[((x-startround)*2)+8])
-                        lvalues.update({x:l})
+                    for x in range(0, numofruns):
+                        l = int(inputlist[(x*2)+8])
+                        lvalues.update({(x+1):l})
                     #l = int(inputlist[8])
                     RangeKmerCounterSELEXmulti(mink, maxk)
-                    for x in range(startround, (numofruns+startround)):
+                    for x in range(1, numofruns+1):
                         listhammer(x)
                         dicthammer(x)
                         startpwm(x)
                         pwmmaker(x)
                 if extype in ["ChIP", "DNase"]:
                     RangeKmerCounterChipDNAmulti(mink, maxk)
-                    for x in range(startround, numofrounds):
+                    for x in range(1, numofrounds+1):
                         listhammer(x)
                         dicthammer(x)
                         startpwm(x)
@@ -717,17 +756,14 @@ def addrungui():
 
 
     except:
-        print("Command line input required (removed)")
+        print("Further command line input required")
 
 
 def addingall(n):
-    try:
-        if len(inputlist) > 1:
-            addrungui()
-    except:
-        for x in range(1, n+1):
-            #addruncl(x)
-            print("Removed")
+    if len(inputlist) > 1:
+        addrungui()
+    else:
+        addruncl()
 
 
 addingall(numofruns)
