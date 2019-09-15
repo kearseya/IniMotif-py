@@ -123,7 +123,15 @@ def initialinput():
     global extype
     #global multiround
     #global knownbarcode
-    #try:
+    global barcodeprimers53
+    global barcodes5
+    global barcodeslist5
+    global barfiveslice
+    global primer5
+    global barcodes3
+    global barthreeslice
+    global primer3
+
     if len(inputlist) > 1:
         identifier = str(inputlist[0])
         datadir = inputlist[1]
@@ -142,7 +150,7 @@ def initialinput():
             #print(files)
 
         if knownbarcode == True:
-            global barcodeprimers53
+
             barcodeprimers53 = {}
             for x in range(startround, (numofruns+startround)):
                 barcodeprimers53[x] = (inputlist[(((x-startround)*2)+(numofruns*2)+7)], inputlist[(((x-startround)*2)+(numofruns*2)+8)])
@@ -180,9 +188,7 @@ def initialinput():
                 primer3len = threeprimerfinder(barcodeprimers3)
                 #print("primer3len")
                 #print(primer3len)
-            global barcodes5
             barcodes5 = {}
-            global barcodeslist5
             barcodeslist5 = []
             for x in barcodeprimers53:
                 barcodes5[barcodeprimers53[x][0][:-primer5len]] = x
@@ -196,15 +202,12 @@ def initialinput():
                 list5.append(len(i))
             #print("list5")
             #print(list5)
-            global barfiveslice
             barfiveslice = min(list5)
             #print("barfiveslice")
             #print(barfiveslice)
-            global primer5
             primer5 = barcodeprimers5[0][primer5len:]
             #print("primer5")
             #print(primer5)
-            global barcodes3
             barcodes3 = {}
             for x in barcodeprimers53:
                 barcodes3[barcodeprimers53[x][1][-primer3len:]] = x
@@ -215,11 +218,9 @@ def initialinput():
                 list3.append(len(i))
             #print("list3")
             #print(list3)
-            global barthreeslice
             barthreeslice = min(list3)
             #print("barthreeslice")
             #print(barthreeslice)
-            global primer3
             primer3 = barcodeprimers3[0][:primer3len]
             #print("primer3")
             #print(primer3)
@@ -237,6 +238,55 @@ def initialinput():
         extype = str(input("Experiment type (SELEX, ChIP, ATAC): "))
         mink = int(input("Minimum kmer length: "))
         maxk = int(input("Maximum kmer length: "))
+
+        if knownbarcode == True:
+            barcodeprimers53 = {}
+            for x in range(startround, (numofruns+startround)):
+                fivein = str(input("5' barcode/primer ("+str(x)+"): "))
+                threein = str(input("3' primer/barcode ("+str(x)+"): "))
+                barcodeprimers53[x] = (fivein, threein)
+                barcodeprimers5 = []
+            for x in barcodeprimers53:
+                barcodeprimers5.append(barcodeprimers53[x][0])
+            len5 = []
+            for i in barcodeprimers5:
+                len5.append(len(i))
+            max5 = max(len5)
+            min5 = min(len5)
+            if max5 == min5:
+                primer5len = fiveprimerfinder(barcodeprimers5)
+            barcodeprimers3 = []
+            for x in barcodeprimers53:
+                barcodeprimers3.append(barcodeprimers53[x][1])
+            len3 = []
+            for i in barcodeprimers3:
+                len3.append(len(i))
+            max3 = max(len3)
+            min3 = min(len3)
+            if max3 == min3:
+                primer3len = threeprimerfinder(barcodeprimers3)
+            barcodes5 = {}
+            barcodeslist5 = []
+            for x in barcodeprimers53:
+                barcodes5[barcodeprimers53[x][0][:-primer5len]] = x
+                barcodeslist5.append(barcodeprimers53[x][0][:-primer5len])
+            print("barcodes5")
+            print(barcodes5)
+            print("barcodeslist5")
+            print(barcodeslist5)
+            list5 = []
+            for i in barcodes5:
+                list5.append(len(i))
+            barfiveslice = min(list5)
+            primer5 = barcodeprimers5[0][primer5len:]
+            barcodes3 = {}
+            for x in barcodeprimers53:
+                barcodes3[barcodeprimers53[x][1][-primer3len:]] = x
+            list3 = []
+            for i in barcodes3:
+                list3.append(len(i))
+            barthreeslice = min(list3)
+            primer3 = barcodeprimers3[0][:primer3len]
 
 
 initialinput()
@@ -681,7 +731,7 @@ def addruncl():
             files.append(FileName)
         if extype == "SELEX":
             for x in range(0, numofruns):
-                l = int(input("Length of reads: "))
+                l = int(input("Length of reads ("+str(x+1)+"): "))
                 lvalues.update({(x+1):l})
             RangeKmerCounterSELEXmulti(mink, maxk)
             for x in range(1, numofruns+1):
