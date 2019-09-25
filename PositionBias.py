@@ -486,7 +486,7 @@ def plotter(runnum, k):
 
     bar.set_xlabel("TFBS")
     bar.set_ylabel("Frequency")
-    bar.set_title("Position Distribution for Run: "+str(runnum)+", K: "+str(k))
+    bar.set_title("Position Distribution for Run: "+str(runnum+(startround-1))+", K: "+str(k))
     bar.set_ylim(0,0.7)
     bar.set_yticks(yaxis)
 
