@@ -8,6 +8,8 @@ from KmerKounter import multiround
 if multiround == True:
     from KmerKounter import files
 
+from WebLogoMod import nmotifs
+
 from PositionBias import TSeqNums
 from PositionBias import LSeqNums
 from PositionBias import Barcodevalues
@@ -40,37 +42,50 @@ title = """
   box-sizing: border-box;
 }
 
-body {
+  body {
   font-family: Arial, Helvetica, sans-serif;
+  background-image: linear-gradient(to bottom, #051937, #004d7a, #008793, #00bf72, #a8eb12);
 }
 
 p {
-  font-size: 100px
+  font-size: 100px;
 }
 
 h1 {
-  font-size: 200px
+  font-size: 200px;
+  background-color: none;
+  color: white;
 }
 
 h2 {
-  font-size: 35px
+  font-size: 35px;
 }
 
+th {
+  color: lightgrey;
+  background-color: none;
+}
+
+td {
+  background-color: white;
+}
 
 header {
-  background-color: #666;
+  background-color: none;
   padding: 10px;
   text-align: center;
   font-size: 35px;
   color: white;
+
 }
 </style>
 </head>
 <header>
-<p> IniMotif </p>
-<h2>A pipeline for motif discovery!</h2>
+<h1 style="font-size: 600px;"> IniMotif </h1>
+<h2 style="font-size: 100px">A pipeline for motif discovery!</h2>
 </header>
 <br>
+
 """
 
 Html_file.write(title)
@@ -78,13 +93,13 @@ Html_file.write(title)
 def runheader():
     runheaders = []
     for x in range(0, numofruns+1):
-        string="<h1>Run "+str(x)+"</h1>"
+        string= """<h1 align = "middle" colour = "white";>Run """+str(x+(startround-1))+"</h1>"
         runheaders.append(string)
     return runheaders
 
 runheaders = runheader()
 
-
+# style="background-color: lightgrey;
 def results():
     html_strs = []
     for z in range(0, numofruns+1):
@@ -94,23 +109,35 @@ def results():
 
     for x in range(1, numofruns+1):
         for k in range(mink, maxk+1):
-            string = """<tr><td><p style="background-color: lightgrey; color: #333; padding: 30px;">K = """+str(k)+"""</p><img src="figures/logo_"""+str(identifier)+"_"+str(x)+"_"+str(k)+""".png"><img src="figures/hamdist_"""+str(identifier)+"_"+str(x)+"_"+str(k)+""".png" width=2000px hight=1200px><img src="figures/pos_"""+str(identifier)+"_"+str(x)+"_"+str(k)+""".png" width=2000px hight=1200px></td></tr>"""
+            logos = "<tr>"
+            kval = """<p style="color: white; padding: 30px;" align = "middle"><b>K = """+str(k)+"</b></p>"""
+            for n in range(1, nmotifs+1):
+                logos += """<td><img src="figures/"""+str(identifier)+"""/logos/logo_"""+str(identifier)+"_"+str(x+(startround-1))+"_"+str(k)+"_"+str(n)+""".png"></td>"""
+            ham = """<tr><td><img src="figures/"""+str(identifier)+"""/hamming_distance/hamdist_"""+str(identifier)+"_"+str(x+(startround-1))+"_"+str(k)+""".png" width=2000px hight=1200px></td>"""
+            pos = """<td><img src="figures/"""+str(identifier)+"""/position_bias/pos_"""+str(identifier)+"_"+str(x+(startround-1))+"_"+str(k)+""".png" width=2000px hight=1200px></td></tr>"""
+            string = kval+"""<table align = "center";>"""+logos+"</tr>"+ham+pos+"</table>"
             html_strs[x][k].append(string)
 
     return html_strs
 
 html_strs = results()
 
-
+#"""<p style="color: white; padding: 30px;" width=3000px hight=1800px align = "middle">K = """+str(i)+"""</p><img src="figures/"""+str(identifier)+"""/kmer_frequency/kmerfreq_"""+str(identifier)+"_"+str(k)+""".png" width=3000px height=3000px>"""
 def kmerfrequency():
     html_kmerfreq = {}
+    twos = 0
+    #pair = """<table align = "center";>"""
     for k in range(mink, maxk+1):
         html_kmerfreq.update({k:[]})
+        if twos % 2 == 0:
+            first = """<tr><td><img src="figures/"""+str(identifier)+"""/kmer_frequency/kmerfreq_"""+str(identifier)+"_"+str(k)+""".png" width=3000px height=3000px></td>"""
+            html_kmerfreq[k].append(first)
+        if twos % 2 == 1:
+            second = """<td><img src="figures/"""+str(identifier)+"""/kmer_frequency/kmerfreq_"""+str(identifier)+"_"+str(k)+""".png" width=3000px height=3000px></td></tr>"""
+            html_kmerfreq[k].append(second)
         #print(html_kmerfreq)
         #html_kmerfreq.update({k:[]})
-        string = """<p style="background-color: lightgrey; color: #333; padding: 30px;">K = """+str(k)+"""</p>"""+"""<img src="figures/kmerfreq_"""+str(identifier)+"_"+str(k)+""".png" width=3000px height=3000px>"""
-        html_kmerfreq[k].append(string)
-
+        twos += 1
     return html_kmerfreq
 
 html_kmerfreq = kmerfrequency()
@@ -124,20 +151,53 @@ def formatter():
             Html_file.write(html_strs[r][k][0])
 
 def kmerfreqformatter():
-    Html_file.write("""<h1 style="background-color: #3c3c3c; padding: 20px; color: white;"> Kmer frequency </h1>""")
-    for i in range(mink, maxk+1):
-        Html_file.write(html_kmerfreq[i][0])
+    Html_file.write("""<h1 style="background-color: #3c3c3c; padding: 0px; color: white;" align = "middle"> Kmer frequency </h1>""")
+    Html_file.write("""<table align = "center";>""")
+    twos = 0
+    for k in range(mink, maxk+1):
+        Html_file.write(html_kmerfreq[k][0])
+        twos += 1
+        if k == maxk:
+            if twos % 2 == 1:
+                Html_file.write("""<td><background color = "white" width=3000px height=3000px></td></tr>""")
+    Html_file.write("</table>")
+
 
 formatter()
+
 kmerfreqformatter()
 
 def tablemaker():
-    Html_file.write("""<h1 style="background-color: #3c3c3c; padding: 20px; color: white;"> Numbers </h1><br>""")
-    for r in range(startround, numofruns+1):
+    Html_file.write("""<h1 style="background-color: #3c3c3c; padding: 20px; color: white;" align = "middle"> Numbers </h1><br>""")
+    for r in range(1, numofruns+1):
         if multiround == False:
-            Html_file.write("<table cellpadding=10><tr><td><h2>"+str(r)+": "+str(filenames1[r])+"</h2></td></tr>"+"<tr><td>Total sequences:</td><td>"+str(TSeqNums[r])+"</td></tr>"+"<tr><td>Passed sequences:</td><td>"+str(LSeqNums[r])+"</td></tr>"+"</h2></td></tr>"+"<tr><td>Barcode:</td><td>"+str(Barcodevalues[r])+"""</td></tr><tr><td style="background-color:lightgrey;"></td>""")
+            Html_file.write("<table cellpadding=10><tr><td><h2>"+str(r+(startround-1))+": "+str(filenames1[r])+"</h2></td>")
+            for _ in range(mink, maxk+1):
+                Html_file.write("<td></td>")
+            Html_file.write("</tr><tr><td>Total sequences:</td><td>"+str(TSeqNums[r])+"</td>")
+            for _ in range(mink, maxk):
+                Html_file.write("<td></td>")
+            Html_file.write("</tr><tr><td>Passed sequences:</td><td>"+str(LSeqNums[r])+"</td>")
+            for _ in range(mink, maxk):
+                Html_file.write("<td></td>")
+            Html_file.write("</tr></h2></td></tr>"+"<tr><td>Barcode:</td><td>"+str(Barcodevalues[r])+"</td>")
+            for _ in range(mink, maxk):
+                Html_file.write("<td></td>")
+            Html_file.write("""</tr><tr><td style="background-color:lightgrey;"></td>""")
         if multiround == True:
-            Html_file.write("<table cellpadding=10><tr><td><h2>"+str(r)+": "+str(files[0])+"</h2></td></tr>"+"<tr><td>Total sequences:</td><td>"+str(TSeqNums[r])+"</td></tr>"+"<tr><td>Passed sequences:</td><td>"+str(LSeqNums[r])+"</td></tr>"+"</h2></td></tr>"+"<tr><td>Barcode:</td><td>"+str(Barcodevalues[r])+"""</td></tr><tr><td style="background-color:lightgrey;"></td>""")
+            Html_file.write("<table cellpadding=10><tr><td><h2>"+str(r+(startround-1))+": "+str(files[0])+"</h2></td>")
+            for _ in range(mink, maxk+1):
+                Html_file.write("<td></td>")
+            Html_file.write("</tr><tr><td>Total sequences:</td><td>"+str(TSeqNums[r])+"</td>")
+            for _ in range(mink, maxk):
+                Html_file.write("<td></td>")
+            Html_file.write("</tr><tr><td>Passed sequences:</td><td>"+str(LSeqNums[r])+"</td>")
+            for _ in range(mink, maxk):
+                Html_file.write("<td></td>")
+            Html_file.write("</tr></h2></td></tr>"+"<tr><td>Barcode:</td><td>"+str(Barcodevalues[r])+"</td>")
+            for _ in range(mink, maxk):
+                Html_file.write("<td></td>")
+            Html_file.write("""</tr><tr><td style="background-color:lightgrey;"></td>""")
         for k in range(mink, maxk+1):
             Html_file.write("""<td style="background-color:lightgrey;"><b>K"""+str(k)+"</b></td>")
         Html_file.write("<tr><td>Total kmers</td>")
