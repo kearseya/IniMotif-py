@@ -187,6 +187,13 @@ startroundinputs.delete(0)
 startroundinputs.insert(0, int(1))
 startroundinputs.grid(row=10, column=1)
 
+nmotifslabels = Label(initialdetailsframe, text="Number of motifs: ")
+nmotifslabels.grid(row=11, column=0,  sticky="e")
+nmotifsinputs = Entry(initialdetailsframe, textvariable=IntVar())
+nmotifsinputs.delete(0)
+nmotifsinputs.insert(0, int(1))
+nmotifsinputs.grid(row=11, column=1)
+
 
 """
 filenameslabels = Label(variableinputform, text="File name: ", anchor="w")
@@ -263,15 +270,16 @@ def makeorderedinputlist():
             position = fileinputslist[x]
             inputlist.append(str(position.get()))
 
-    global logotype
-    logotype = str(valueforlogodrop.get())
-
     global startround
     startround = int(startroundinputs.get())
     global multiround
     multiround = multiround.get()
     global knownbarcode
     knownbarcode = knownbarcodes.get()
+    global logotype
+    logotype = str(valueforlogodrop.get())
+    global nmotifs
+    nmotifs = int(nmotifsinputs.get())
 
     if knownbarcode == True:
         inputlist.append(str(fiveprimebarinputs.get()))
@@ -292,9 +300,7 @@ autofilldetailscheckbox.pack(side=LEFT, anchor="n", padx=20, pady=20)
 submitdetailscheckbox = Button(window, command=makeorderedinputlist, text="SUBMIT")
 submitdetailscheckbox.pack(side=RIGHT, anchor="n", padx=20, pady=20)
 
-
 window.mainloop()
-
 
 
 
