@@ -6,6 +6,8 @@ from Bio import SeqIO
 #import sys
 import os
 
+import operator
+
 #cwd = os.getcwd()
 
 def kmer2hash(kmer):
@@ -59,15 +61,15 @@ def importfromgui():
     global inputlist
     try:
         from GUI import inputlist
-        print(inputlist)
+        #print(inputlist)
         from GUI import startround
         from GUI import multiround
         from GUI import knownbarcode
     except:
         inputlist = ["cl"]
-        startround = 1
         multiround = str(input("Multiple rounds per file (y/n)?: "))
         knownbarcode = str(input("Known barcodes (y/n)?: "))
+        startround = int(input("Starting round: "))
         if multiround in ["y", "Y", "yes", "Yes", "t", "true", "True"]:
             multiround = True
         else:
@@ -87,7 +89,26 @@ def revComp(seq):
     return rev
 
 
-
+"""
+def fiveprimerfinder(listin):
+    primer = 0
+    for i in range(len(listin[0])):
+        truefor = 0
+        #print(diff)
+        for x in range(len(listin)):
+            diff = abs((len(listin[0])-len(listin[x])))
+            if diff == 0:
+                if listin[0][i:] == listin[x][i:]:
+                    truefor += 1
+                    if truefor == len(listin):
+                        primer += 1
+            if diff != 0:
+                if listin[0][i:-diff] == listin[x][i:-diff]:
+                    truefor += 1
+                    if truefor == len(listin):
+                        primer += 1
+    return primer
+"""
 def fiveprimerfinder(listin):
     primer = 0
     for i in range(len(listin[0])):
@@ -193,10 +214,10 @@ def initialinput():
             for x in barcodeprimers53:
                 barcodes5[barcodeprimers53[x][0][:-primer5len]] = x
                 barcodeslist5.append(barcodeprimers53[x][0][:-primer5len])
-            print("barcodes5")
-            print(barcodes5)
-            print("barcodeslist5")
-            print(barcodeslist5)
+            #print("barcodes5")
+            #print(barcodes5)
+            #print("barcodeslist5")
+            #print(barcodeslist5)
             list5 = []
             for i in barcodes5:
                 list5.append(len(i))
@@ -270,10 +291,10 @@ def initialinput():
             for x in barcodeprimers53:
                 barcodes5[barcodeprimers53[x][0][:-primer5len]] = x
                 barcodeslist5.append(barcodeprimers53[x][0][:-primer5len])
-            print("barcodes5")
-            print(barcodes5)
-            print("barcodeslist5")
-            print(barcodeslist5)
+            #print("barcodes5")
+            #print(barcodes5)
+            #print("barcodeslist5")
+            #print(barcodeslist5)
             list5 = []
             for i in barcodes5:
                 list5.append(len(i))
@@ -299,9 +320,9 @@ l = int(input("Read lengths:"))
 
 #kmercombinations = {}
 kmercount = []
-hamlist = []
-hamdict = []
-pwm = []
+#hamlist = []
+#hamdict = []
+#pwm = []
 filenames = {}
 ufilenames = {}
 filenames1 = {}
@@ -310,9 +331,9 @@ lvalues = {}
 def dictinit(numofruns):
     for _ in range(numofruns + startround):
         kmercount.append({})
-        hamlist.append({})
-        hamdict.append({})
-        pwm.append({})
+        #hamlist.append({})
+        #hamdict.append({})
+        #pwm.append({})
 
 
 dictinit(numofruns)
@@ -632,7 +653,7 @@ def RangeKmerCounterChipDNAmulti(mink, maxk):
 
 
 
-
+"""
 def hamming_distance(s1, s2):
     if len(s1) != len(s2):
         raise ValueError("Undefined for sequences of unequal length")
@@ -689,13 +710,12 @@ def pwmmaker(runnum):
                     pwm[runnum][i][j]["T"] += hamdict[runnum][i][x]
                 elif kmer[j-1] == "G":
                     pwm[runnum][i][j]["G"] += hamdict[runnum][i][x]
-
+"""
 
 
 def addruncl():
     global FileName1
     global FileName
-    print(multiround)
     if multiround == False:
         for runnum in range(1, numofruns+1):
             FileName1 = str(input("Fasta File Name: "))
@@ -710,16 +730,16 @@ def addruncl():
                 l = int(input("Read lengths:"))
                 lvalues.update({runnum:l})
                 RangeKmerCounterSELEX(FileName, runnum, mink, maxk)
-                listhammer(runnum)
-                dicthammer(runnum)
-                startpwm(runnum)
-                pwmmaker(runnum)
+                #listhammer(runnum)
+                #dicthammer(runnum)
+                #startpwm(runnum)
+                #pwmmaker(runnum)
             if extype in ["ChIP", "DNase"]:
                 RangeKmerCounterChipDNA(FileName, runnum, mink, maxk)
-                listhammer(runnum)
-                dicthammer(runnum)
-                startpwm(runnum)
-                pwmmaker(runnum)
+                #listhammer(runnum)
+                #dicthammer(runnum)
+                #startpwm(runnum)
+                #pwmmaker(runnum)
     if multiround == True:
         global numoffiles
         numoffiles = int(input("Number of files: "))
@@ -734,18 +754,18 @@ def addruncl():
                 l = int(input("Length of reads ("+str(x+1)+"): "))
                 lvalues.update({(x+1):l})
             RangeKmerCounterSELEXmulti(mink, maxk)
-            for x in range(1, numofruns+1):
-                listhammer(x)
-                dicthammer(x)
-                startpwm(x)
-                pwmmaker(x)
+            #for x in range(1, numofruns+1):
+                #listhammer(x)
+                #dicthammer(x)
+                #startpwm(x)
+                #pwmmaker(x)
         if extype in ["ChIP", "DNase"]:
             RangeKmerCounterChipDNAmulti(mink, maxk)
-            for x in range(1, numofrounds+1):
-                listhammer(x)
-                dicthammer(x)
-                startpwm(x)
-                pwmmaker(x)
+            #for x in range(1, numofrounds+1):
+                #listhammer(x)
+                #dicthammer(x)
+                #startpwm(x)
+                #pwmmaker(x)
 
 def addrungui():
     try:
@@ -766,10 +786,10 @@ def addrungui():
                         l = int(inputlist[(x*2)+8])
                         lvalues.update({runnum:l})
                         RangeKmerCounterSELEX(FileName, runnum, mink, maxk)
-                        listhammer(runnum)
-                        dicthammer(runnum)
-                        startpwm(runnum)
-                        pwmmaker(runnum)
+                        #listhammer(runnum)
+                        #dicthammer(runnum)
+                        #startpwm(runnum)
+                        #pwmmaker(runnum)
                 if extype in ["ChIP", "DNase"]:
                     for x in range(0, numofruns):
                         FileName1 = str(inputlist[x+7])
@@ -780,10 +800,10 @@ def addrungui():
                         filenames.update({runnum:FileName})
                         #Combinations(runnum, mink, maxk)
                         RangeKmerCounterChipDNA(FileName, runnum, mink, maxk)
-                        listhammer(runnum)
-                        dicthammer(runnum)
-                        startpwm(runnum)
-                        pwmmaker(runnum)
+                        #listhammer(runnum)
+                        #dicthammer(runnum)
+                        #startpwm(runnum)
+                        #pwmmaker(runnum)
             if multiround == True:
                 if extype == "SELEX":
                     for x in range(0, numofruns):
@@ -791,18 +811,18 @@ def addrungui():
                         lvalues.update({(x+1):l})
                     #l = int(inputlist[8])
                     RangeKmerCounterSELEXmulti(mink, maxk)
-                    for x in range(1, numofruns+1):
-                        listhammer(x)
-                        dicthammer(x)
-                        startpwm(x)
-                        pwmmaker(x)
+                    #for x in range(1, numofruns+1):
+                        #listhammer(x)
+                        #dicthammer(x)
+                        #startpwm(x)
+                        #pwmmaker(x)
                 if extype in ["ChIP", "DNase"]:
                     RangeKmerCounterChipDNAmulti(mink, maxk)
-                    for x in range(1, numofrounds+1):
-                        listhammer(x)
-                        dicthammer(x)
-                        startpwm(x)
-                        pwmmaker(x)
+                    #for x in range(1, numofrounds+1):
+                        #listhammer(x)
+                        #dicthammer(x)
+                        #startpwm(x)
+                        #pwmmaker(x)
 
 
     except:
@@ -831,7 +851,110 @@ def removezeros():
 
 removezeros()
 
+top12t = []
+top12 = []
 
+def top12maker(numofruns):
+    for _ in range(0, numofruns+1):
+        top12t.append({})
+        top12.append({})
+    for x in range(1, numofruns+1):
+        #mink = int(inputlist[((x-1)*5)+7])
+        #maxk = int(inputlist[((x-1)*5)+8])
+        for k in range(mink, maxk+1):
+            top12t[x][k] = list(sorted(kmercount[x][k].items(), key=lambda x: x[1], reverse=True))[:12]
+            top12[x][k] = [j[0] for j in top12t[x][k]]
+
+top12maker(numofruns)
+#print(kmercount)
+#print(top12)
+
+top6all = []
+
+def top6(run, k):
+    top6us = []
+    top6ts = []
+    top6ds = {}
+    top6s = []
+    topvalpos = 0
+    while len(top6us) <= 11:
+        next = top12[run][k][topvalpos]
+        nkmer = hash2kmer(next, k)
+        nrkmer = revComp(nkmer)
+        nhrkmer = kmer2hash(nrkmer)
+        if next not in top6us:
+            top6us.append(next)
+            #print("k "+str(k)+" len "+str(len(top6s))+" kmer "+str(next))
+        if next == nhrkmer:
+            if len(top6us) <= 11:
+                top6us.append(nhrkmer)
+        try:
+            if kmercount[run][k][nhrkmer] > 0:
+                if nhrkmer not in top6us:
+                    if len(top6us) <= 11:
+                        top6us.append(nhrkmer)
+                        #print("k "+str(k)+" len "+str(len(top6s))+" kmer "+str(nhrkmer))
+        except:
+            if len(top6us) <= 11:
+                top6us.append(next)
+        topvalpos += 1
+
+    for i in range(len(top6us)):
+        if i//2 == (i+1)//2:
+            top6ts.append((top6us[i], top6us[i+1]))
+
+    for x in top6ts:
+        try:
+            first = kmercount[run][k][x[0]]
+        except:
+            first = 0
+        if x[0] != x[1]:
+            try:
+                second = kmercount[run][k][x[1]]
+            except:
+                second = 0
+        if x[0] == x[1]:
+            second = 0
+        top6ds[x] = first+second
+
+    sort = sorted(top6ds.items(), key=operator.itemgetter(1), reverse=True)
+
+    for z in range(len(sort)):
+        top6s.append(sort[z][0][0])
+        top6s.append(sort[z][0][1])
+
+    return top6s
+
+
+
+
+def top6maker(numofruns):
+    for _ in range(0, numofruns+1):
+        top6all.append({})
+    for x in range(1, numofruns+1):
+        #mink = int(inputlist[((x-1)*5)+7])
+        #maxk = int(inputlist[((x-1)*5)+8])
+        for k in range(mink, maxk+1):
+            top6all[x][k] = top6(x, k)
+
+top6maker(numofruns)
+#print("top6all")
+#print(top6all)
+
+totaldict = []
+
+def findalltotals():
+    global totaldict
+    for _ in range(numofruns+1):
+        totaldict.append({})
+    for runnum in range(1, numofruns+1):
+        for k in range(mink, maxk+1):
+            totaldict[runnum][k] = sum(kmercount[runnum][k].values())
+
+findalltotals()
+
+#print("Total")
+#print(totaldict)
 
 #print(kmercombinations)
 
@@ -843,6 +966,21 @@ removezeros()
 #print(hamdict)
 #print("pwm")
 #print(pwm)
+
+#print(os.getcwd())
+
+def organisefigures():
+    cwd = str(os.getcwd())
+    try:
+        os.makedirs(cwd+"/figures/"+str(identifier))
+        os.makedirs(cwd+"/figures/"+str(identifier)+"/logos")
+        os.makedirs(cwd+"/figures/"+str(identifier)+"/hamming_distance")
+        os.makedirs(cwd+"/figures/"+str(identifier)+"/position_bias")
+        os.makedirs(cwd+"/figures/"+str(identifier)+"/kmer_frequency")
+    except:
+        pass
+
+organisefigures()
 
 
 print('Generating Logos')
