@@ -112,7 +112,10 @@ def results():
             logos = "<tr>"
             kval = """<p style="color: white; padding: 30px;" align = "middle"><b>K = """+str(k)+"</b></p>"""
             for n in range(1, nmotifs+1):
-                logos += """<td><img src="figures/"""+str(identifier)+"""/logos/logo_"""+str(identifier)+"_"+str(x+(startround-1))+"_"+str(k)+"_"+str(n)+""".png"></td>"""
+                if nmotifs == 1:
+                    logos += """<td colspan = 2 align = "middle"><img src="figures/"""+str(identifier)+"""/logos/logo_"""+str(identifier)+"_"+str(x+(startround-1))+"_"+str(k)+"_"+str(n)+""".png"></td>"""
+                else:
+                    logos += """<td><img src="figures/"""+str(identifier)+"""/logos/logo_"""+str(identifier)+"_"+str(x+(startround-1))+"_"+str(k)+"_"+str(n)+""".png"></td>"""
             ham = """<tr><td><img src="figures/"""+str(identifier)+"""/hamming_distance/hamdist_"""+str(identifier)+"_"+str(x+(startround-1))+"_"+str(k)+""".png" width=2000px hight=1200px></td>"""
             pos = """<td><img src="figures/"""+str(identifier)+"""/position_bias/pos_"""+str(identifier)+"_"+str(x+(startround-1))+"_"+str(k)+""".png" width=2000px hight=1200px></td></tr>"""
             string = kval+"""<table align = "center";>"""+logos+"</tr>"+ham+pos+"</table>"
@@ -167,36 +170,23 @@ formatter()
 
 kmerfreqformatter()
 
+#for _ in range(mink, maxk+1):
+    #Html_file.write("<td></td>")
+
 def tablemaker():
     Html_file.write("""<h1 style="background-color: #3c3c3c; padding: 20px; color: white;" align = "middle"> Numbers </h1><br>""")
     for r in range(1, numofruns+1):
         if multiround == False:
-            Html_file.write("<table cellpadding=10><tr><td><h2>"+str(r+(startround-1))+": "+str(filenames1[r])+"</h2></td>")
-            for _ in range(mink, maxk+1):
-                Html_file.write("<td></td>")
-            Html_file.write("</tr><tr><td>Total sequences:</td><td>"+str(TSeqNums[r])+"</td>")
-            for _ in range(mink, maxk):
-                Html_file.write("<td></td>")
-            Html_file.write("</tr><tr><td>Passed sequences:</td><td>"+str(LSeqNums[r])+"</td>")
-            for _ in range(mink, maxk):
-                Html_file.write("<td></td>")
-            Html_file.write("</tr></h2></td></tr>"+"<tr><td>Barcode:</td><td>"+str(Barcodevalues[r])+"</td>")
-            for _ in range(mink, maxk):
-                Html_file.write("<td></td>")
+            Html_file.write("<table cellpadding=10><tr><td colspan = "+str((maxk-mink)+2)+""" align = "middle"><h2>"""+str(r+(startround-1))+": "+str(filenames1[r])+"</h2></td>")
+            Html_file.write("</tr><tr><td>Total sequences:</td><td colspan = "+str((maxk-mink)+1)+""" align = "left">"""+str(TSeqNums[r])+"</td>")
+            Html_file.write("</tr><tr><td>Passed sequences:</td><td colspan = "+str((maxk-mink)+1)+""" align = "left">"""+str(LSeqNums[r])+"</td>")
+            Html_file.write("</tr></h2></td></tr>"+"<tr><td>Barcode:</td><td colspan = "+str((maxk-mink)+1)+""" align = "left">"""+str(Barcodevalues[r])+"</td>")
             Html_file.write("""</tr><tr><td style="background-color:lightgrey;"></td>""")
         if multiround == True:
-            Html_file.write("<table cellpadding=10><tr><td><h2>"+str(r+(startround-1))+": "+str(files[0])+"</h2></td>")
-            for _ in range(mink, maxk+1):
-                Html_file.write("<td></td>")
-            Html_file.write("</tr><tr><td>Total sequences:</td><td>"+str(TSeqNums[r])+"</td>")
-            for _ in range(mink, maxk):
-                Html_file.write("<td></td>")
-            Html_file.write("</tr><tr><td>Passed sequences:</td><td>"+str(LSeqNums[r])+"</td>")
-            for _ in range(mink, maxk):
-                Html_file.write("<td></td>")
-            Html_file.write("</tr></h2></td></tr>"+"<tr><td>Barcode:</td><td>"+str(Barcodevalues[r])+"</td>")
-            for _ in range(mink, maxk):
-                Html_file.write("<td></td>")
+            Html_file.write("<table cellpadding=10><tr><td colspan = "+str((maxk-mink)+2)+""" align = "middle"><h2>"""+str(r+(startround-1))+": "+str(files[0])+"</h2></td>")
+            Html_file.write("</tr><tr><td>Total sequences:</td><td colspan = "+str((maxk-mink)+1)+""" align = "left">"""+str(TSeqNums[r])+"</td>")
+            Html_file.write("</tr><tr><td>Passed sequences:</td><td colspan = "+str((maxk-mink)+1)+""" align = "left">"""+str(LSeqNums[r])+"</td>")
+            Html_file.write("</tr></h2></td></tr>"+"<tr><td>Barcode:</td><td colspan = "+str((maxk-mink)+1)+""" align = "left">"""+str(Barcodevalues[r])+"</td>")
             Html_file.write("""</tr><tr><td style="background-color:lightgrey;"></td>""")
         for k in range(mink, maxk+1):
             Html_file.write("""<td style="background-color:lightgrey;"><b>K"""+str(k)+"</b></td>")
