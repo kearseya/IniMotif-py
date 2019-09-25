@@ -9,12 +9,15 @@ from KmerKounter import mink
 from KmerKounter import maxk
 from KmerKounter import inputlist
 from KmerKounter import startround
+from KmerKounter import totaldict
+
+from KmerKounter import top6all
 
 import matplotlib.pyplot as plt
 import numpy as np
 import math
 import random
-import operator
+#import operator
 
 from adjustText import adjust_text
 
@@ -38,7 +41,7 @@ khams = []
 def hammer():
     for _ in range(numofruns + 1):
         khams.append({})
-    for run in range(startround, (numofruns+startround)):
+    for run in range(1, numofruns+1):
         for k in range(mink, maxk+1):
             khams[run][k] = {k: {} for k in range(k+1)}
             #print("run "+str(run)+" k "+str(k))
@@ -66,6 +69,7 @@ def multihammer():
 #print("khams")
 #print(khams)
 
+"""
 top12t = []
 top12 = []
 
@@ -85,6 +89,7 @@ top12maker(numofruns)
 #print(top12)
 
 top6all = []
+"""
 
 """
 def top6(run, k):
@@ -115,6 +120,7 @@ def top6(run, k):
     return top6s
 """
 
+"""
 def top6(run, k):
     top6us = []
     top6ts = []
@@ -175,7 +181,7 @@ def top6(run, k):
 def top6maker(numofruns):
     for _ in range(0, numofruns+1):
         top6all.append({})
-    for x in range(startround, (numofruns+startround)):
+    for x in range(1, numofruns+1):
         #mink = int(inputlist[((x-1)*5)+7])
         #maxk = int(inputlist[((x-1)*5)+8])
         for k in range(mink, maxk+1):
@@ -184,6 +190,7 @@ def top6maker(numofruns):
 top6maker(numofruns)
 #print("top6all")
 #print(top6all)
+"""
 
 
 def top6plotx(run, p, k):
@@ -338,13 +345,13 @@ def scatter(run, k):
 
     plt.xlabel("Hamming distance")
     plt.ylabel("Kmer count")
-    plt.title("Run number:"+' '+str(run)+'\n'+'K: '+str(k)+'\n'+'Total kmers: '+str(sum(kmercount[run][k].values())))
+    plt.title("Run number:"+' '+str(run)+'\n'+'K: '+str(k)+'\n'+'Total kmers: '+str(totaldict[run][k]))
     #plt.show()
-    plt.savefig('figures/hamdist_'+str(identifier)+"_"+str(run)+"_"+str(k), dpi=600)
+    plt.savefig("figures/"+str(identifier)+"/hamming_distance/hamdist_"+str(identifier)+"_"+str(run+(startround-1))+"_"+str(k), dpi=600)
     plt.close()
 
 def plotrange(runs):
-    for r in range(startround,runs+1):
+    for r in range(1, runs+1):
         #mink = int(inputlist[((r-1)*5)+7])
         #maxk = int(inputlist[((r-1)*5)+8])
         for k in range(mink, maxk+1):
