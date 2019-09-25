@@ -9,6 +9,7 @@ from KmerKounter import revnuc
 from KmerKounter import revComp
 from KmerKounter import revcompwanted
 from KmerKounter import startround
+from KmerKounter import totaldict
 
 from KmerKounter import numofruns
 from HamDistFig import top6all
@@ -22,7 +23,7 @@ import math
 
 def makexaxis():
     xaxis = ([])
-    for i in range(numofruns):
+    for i in range((startround-1), numofruns+(startround-1)):
         xaxis.append(i)
     return xaxis
 
@@ -64,9 +65,9 @@ def colours1():
     global colours
     colours = {}
     for k in range(mink, maxk+1):
-        top6s = top6all[numofruns+startround-1][k]
+        top6s = top6all[numofruns][k]
         #consensusnum = kmercount[numofruns][k][top6s[0]]
-        colours[k] = list(sorted(kmercount[numofruns+startround-1][k].items(), key=lambda x: x[1], reverse=True))[:62]
+        colours[k] = list(sorted(kmercount[numofruns][k].items(), key=lambda x: x[1], reverse=True))[:62]
         colours[k] = [j[0] for j in colours[k]]
         for i in top6s:
             if i in colours[k]:
@@ -88,8 +89,8 @@ def makeyaxis1a(i, k):
     rkmer = kmer2hash(revComp(hash2kmer(i,k)))
     top6s = top6all[numofruns][k]
     #colours = colours[k]
-    for l in range(startround, (numofruns+startround)):
-        total = sum(kmercount[l][k].values())
+    for l in range(1, numofruns+1):
+        total = totaldict[l][k]
         if i not in top6s or colours[k]:
             try:
                 num =  kmercount[l][k][i]
@@ -110,8 +111,8 @@ def makeyaxis1b(i, k):
     yaxis1b = ([])
     rkmer = kmer2hash(revComp(hash2kmer(i,k)))
     #colours = colours[k]
-    for l in range(startround, (numofruns+startround)):
-        total = sum(kmercount[l][k].values())
+    for l in range(1, numofruns+1):
+        total = totaldict[l][k]
         if i in colours[k]:
             try:
                 num =  kmercount[l][k][i]
@@ -131,8 +132,8 @@ def makeyaxis1c(i, k):
     yaxis1c = ([])
     rkmer = kmer2hash(revComp(hash2kmer(i,k)))
     top6s = top6all[numofruns][k]
-    for l in range(startround, (numofruns+startround)):
-        total = sum(kmercount[l][k].values())
+    for l in range(1, numofruns+1):
+        total = totaldict[l][k]
         if i in top6s:
             try:
                 num =  kmercount[l][k][i]
@@ -154,8 +155,8 @@ def makeyaxis2a(i, k):
     rkmer = kmer2hash(revComp(hash2kmer(i,k)))
     top6s = top6all[numofruns][k]
     #colours = colours[k]
-    for l in range(startround, (numofruns+startround)):
-        total = sum(kmercount[l][k].values())
+    for l in range(1, numofruns+1):
+        total = totaldict[l][k]
         if i not in top6s or colours[k]:
             try:
                 num =  kmercount[l][k][i]
@@ -173,8 +174,8 @@ def makeyaxis2b(i, k):
     yaxis2b = ([])
     rkmer = kmer2hash(revComp(hash2kmer(i,k)))
     #colours = colours[k]
-    for l in range(startround, (numofruns+startround)):
-        total = sum(kmercount[l][k].values())
+    for l in range(1, numofruns+1):
+        total = totaldict[l][k]
         if i in colours[k]:
             try:
                 num =  kmercount[l][k][i]
@@ -192,8 +193,8 @@ def makeyaxis2c(i, k):
     yaxis2c = ([])
     rkmer = kmer2hash(revComp(hash2kmer(i,k)))
     top6s = top6all[numofruns][k]
-    for l in range(startround, (numofruns+startround)):
-        total = sum(kmercount[l][k].values())
+    for l in range(1, numofruns+1):
+        total = totaldict[l][k]
         if i in top6s:
             try:
                 num =  kmercount[l][k][i]
@@ -210,8 +211,8 @@ def makeyaxis2c(i, k):
 
 def makeyaxis3(k):
     yaxis3 = ([])
-    for l in range(startround, (numofruns+startround)):
-        total = sum(kmercount[l][k].values())
+    for l in range(1, numofruns+1):
+        total = totaldict[l][k]
         yaxis3.append(total)
     return yaxis3
 
@@ -231,15 +232,15 @@ def grapher(k):
     top.set_xlabel("SELEX round")
     top.set_ylabel("log(f/(1-f))")
     top.set_title("Kmer frequency"+', K: '+str(k))
-    top.set_xlim([-0.5, (numofruns+1)])
-    top.set_xticks(np.linspace(-0.5, (numofruns+1), num=((2*(numofruns+1))+2), endpoint=True))
+    top.set_xlim([((startround-1)-0.5), (numofruns+startround)])
+    top.set_xticks(np.linspace((startround-1)-0.5, (numofruns+startround), num=((2*(numofruns+1))+2), endpoint=True))
 
     bottom = fig.add_subplot(grid[-1,:-1])
     bottom.set_xlabel("SELEX round")
     bottom.set_ylabel("f = (kmer/total)")
     bottom.set_title("Kmer frequency")
-    bottom.set_xlim([-0.5, numofruns])
-    bottom.set_xticks(range(0,(numofruns+1)))
+    bottom.set_xlim([((startround-1)-0.5), (numofruns+(startround-1))])
+    bottom.set_xticks(range((startround-1),(numofruns+1)))
 
     bar = fig.add_subplot(grid[-1,-1:])
     bar.set_xlabel("SELEX round")
@@ -317,7 +318,7 @@ def grapher(k):
                     continue
 
 
-        for l in range(startround, (numofruns+startround)):
+        for l in range(1, numofruns+1):
             #total = sum(kmercount[l][k].values())
             alreadybottom = []
             for i in kmercount[l][k]:
@@ -352,18 +353,18 @@ def grapher(k):
         p = (n//2)
         yaxis1c = makeyaxis1c(i, k)
         yaxis2c = makeyaxis2c(i, k)
-        top.annotate((str(n+1)), (xaxis[last], yaxis1c[last]), (xaxis[last]+0.1, ypost[-(n+2)]), size=10, fontname='monospace', weight='bold', arrowprops=dict(color=colourslist[n], shrink=0.05, width=0.05, headwidth=0.4), color=colourslist[n])
+        top.annotate((str(n+1)), (xaxis[last], yaxis1c[last]), (xaxis[last]+0.2, ypost[-(n+2)]), size=10, fontname='monospace', weight='bold', arrowprops=dict(color=colourslist[n], shrink=0.05, width=0.05, headwidth=0.4), color=colourslist[n])
         top6labels.append(str(n+1)+". "+str(hash2kmer(i,k))+" / "+revComp(str(hash2kmer(i,k))))
         bottom.annotate((str(n+1)+". "+str(hash2kmer(i,k))), (xaxis[last], yaxis2c[last]), (xaxis[last]+0.3, yposb[-(n+2)]), size=10, fontname='monospace', weight='bold', color=colourslist[n], arrowprops=dict(color=colourslist[n], shrink=0.05, width=0.05, headwidth=0.4))
 
     for p, i in enumerate(top6s[::2]):
         dp = (p+3)
-        top.text(s=(str(top6labels[p])), x=(numofruns-0.5), y=(ypost[-dp]), size=14, fontname='monospace', color=colourslist[p])
+        top.text(s=(str(top6labels[p])), x=(numofruns-0.5+(startround-1)), y=(ypost[-dp]), size=14, fontname='monospace', color=colourslist[p])
 
     bar.bar(xaxis, makeyaxis3(k))
 
     #plt.show()
-    plt.savefig('figures/kmerfreq_'+str(identifier)+'_'+str(k), dpi=600)
+    plt.savefig("figures/"+str(identifier)+"/kmer_frequency/kmerfreq_"+str(identifier)+"_"+str(k), dpi=600)
     plt.close()
 
 def multigrapher(mink, maxk):
