@@ -93,7 +93,7 @@ Primervalues = {}
 numoftfbsseq = {}
 
 def seqcountdictinit():
-    for x in range(startround, (numofruns+startround)):
+    for x in range(1, numofruns+1):
         TSeqNums[x] = 0
         LSeqNums[x] = 0
         numoftfbsseq[x] = {}
@@ -138,7 +138,7 @@ def LSeqCounter(FileName):
     return LSeqNum
 
 def allTLSeqCounter():
-    for i in range(startround, numofruns+1):
+    for i in range(1, numofruns+1):
             x = TSeqCounter(filenames[i])
             y = LSeqCounter(filenames[i])
             b = barcodechecker(filenames[i])
@@ -159,7 +159,7 @@ def listinit():
     for i in range(0,numofruns+1):
         poslist.append({})
         rposlist.append({})
-    for j in range(startround, (numofruns+startround)):
+    for j in range(1, numofruns+1):
         l = lvalues[j]
         if knownbarcode == False:
             avg5 = barcodechecker(filenames[j])
@@ -232,7 +232,7 @@ def listhammer(runnum, k):
 
 
 def multilisthammer(numofruns):
-    for x in range(startround, (numofruns+startround)):
+    for x in range(1, numofruns+1):
         #mink = int(inputlist[((x-1)*5)+7])
         #maxk = int(inputlist[((x-1)*5)+8])
         for i in range(mink, maxk+1):
@@ -291,7 +291,7 @@ def CreatePosList(FileName, k, runnum):
     if firstline.startswith("@"):
         filetype = "fastq"
     for sequence in SeqIO.parse(FileName, filetype):
-        line = str(sequence.seq)en(rkmers) > 0 and (line.count(rkmers) + line.count(kmers)) == 1
+        line = str(sequence.seq)
         c = 0
         if len(line) == lvalues[runnum] and "N" not in line:
             LSeqNums[runnum] += 1
@@ -332,7 +332,7 @@ def CreatePosList(FileName, k, runnum):
                             rdone.append(rkmers)
 
 def multiPosList(numofruns):
-    for x in range(startround, (numofruns+startround)):
+    for x in range(1, numofruns+1):
         #mink = int(inputlist[((x-1)*5)+7])
         #maxk = int(inputlist[((x-1)*5)+8])
         for i in range(mink, maxk+1):
@@ -507,13 +507,13 @@ def plotter(runnum, k):
         label=('Forward strands', 'Reverse strands')
         bar.legend(loc = 1)
 
-    plt.savefig('figures/pos_'+str(identifier)+"_"+str(runnum)+"_"+str(k), dpi=600)
+    plt.savefig("figures/"+str(identifier)+"/position_bias/pos_"+str(identifier)+"_"+str(runnum+(startround-1))+"_"+str(k), dpi=600)
     plt.close()
 
 
 
 def plotrange(numofruns):
-    for r in range(startround, (numofruns+startround)):
+    for r in range(1, numofruns+1):
         #mink = int(inputlist[((r-1)*5)+7])
         #maxk = int(inputlist[((r-1)*5)+8])
         for k in range(mink, maxk+1):
@@ -528,11 +528,11 @@ numofuniquekmers = {}
 numoftfbs = {}
 
 def numberofukmers():
-    for i in range(startround, (numofruns+startround)):
+    for i in range(1, numofruns+1):
         numofkmers.update({i:{}})
         numofuniquekmers.update({i:{}})
         numoftfbs.update({i:{}})
-    for i in range(startround, (numofruns+startround)):
+    for i in range(1, numofruns+1):
         #mink = int(inputlist[((i-1)*5)+7])
         #maxk = int(inputlist[((i-1)*5)+8])
         for k in range(mink, maxk+1):
