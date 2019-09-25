@@ -345,7 +345,7 @@ def scatter(run, k):
 
     plt.xlabel("Hamming distance")
     plt.ylabel("Kmer count")
-    plt.title("Run number:"+' '+str(run)+'\n'+'K: '+str(k)+'\n'+'Total kmers: '+str(totaldict[run][k]))
+    plt.title("Run number:"+' '+str(run+(startround-1))+'\n'+'K: '+str(k)+'\n'+'Total kmers: '+str(totaldict[run][k]))
     #plt.show()
     plt.savefig("figures/"+str(identifier)+"/hamming_distance/hamdist_"+str(identifier)+"_"+str(run+(startround-1))+"_"+str(k), dpi=600)
     plt.close()
