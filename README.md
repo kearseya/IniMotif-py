@@ -25,7 +25,7 @@ $ python3 HTMLmaker.py
 <br />
 And exit the GUI window.
 <br />
-Python module requirements: Numpy, Matplotlib, Tkinter, Pillow, PyQt(5), SIP, adjustText
+Python module requirements: Numpy, Biopython, Matplotlib, Tkinter, Pillow, PyQt(5), SIP, adjustText
 
 
 
