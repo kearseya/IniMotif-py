@@ -142,10 +142,8 @@ def listhammer():
                         if x in removelist[runnum][i][n]:
                             temptop6.remove(x)
                             temptop6.remove(kmer2hash(revComp(hash2kmer(x, i))))
-                    print(temptop6)
                     hconsensus = max(temptop6, key=lambda key: kmercount[runnum][i][key])
                 consensus = hash2kmer(hconsensus, i)
-                print("con: "+str(consensus))
                 for x in list(kmercount[runnum][i].keys()):
                     values = hash2kmer(x,i)
                     if hamming_distance(consensus, values) <= allowham:
@@ -172,6 +170,7 @@ def listhammer():
 
 listhammer()
 
+"""
 def visualise():
     visibleremove = []
     for _ in range(0, numofruns+1):
@@ -185,10 +184,10 @@ def visualise():
                 for x in removelist[r][k][n]:
                     visibleremove[r][k][n].append(hash2kmer(x, k))
     return visibleremove
+"""
+#print(visualise())
 
-print(visualise())
-
-print(removelist)
+#print(removelist)
 
 """
 else:
