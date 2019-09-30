@@ -30,6 +30,11 @@ if knownbarcode == True:
 
 from KmerKounter import inputlist
 
+from KmerKounter import top6all
+
+from WebLogoMod import nmotifs
+from WebLogoMod import removelist
+
 
 
 def kmer2hash(kmer):
@@ -170,11 +175,14 @@ def listinit():
         #mink = int(inputlist[((j-1)*5)+7])
         #maxk = int(inputlist[((j-1)*5)+8])
         for k in range(mink, maxk+1):
-            poslist[j].update({k:{}})
-            rposlist[j].update({k:{}})
-            for x in range(0,(l+1-k-(avg5+avg3))):
-                poslist[j][k].update({x:0})
-                rposlist[j][k].update({x:0})
+            poslist[j][k] = {}
+            rposlist[j][k] = {}
+            for n in range(1, nmotifs+1):
+                poslist[j][k][n] = {}
+                rposlist[j][k][n] = {}
+                for x in range(0,(l+1-k-(avg5+avg3))):
+                    poslist[j][k][n].update({x:0})
+                    rposlist[j][k][n].update({x:0})
 
 listinit()
 
@@ -194,23 +202,38 @@ def hamming_distance(s1, s2):
 
 
 
-def listhammer(runnum, k):
-    hamminglist2[runnum][k] = []
-    #for i in kmercount[runnum]:
-        #hconsensus = (list(kmercount[runnum][i].keys())[0])
-    hconsensus = max(kmercount[runnum][k], key=lambda key: kmercount[runnum][k][key])
-    consensus = hash2kmer(hconsensus, k)
-    for x in list(kmercount[runnum][k].keys()):
-        values = hash2kmer(x,k)
-        rvalues = revComp(values)
-        ham = hamming_distance(consensus, values)
-        rham = hamming_distance(consensus, rvalues)
-        if ham <= 2:
-            if kmer2hash(values) not in hamminglist2[runnum][k]:
-                hamminglist2[runnum][k].append(kmer2hash(values))
-        if rham <= 2:
-            if kmer2hash(rvalues) not in hamminglist2[runnum][k]:
-                hamminglist2[runnum][k].append(kmer2hash(rvalues))
+def listhammer():
+    for runnum in range(1, numofruns+1):
+        for k in range(mink, maxk+1):
+            hamminglist2[runnum][k] = {}
+            for n in range(1, nmotifs+1):
+                hamminglist2[runnum][k][n] = set()
+                #for i in kmercount[runnum]:
+                    #hconsensus = (list(kmercount[runnum][i].keys())[0])
+                if n == 1:
+                    hconsensus = max(kmercount[runnum][k], key=lambda key: kmercount[runnum][k][key])
+                else:
+                    temptop6 = top6all[runnum][k].copy()
+                    for j in temptop6:
+                        if j in removelist[runnum][k][n]:
+                            temptop6.remove(j)
+                            if kmer2hash(revComp(hash2kmer(j, k))) in temptop6:
+                                temptop6.remove(kmer2hash(revComp(hash2kmer(j, k))))
+                    hconsensus = max(temptop6, key=lambda key: kmercount[runnum][k][key])
+                consensus = hash2kmer(hconsensus, k)
+                for x in list(kmercount[runnum][k].keys()):
+                    values = hash2kmer(x,k)
+                    rvalues = revComp(values)
+                    ham = hamming_distance(consensus, values)
+                    rham = hamming_distance(consensus, rvalues)
+                    if ham <= 2 and x not in removelist[runnum][k][n]:
+                        if kmer2hash(values) not in hamminglist2[runnum][k][n]:
+                            hamminglist2[runnum][k][n].add(kmer2hash(values))
+                    if rham <= 2 and x not in removelist[runnum][k][n]:
+                        if kmer2hash(rvalues) not in hamminglist2[runnum][k][n]:
+                            hamminglist2[runnum][k][n].add(kmer2hash(rvalues))
+
+listhammer()
 
 """
     if revcompwanted == True:
@@ -230,7 +253,7 @@ def listhammer(runnum, k):
 """
 
 
-
+"""
 def multilisthammer(numofruns):
     for x in range(1, numofruns+1):
         #mink = int(inputlist[((x-1)*5)+7])
@@ -239,7 +262,7 @@ def multilisthammer(numofruns):
             listhammer(x, i)
 
 multilisthammer(numofruns)
-
+"""
 
 
 
@@ -296,40 +319,44 @@ def CreatePosList(FileName, k, runnum):
         if len(line) == lvalues[runnum] and "N" not in line:
             LSeqNums[runnum] += 1
             TSeqNums[runnum] += 1
-            done = []
-            for x in range(0,((len(line)+1)-k)-(avg5+avg3)):
-                kmers = str(line[x+avg5:x+k+avg5])
-                if kmers not in done:
-                    hkmers = kmer2hash(kmers)
-                    if hkmers < combinations:
-                        if hkmers in hamminglist2[runnum][k]:
-                            poslist[runnum][k][x] += 1
-                            done.append(kmers)
-                            if c == 0:
-                                numoftfbsseq[runnum][k] += 1
-                                c += 1
-                            #if revcompwanted == True:
-                                #rkmers = revComp(kmers)
-                                #if len(rkmers) > 0 and (line.count(kmers) + line.count(rkmers)) <= 2:
-                                    #hrkmers = kmer2hash(rkmers)
-                                    #if hrkmers < combinations:
-                                        #if hrkmers in hamminglist2[runnum][k]:
-                                            #rposlist[runnum][k][x].append(hrkmers)
+            done = {}
+            for n in range(1, nmotifs+1):
+                done[n] = []
+                for x in range(0,((len(line)+1)-k)-(avg5+avg3)):
+                    kmers = str(line[x+avg5:x+k+avg5])
+                    if kmers not in done[n]:
+                        hkmers = kmer2hash(kmers)
+                        if hkmers < combinations:
+                            if hkmers in hamminglist2[runnum][k][n]:
+                                poslist[runnum][k][n][x] += 1
+                                done[n].append(kmers)
+                                if c == 0:
+                                    numoftfbsseq[runnum][k] += 1
+                                    c += 1
+                                #if revcompwanted == True:
+                                    #rkmers = revComp(kmers)
+                                    #if len(rkmers) > 0 and (line.count(kmers) + line.count(rkmers)) <= 2:
+                                        #hrkmers = kmer2hash(rkmers)
+                                        #if hrkmers < combinations:
+                                            #if hrkmers in hamminglist2[runnum][k][n]:
+                                                #rposlist[runnum][k][n][x].append(hrkmers)
         else:
             TSeqNums[runnum] += 1
             continue
 
         if revcompwanted == True:
             if len(line) == lvalues[runnum] and "N" not in line:
-                rdone = []
-                for x in range(0,((len(line)+1)-k)-(avg5+avg3)):
-                    #kmers = str(line[x+avg5:x+k+avg5])
-                    rkmers = revComp(line[x+avg5:x+k+avg5])
-                    if rkmers not in rdone:
-                        hrkmers = kmer2hash(rkmers)
-                        if hrkmers in hamminglist2[runnum][k]:
-                            rposlist[runnum][k][x] += 1
-                            rdone.append(rkmers)
+                rdone = {}
+                for n in range(1, nmotifs+1):
+                    rdone[n] = []
+                    for x in range(0,((len(line)+1)-k)-(avg5+avg3)):
+                        #kmers = str(line[x+avg5:x+k+avg5])
+                        rkmers = revComp(line[x+avg5:x+k+avg5])
+                        if rkmers not in rdone[n]:
+                            hrkmers = kmer2hash(rkmers)
+                            if hrkmers in hamminglist2[runnum][k][n]:
+                                rposlist[runnum][k][n][x] += 1
+                                rdone[n].append(rkmers)
 
 def multiPosList(numofruns):
     for x in range(1, numofruns+1):
@@ -359,40 +386,44 @@ def CreatePosListmulti(FileName, k):
         if len(line) == l and "N" not in line:
             LSeqNums[runnum] += 1
             TSeqNums[runnum] += 1
-            done = []
-            for x in range(0,(l+1-k-len(barcodeprimers53[runnum][0])-len(barcodeprimers53[runnum][1]))):
-                kmers = str(line[x+len(barcodeprimers53[runnum][0]):x+k+len(barcodeprimers53[runnum][0])])
-                if kmers not in done:
-                    hkmers = kmer2hash(kmers)
-                    if hkmers < combinations:
-                        if hkmers in hamminglist2[runnum][k]:
-                            poslist[runnum][k][x] += 1
-                            done.append(kmers)
-                            if c == 0:
-                                numoftfbsseq[runnum][k] += 1
-                                c += 1
-                            #if revcompwanted == True:
-                                #rkmers = revComp(kmers)
-                                #if len(rkmers) > 0 and (line.count(kmers) + line.count(rkmers)) <= 2:
-                                    #hrkmers = kmer2hash(rkmers)
-                                    #if hrkmers < combinations:
-                                        #if hrkmers in hamminglist2[runnum][k]:
-                                            #rposlist[runnum][k][x].append(hrkmers)
+            done = {}
+            for n in range(1, nmotifs+1):
+                done[n] = []
+                for x in range(0,(l+1-k-len(barcodeprimers53[runnum][0])-len(barcodeprimers53[runnum][1]))):
+                    kmers = str(line[x+len(barcodeprimers53[runnum][0]):x+k+len(barcodeprimers53[runnum][0])])
+                    if kmers not in done[n]:
+                        hkmers = kmer2hash(kmers)
+                        if hkmers < combinations:
+                            if hkmers in hamminglist2[runnum][k][n]:
+                                poslist[runnum][k][n][x] += 1
+                                done[n].append(kmers)
+                                if c == 0:
+                                    numoftfbsseq[runnum][k] += 1
+                                    c += 1
+                                #if revcompwanted == True:
+                                    #rkmers = revComp(kmers)
+                                    #if len(rkmers) > 0 and (line.count(kmers) + line.count(rkmers)) <= 2:
+                                        #hrkmers = kmer2hash(rkmers)
+                                        #if hrkmers < combinations:
+                                            #if hrkmers in hamminglist2[runnum][k][n]:
+                                                #rposlist[runnum][k][n][x].append(hrkmers)
         else:
             TSeqNums[runnum] += 1
             continue
 
         if revcompwanted == True:
             if len(line) == lvalues[runnum] and "N" not in line:
-                rdone = []
-                for x in range(0,((len(line)+1)-k)-(avg5+avg3)):
-                    #kmers = str(line[x+avg5:x+k+avg5])
-                    rkmers = revComp(line[x+avg5:x+k+avg5])
-                    if rkmers not in rdone:
-                        hrkmers = kmer2hash(rkmers)
-                        if hrkmers in hamminglist2[runnum][k]:
-                            rposlist[runnum][k][x] += 1
-                            rdone.append(rkmers)
+                rdone = {}
+                for n in range(1, nmotifs+1):
+                    rdone[n] = []
+                    for x in range(0,((len(line)+1)-k)-(avg5+avg3)):
+                        #kmers = str(line[x+avg5:x+k+avg5])
+                        rkmers = revComp(line[x+avg5:x+k+avg5])
+                        if rkmers not in rdone[n]:
+                            hrkmers = kmer2hash(rkmers)
+                            if hrkmers in hamminglist2[runnum][k][n]:
+                                rposlist[runnum][k][n][x] += 1
+                                rdone[n].append(rkmers)
 
 def multiPosListmulti(numofruns):
     for j in files:
@@ -412,47 +443,47 @@ def PosListMake():
 PosListMake()
 
 
-def FindTotal(runnum, k):
+def FindTotal(runnum, k, n):
     total = 0
-    for i in poslist[runnum][k]:
-        total += poslist[runnum][k][i]
+    for i in poslist[runnum][k][n]:
+        total += poslist[runnum][k][n][i]
         if revcompwanted == True:
-            total += rposlist[runnum][k][i]
+            total += rposlist[runnum][k][n][i]
     return total
 
 
 
-def fseqbias(runnum, k, total):
+def fseqbias(runnum, k, total, n):
     fseqbias = []
-    for i in poslist[runnum][k]:
-        fseqbias.append(poslist[runnum][k][i]/total)
+    for i in poslist[runnum][k][n]:
+        fseqbias.append(poslist[runnum][k][n][i]/total)
     return fseqbias
 
-def rseqbias(runnum, k, total):
+def rseqbias(runnum, k, total, n):
     rseqbias = []
-    for i in rposlist[runnum][k]:
-        rseqbias.append(rposlist[runnum][k][i]/total)
+    for i in rposlist[runnum][k][n]:
+        rseqbias.append(rposlist[runnum][k][n][i]/total)
     return rseqbias
 
 
 
-def makexaxis(runnum, k):
+def makexaxis(runnum, k, n):
     xaxis = ([])
-    for i in range(1, len(poslist[runnum][k])+1):
+    for i in range(1, len(poslist[runnum][k][n])+1):
         xaxis.append(i)
     return xaxis
 
 
 
-def rmakexaxis1(width, runnum, k):
+def rmakexaxis1(width, runnum, k, n):
     fxaxis = ([])
-    for i in range(1, len(poslist[runnum][k])+1):
+    for i in range(1, len(poslist[runnum][k][n])+1):
         fxaxis.append(i-width/2)
     return fxaxis
 
-def rmakexaxis2(width, runnum, k):
+def rmakexaxis2(width, runnum, k, n):
     rxaxis = ([])
-    for i in range(1, len(poslist[runnum][k])+1):
+    for i in range(1, len(poslist[runnum][k][n])+1):
         rxaxis.append(i+width/2)
     return rxaxis
 
@@ -466,20 +497,20 @@ def makeyaxis():
 
 
 
-def plotter(runnum, k):
+def plotter(runnum, k, n):
     fig, bar = plt.subplots()
     width = 0.4
 
-    xaxis = makexaxis(runnum, k)
+    xaxis = makexaxis(runnum, k, n)
     yaxis = makeyaxis()
 
-    total = FindTotal(runnum, k)
+    total = FindTotal(runnum, k, n)
 
-    fseq = fseqbias(runnum, k, total)
-    rseq = rseqbias(runnum, k, total)
+    fseq = fseqbias(runnum, k, total, n)
+    rseq = rseqbias(runnum, k, total, n)
 
-    fxaxis = rmakexaxis1(width, runnum, k)
-    rxaxis = rmakexaxis2(width, runnum, k)
+    fxaxis = rmakexaxis1(width, runnum, k, n)
+    rxaxis = rmakexaxis2(width, runnum, k, n)
 
     average = (1/len(fseq))
     raverage = (1/(len(fseq)+len(rseq)))
@@ -507,7 +538,7 @@ def plotter(runnum, k):
         label=('Forward strands', 'Reverse strands')
         bar.legend(loc = 1)
 
-    plt.savefig("figures/"+str(identifier)+"/position_bias/pos_"+str(identifier)+"_"+str(runnum+(startround-1))+"_"+str(k), dpi=600)
+    plt.savefig("figures/"+str(identifier)+"/position_bias/pos_"+str(identifier)+"_"+str(runnum+(startround-1))+"_"+str(k)+"_"+str(n), dpi=600)
     plt.close()
 
 
@@ -517,7 +548,8 @@ def plotrange(numofruns):
         #mink = int(inputlist[((r-1)*5)+7])
         #maxk = int(inputlist[((r-1)*5)+8])
         for k in range(mink, maxk+1):
-            plotter(r, k)
+            for n in range(1, nmotifs+1):
+                plotter(r, k, n)
 
 plotrange(numofruns)
 
