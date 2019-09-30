@@ -194,6 +194,13 @@ nmotifsinputs.delete(0)
 nmotifsinputs.insert(0, int(1))
 nmotifsinputs.grid(row=11, column=1)
 
+allowhamlabels = Label(initialdetailsframe, text="Allow hamming distance: ")
+allowhamlabels.grid(row=12, column=0,  sticky="e")
+allowhaminputs = Entry(initialdetailsframe, textvariable=IntVar())
+allowhaminputs.delete(0)
+allowhaminputs.insert(0, int(1))
+allowhaminputs.grid(row=12, column=1)
+
 
 """
 filenameslabels = Label(variableinputform, text="File name: ", anchor="w")
@@ -280,6 +287,8 @@ def makeorderedinputlist():
     logotype = str(valueforlogodrop.get())
     global nmotifs
     nmotifs = int(nmotifsinputs.get())
+    global allowham
+    allowham = int(allowhaminputs.get())
 
     if knownbarcode == True:
         inputlist.append(str(fiveprimebarinputs.get()))
