@@ -10,6 +10,8 @@ import numpy as np
 import math
 #import operator
 
+from KmerKounter import revnuc
+from KmerKounter import revComp
 #from KmerKounter import hamlist
 #from KmerKounter import pwm
 from KmerKounter import numofruns
@@ -64,14 +66,17 @@ def hash2kmer(hashkey, k):
 def inputtype():
     global nmotifs
     global type
+    global allowham
     try:
         from GUI import nmotifs
         from GUI import logotype
         #if len(logotype) > 1:
         type = logotype[0]
+        from GUI import allowham
     except:
         nmotifs = int(input("Number of motifs: "))
         type = input("Bits (b) or Frequency (f)?: ")
+        allowham = int(input("Number of motifs: "))
 
 inputtype()
 
@@ -79,8 +84,10 @@ inputtype()
 #print(pwm)
 
 hamlist = []
+rhamlist = []
 removelist = []
 hamdict = []
+rhamdict = []
 countdict = []
 pwm = []
 logoform = []
@@ -89,8 +96,10 @@ def dictinit(numofruns):
     for _ in range(numofruns+1):
         #kmercount.append({})
         hamlist.append({})
+        rhamlist.append({})
         removelist.append({})
         hamdict.append({})
+        rhamdict.append({})
         countdict.append({})
         pwm.append({})
         logoform.append({})
@@ -104,54 +113,122 @@ def hamming_distance(s1, s2):
     return sum(ch1 != ch2 for ch1, ch2 in zip(s1, s2))
 
 
+def removelistinit():
+    for runnum in range(1, numofruns+1):
+        for k in range(mink, maxk+1):
+            removelist[runnum][k] = {}
+            for n in range(1, nmotifs+1):
+                removelist[runnum][k][n] = set()
+
+removelistinit()
+
 
 def listhammer():
     for runnum in range(1, numofruns+1):
         for i in kmercount[runnum]:
             hamlist[runnum][i] = {}
-            removelist[runnum][i] = set()
+            rhamlist[runnum][i] = {}
+            #removelist[runnum][i] = {}
             for n in range(1, nmotifs+1):
                 hamlist[runnum][i][n] = []
+                rhamlist[runnum][i][n] = []
+                #removelist[runnum][i][n] = set()
                 #hconsensus = (list(kmercount[runnum][i].keys())[0])
                 if n == 1:
                     hconsensus = max(kmercount[runnum][i], key=lambda key: kmercount[runnum][i][key])
                 else:
-                    po = 0
-                    for p, x in enumerate(top6all[runnum][i], 1):
-                        if p > po:
-                            if x not in removelist[runnum][i]:
-                                hconsensus = x
-                                po = p
+                    temptop6 = top6all[runnum][i].copy()
+                    for x in temptop6:
+                        if x in removelist[runnum][i][n]:
+                            temptop6.remove(x)
+                            temptop6.remove(kmer2hash(revComp(hash2kmer(x, i))))
+                    print(temptop6)
+                    hconsensus = max(temptop6, key=lambda key: kmercount[runnum][i][key])
                 consensus = hash2kmer(hconsensus, i)
+                print("con: "+str(consensus))
                 for x in list(kmercount[runnum][i].keys()):
                     values = hash2kmer(x,i)
-                    if hamming_distance(consensus, values) <= 1:
-                        if x not in removelist[runnum][i]:
-                            hamlist[runnum][i][n].append(x)
-                            removelist[runnum][i].add(x)
-
-
+                    if hamming_distance(consensus, values) <= allowham:
+                        if x not in removelist[runnum][i][n]:
+                            rvalue = revComp(values)
+                            rx = kmer2hash(rvalue)
+                            try:
+                                if kmercount[runnum][i][x] >= kmercount[runnum][i][rx]:
+                                    hamlist[runnum][i][n].append(x)
+                                    for j in range(n+1, nmotifs+1):
+                                        removelist[runnum][i][j].add(x)
+                                        removelist[runnum][i][j].add(rx)
+                                    if x != rx:
+                                        rhamlist[runnum][i][n].append(rx)
+                                        if n != nmotifs:
+                                            for j in range(n+1, nmotifs+1):
+                                                removelist[runnum][i][j].add(x)
+                                                removelist[runnum][i][j].add(rx)
+                            except:
+                                hamlist[runnum][i][n].append(x)
+                                for j in range(n+1, nmotifs+1):
+                                    removelist[runnum][i][j].add(x)
+                                    removelist[runnum][i][j].add(rx)
 
 listhammer()
 
+def visualise():
+    visibleremove = []
+    for _ in range(0, numofruns+1):
+        visibleremove.append({})
+    for r in range(1, numofruns+1):
+        visibleremove[r] = {}
+        for k in range(mink, maxk+1):
+            visibleremove[r][k] = {}
+            for n in range(1, nmotifs+1):
+                visibleremove[r][k][n] = []
+                for x in removelist[r][k][n]:
+                    visibleremove[r][k][n].append(hash2kmer(x, k))
+    return visibleremove
+
+print(visualise())
+
+print(removelist)
+
+"""
+else:
+    po = 0
+    for p, x in enumerate(top6all[runnum][i], 1):
+        if p > po:
+            if x not in removelist[runnum][i][n]:
+                hconsensus = x
+                po = p
+"""
+
 #print(hamlist)
+#print(rhamlist)
+#print("remove")
+#print(removelist)
 
 def dicthammer():
     global countdict
     for runnum in range(1, numofruns+1):
-        for i in hamlist[runnum]:
-            hamdict[runnum][i] = {}
-            countdict[runnum][i] = {}
+        for k in range(mink, maxk+1):
+            hamdict[runnum][k] = {}
+            rhamdict[runnum][k] = {}
+            countdict[runnum][k] = {}
             for n in range(1, nmotifs+1):
-                hamdict[runnum][i][n] = {}
-                countdict[runnum][i][n] = 0
-                test = { z : kmercount[runnum][i][z] for z in hamlist[runnum][i][n] }
-                #M = sum(kmercount[runnum][i].values())
-                M = sum(test.values())
-                test = { z : (kmercount[runnum][i][z]/M) for z in test }
-                hamdict[runnum][i][n].update(test)
-                for x in hamlist[runnum][i][n]:
-                    countdict[runnum][i][n] += kmercount[runnum][i][x]
+                hamdict[runnum][k][n] = {}
+                rhamdict[runnum][k][n] = {}
+                countdict[runnum][k][n] = 0
+                frac = { z : kmercount[runnum][k][z] for z in hamlist[runnum][k][n] }
+                rfrac = { z : kmercount[runnum][k][z] for z in rhamlist[runnum][k][n] }
+                combine = {**frac, **rfrac}
+                #M = sum(kmercount[runnum][k].values())
+                M = sum(combine.values())
+                frac = { z : (kmercount[runnum][k][z]/M) for z in frac }
+                rfrac = { z : (kmercount[runnum][k][z]/M) for z in rfrac }
+                hamdict[runnum][k][n].update(frac)
+                rhamdict[runnum][k][n].update(rfrac)
+                for x in hamlist[runnum][k][n]:
+                    countdict[runnum][k][n] += kmercount[runnum][k][x]
+                for y in rhamlist[runnum][k][n]:
+                    countdict[runnum][k][n] += kmercount[runnum][k][y]
 
 dicthammer()
 
@@ -189,10 +266,21 @@ def pwmmaker():
                             pwm[runnum][i][n][j]["T"] += hamdict[runnum][i][n][x]
                         elif kmer[j-1] == "G":
                             pwm[runnum][i][n][j]["G"] += hamdict[runnum][i][n][x]
+                for x in rhamdict[runnum][i][n]:
+                    kmer = revComp(hash2kmer((x),i))
+                    for j in range(1,i+1):
+                        if kmer[j-1] == "A":
+                            pwm[runnum][i][n][j]["A"] += rhamdict[runnum][i][n][x]
+                        elif kmer[j-1] == "C":
+                            pwm[runnum][i][n][j]["C"] += rhamdict[runnum][i][n][x]
+                        elif kmer[j-1] == "T":
+                            pwm[runnum][i][n][j]["T"] += rhamdict[runnum][i][n][x]
+                        elif kmer[j-1] == "G":
+                            pwm[runnum][i][n][j]["G"] += rhamdict[runnum][i][n][x]
 
 pwmmaker()
 
-
+#print(pwm)
 
 def En(num):
     Enn = ((1/math.log(2))*((4-1)/(2*num)))
@@ -210,7 +298,7 @@ def Shannon(runnum, k, pos, n):
     return Hi
 
 def Ri(runnum, k, i, n):
-    num = len(hamlist[runnum][k][n])
+    num = len(hamlist[runnum][k][n])+len(rhamlist[runnum][k][n])
     Rii = math.copysign((math.log2(4)-(Shannon(runnum, k, i, n) + En(num))), 1)
     return Rii
 
@@ -323,7 +411,7 @@ def draw_logo(all_scores, run, k, n):
         ax.set_ylabel("frequency")
     if type == "b":
         ax.set_ylabel("bits")
-    ax.set_title("Uses "+str(round((countdict[run][k][n]/totaldict[run][k])*100, 2))+"%")
+    #ax.set_title("Uses "+str(round((countdict[run][k][n]/totaldict[run][k])*100, 2))+"%")
     #ax.spines['bottom'].set_visible(False)
     #ax.spines['top'].set_visible(False)
     #ax.spines['right'].set_visible(False)
