@@ -8,7 +8,10 @@ from KmerKounter import multiround
 if multiround == True:
     from KmerKounter import files
 
+from KmerKounter import totaldict
+
 from WebLogoMod import nmotifs
+from WebLogoMod import countdict
 
 from PositionBias import TSeqNums
 from PositionBias import LSeqNums
@@ -88,6 +91,8 @@ header {
 
 """
 
+logoordernames = ["", "First", "Second", "Third", "Fourth", "Fifth", "Sixth"]
+
 Html_file.write(title)
 
 def runheader():
@@ -105,26 +110,31 @@ def results():
     for z in range(0, numofruns+1):
         html_strs.append({})
         for i in range(mink, maxk+1):
-            html_strs[z].update({i:[]})
+            html_strs[z][i] ={}
+            for n in range(1, nmotifs+1):
+                html_strs[z][i][n] = []
 
     for x in range(1, numofruns+1):
         for k in range(mink, maxk+1):
-            logos = "<tr>"
-            kval = """<p style="color: white; padding: 30px;" align = "middle"><b>K = """+str(k)+"</b></p>"""
+            #logos = "<tr>"
+            #kval = """<p style="color: white; padding: 30px;" align = "middle"><b>K = """+str(k)+"</b></p>"""
             for n in range(1, nmotifs+1):
+                logos = """<tr><td colspan = 2 align = "middle"><img src="figures/"""+str(identifier)+"""/logos/logo_"""+str(identifier)+"_"+str(x+(startround-1))+"_"+str(k)+"_"+str(n)+""".png"></td></tr>"""
                 if nmotifs == 1:
-                    logos += """<td colspan = 2 align = "middle"><img src="figures/"""+str(identifier)+"""/logos/logo_"""+str(identifier)+"_"+str(x+(startround-1))+"_"+str(k)+"_"+str(n)+""".png"></td>"""
+                    logosusage = """<tr><td colspan = 2 align = "middle"><p>"""+"Motif uses "+str(round((countdict[x][k][n]/totaldict[x][k])*100, 2))+"% of kmers"+"</p>></td></tr>"
                 else:
-                    logos += """<td><img src="figures/"""+str(identifier)+"""/logos/logo_"""+str(identifier)+"_"+str(x+(startround-1))+"_"+str(k)+"_"+str(n)+""".png"></td>"""
-            ham = """<tr><td><img src="figures/"""+str(identifier)+"""/hamming_distance/hamdist_"""+str(identifier)+"_"+str(x+(startround-1))+"_"+str(k)+""".png" width=2000px hight=1200px></td>"""
-            pos = """<td><img src="figures/"""+str(identifier)+"""/position_bias/pos_"""+str(identifier)+"_"+str(x+(startround-1))+"_"+str(k)+""".png" width=2000px hight=1200px></td></tr>"""
-            string = kval+"""<table align = "center";>"""+logos+"</tr>"+ham+pos+"</table>"
-            html_strs[x][k].append(string)
+                    logosusage = """<tr><td colspan = 2 align = "middle"><p>"""+str(logoordernames[n])+" motif uses "+str(round((countdict[x][k][n]/totaldict[x][k])*100, 2))+"% of kmers"+"</p>></td></tr>"
+                ham = """<tr><td><img src="figures/"""+str(identifier)+"""/hamming_distance/hamdist_"""+str(identifier)+"_"+str(x+(startround-1))+"_"+str(k)+"_"+str(n)+""".png" width=2000px hight=1200px></td>"""
+                pos = """<td><img src="figures/"""+str(identifier)+"""/position_bias/pos_"""+str(identifier)+"_"+str(x+(startround-1))+"_"+str(k)+"_"+str(n)+""".png" width=2000px hight=1200px></td></tr>"""
+                string = """<table align = "center";>"""+logos+logosusage+ham+pos+"</table>"
+                html_strs[x][k][n].append(string)
 
     return html_strs
 
 html_strs = results()
 
+#else:
+    #logos += """<td><img src="figures/"""+str(identifier)+"""/logos/logo_"""+str(identifier)+"_"+str(x+(startround-1))+"_"+str(k)+"_"+str(n)+""".png"></td>""
 #"""<p style="color: white; padding: 30px;" width=3000px hight=1800px align = "middle">K = """+str(i)+"""</p><img src="figures/"""+str(identifier)+"""/kmer_frequency/kmerfreq_"""+str(identifier)+"_"+str(k)+""".png" width=3000px height=3000px>"""
 def kmerfrequency():
     html_kmerfreq = {}
@@ -151,7 +161,9 @@ def formatter():
     for r in range(1,numofruns+1):
         Html_file.write(runheaders[r])
         for k in range(mink, maxk+1):
-            Html_file.write(html_strs[r][k][0])
+            Html_file.write("""<p style="color: white; padding: 30px;" align = "middle"><b>K = """+str(k)+"</b></p>""")
+            for n in range(1, nmotifs+1):
+                Html_file.write(html_strs[r][k][n][0])
 
 def kmerfreqformatter():
     Html_file.write("""<h1 style="background-color: #3c3c3c; padding: 0px; color: white;" align = "middle"> Kmer frequency </h1>""")
