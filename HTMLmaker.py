@@ -121,9 +121,9 @@ def results():
             for n in range(1, nmotifs+1):
                 logos = """<tr><td colspan = 2 align = "middle"><img src="figures/"""+str(identifier)+"""/logos/logo_"""+str(identifier)+"_"+str(x+(startround-1))+"_"+str(k)+"_"+str(n)+""".png"></td></tr>"""
                 if nmotifs == 1:
-                    logosusage = """<tr><td colspan = 2 align = "middle"><p>"""+"Motif uses "+str(round((countdict[x][k][n]/totaldict[x][k])*100, 2))+"% of kmers"+"</p>></td></tr>"
+                    logosusage = """<tr><td colspan = 2 align = "middle"><p>"""+"Motif uses "+str(round((countdict[x][k][n]/totaldict[x][k])*100, 2))+"% of kmers"+"</p></td></tr>"
                 else:
-                    logosusage = """<tr><td colspan = 2 align = "middle"><p>"""+str(logoordernames[n])+" motif uses "+str(round((countdict[x][k][n]/totaldict[x][k])*100, 2))+"% of kmers"+"</p>></td></tr>"
+                    logosusage = """<tr><td colspan = 2 align = "middle"><p>"""+str(logoordernames[n])+" motif uses "+str(round((countdict[x][k][n]/totaldict[x][k])*100, 2))+"% of kmers"+"</p></td></tr>"
                 ham = """<tr><td><img src="figures/"""+str(identifier)+"""/hamming_distance/hamdist_"""+str(identifier)+"_"+str(x+(startround-1))+"_"+str(k)+"_"+str(n)+""".png" width=2000px hight=1200px></td>"""
                 pos = """<td><img src="figures/"""+str(identifier)+"""/position_bias/pos_"""+str(identifier)+"_"+str(x+(startround-1))+"_"+str(k)+"_"+str(n)+""".png" width=2000px hight=1200px></td></tr>"""
                 string = """<table align = "center";>"""+logos+logosusage+ham+pos+"</table>"
@@ -161,7 +161,7 @@ def formatter():
     for r in range(1,numofruns+1):
         Html_file.write(runheaders[r])
         for k in range(mink, maxk+1):
-            Html_file.write("""<p style="color: white; padding: 30px;" align = "middle"><b>K = """+str(k)+"</b></p>""")
+            Html_file.write("""<p style="color: white; padding: 30px;" align = "middle"><b>K = """+str(k)+"</b></p>")
             for n in range(1, nmotifs+1):
                 Html_file.write(html_strs[r][k][n][0])
 
