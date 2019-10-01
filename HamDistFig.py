@@ -98,7 +98,10 @@ def findremovedkmers():
             for n in range(2, nmotifs+1):
                 removedkmers[r][k][n] = 0
                 for kmers in removelist[r][k][n]:
-                    removedkmers[r][k][n] += kmercount[r][k][kmers]
+                    try:
+                        removedkmers[r][k][n] += kmercount[r][k][kmers]
+                    except:
+                        continue
 
 findremovedkmers()
 
