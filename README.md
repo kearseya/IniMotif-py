@@ -25,6 +25,7 @@ $ python3 HTMLmaker.py
 <br />
 Press the "Enter" button and exit the GUI window. If the GUI does not show, there will be command line input prompts.
 <br />
+<br />
 Python module requirements: Numpy, Biopython, Matplotlib, Tkinter, Pillow, PyQt(5), SIP, adjustText
 
 
