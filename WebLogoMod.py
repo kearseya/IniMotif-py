@@ -74,9 +74,12 @@ def inputtype():
         type = logotype[0]
         from GUI import allowham
     except:
-        nmotifs = int(input("Number of motifs: "))
-        type = input("Bits (b) or Frequency (f)?: ")
-        allowham = int(input("Number of motifs: "))
+        from KmerKounter import clnmotifs
+        nmotifs = clnmotifs
+        from KmerKounter import cllogotype
+        type = cllogotype
+        from KmerKounter import clallowham
+        allowham = clallowham
 
 inputtype()
 
