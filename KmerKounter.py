@@ -874,8 +874,8 @@ def top12maker(numofruns):
             top12[x][k] = [j[0] for j in top12t[x][k]]
 
 top12maker(numofruns)
-print(kmercount)
-print(top12)
+#print(kmercount)
+#print(top12)
 
 top6all = []
 
