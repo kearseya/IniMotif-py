@@ -259,6 +259,12 @@ def initialinput():
         extype = str(input("Experiment type (SELEX, ChIP, ATAC): "))
         mink = int(input("Minimum kmer length: "))
         maxk = int(input("Maximum kmer length: "))
+        global clnmotifs
+        global cllogotype
+        global clallowham
+        clnmotifs = int(input("Number of motifs: "))
+        cllogotype = input("Bits (b) or Frequency (f)?: ")
+        clallowham = int(input("Allowed hamming distance: "))
 
         if knownbarcode == True:
             barcodeprimers53 = {}
@@ -452,6 +458,7 @@ Combinations(mink, maxk)
 
 def KmerCounterSELEX(FileName, runnum, k):
     fastaFileName = open(FileName, "r")
+    l = lvalues[runnum]
     if knownbarcode == False:
         avg5 = barcodechecker(FileName)
         avg3 = avg5
@@ -717,29 +724,30 @@ def addruncl():
     global FileName1
     global FileName
     if multiround == False:
-        for runnum in range(1, numofruns+1):
-            FileName1 = str(input("Fasta File Name: "))
-            FileName = os.path.join(datadir, FileName1)
-            #global runnum
-            #runnum = int(input("Run number:"))
-            filenames1.update({runnum:FileName1})
-            ufilenames.update({FileName:runnum})
-            filenames.update({runnum:FileName})
-            if extype == "SELEX":
+        if extype == "SELEX":
+            for runnum in range(1, numofruns+1):
+                FileName1 = str(input("Fasta File Name: "))
+                FileName = os.path.join(datadir, FileName1)
+                #global runnum
+                #runnum = int(input("Run number:"))
+                filenames1.update({runnum:FileName1})
+                ufilenames.update({FileName:runnum})
+                filenames.update({runnum:FileName})
                 global l
-                l = int(input("Read lengths:"))
+                l = int(input("Read lengths: "))
                 lvalues.update({runnum:l})
-                RangeKmerCounterSELEX(FileName, runnum, mink, maxk)
-                #listhammer(runnum)
-                #dicthammer(runnum)
-                #startpwm(runnum)
-                #pwmmaker(runnum)
-            if extype in ["ChIP", "DNase"]:
-                RangeKmerCounterChipDNA(FileName, runnum, mink, maxk)
-                #listhammer(runnum)
-                #dicthammer(runnum)
-                #startpwm(runnum)
-                #pwmmaker(runnum)
+            for run in range(1, numofruns+1):
+                RangeKmerCounterSELEX(filenames[run], run, mink, maxk)
+            #listhammer(runnum)
+            #dicthammer(runnum)
+            #startpwm(runnum)
+            #pwmmaker(runnum)
+        if extype in ["ChIP", "DNase"]:
+            RangeKmerCounterChipDNA(FileName, runnum, mink, maxk)
+            #listhammer(runnum)
+            #dicthammer(runnum)
+            #startpwm(runnum)
+            #pwmmaker(runnum)
     if multiround == True:
         global numoffiles
         numoffiles = int(input("Number of files: "))
@@ -866,8 +874,8 @@ def top12maker(numofruns):
             top12[x][k] = [j[0] for j in top12t[x][k]]
 
 top12maker(numofruns)
-#print(kmercount)
-#print(top12)
+print(kmercount)
+print(top12)
 
 top6all = []
 
