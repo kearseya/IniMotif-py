@@ -117,6 +117,7 @@ def add_rows():
             readlengthslabels.destroy()
             readlengthsinputs.destroy()
     if knownbarcodesval == True:
+        x = int(numberofrunsinput.get())
         for x in range(0, x-1):
             fiveprimebar[x] = Entry(variableinputform, textvariable=StringVar())
             threeprimebar[x] = Entry(variableinputform, textvariable=StringVar())
@@ -130,6 +131,7 @@ def add_rows():
         fiveprimebarinputs.destroy()
         threeprimebarlabels.destroy()
         threeprimebarinputs.destroy()
+
 """
     if dele > 0:
         if extype == "SELEX":
@@ -232,6 +234,7 @@ def autofiller():
     extype = valueforexdrop.get()
     #if usage%2 != 0:
         #add_rows()
+    """
     if len(str(filenamesinputs.get())) != 0:
         if int(numberofrunsinput.get()) != 0:
             firstfile = str(filenamesinputs.get())
@@ -254,8 +257,9 @@ def autofiller():
                         endnum = int(firstfile[-1])+i+1
                         predicted = str(firstfile[:-1])+str(endnum)
                         work.insert(0, string=predicted)
+    """
+    namesindirectory = os.listdir(str(pathtodirectoryinput.get()))
     if len(str(filenamesinputs.get())) == 0:
-        namesindirectory = os.listdir(str(pathtodirectoryinput.get()))
         highestnumber = 0
         #print(namesindirectory)
         for n in namesindirectory:
@@ -264,81 +268,175 @@ def autofiller():
                     highestnumber = int(n[3:-6])
                     firstfileauto = str(n)
                     #print(firstfileauto)
-        if extype == "SELEX":
-            if int(numberofrunsinput.get()) == len(namesindirectory):
-                filenamesinputs.delete(0,10)
+    else:
+        firstfileauto = str(filenamesinputs.get())
+    if extype == "SELEX":
+        if int(numberofrunsinput.get()) == len(namesindirectory):
+            if len(str(filenamesinputs.get())) == 0:
+                filenamesinputs.delete(0,30)
                 filenamesinputs.insert(0, firstfileauto)
-                for x in range(0, (int(numberofrunsinput.get())-1)):
-                    for j in namesindirectory:
-                        threeletter = str(firstfileauto[:3])
-                        sixnumbers = str(int(firstfileauto[3:-6])-(x+1))
-                        if len(sixnumbers) < 6:
-                            sixnumbers = (6-len(sixnumbers))*"0"+sixnumbers
-                        namenoext = threeletter+sixnumbers
-                        if namenoext in j[:-6]:
-                            work = SELEXlist[x*2]
-                            work.delete(0,10)
-                            work.insert(0, j)
-            if int(numberofrunsinput.get()) < len(namesindirectory):
-                filenamesinputs.delete(0,10)
+            for x in range(0, (int(numberofrunsinput.get())-1)):
+                for j in namesindirectory:
+                    threeletter = str(firstfileauto[:3])
+                    sixnumbers = str(int(firstfileauto[3:-6])-(x+1))
+                    if len(sixnumbers) < 6:
+                        sixnumbers = (6-len(sixnumbers))*"0"+sixnumbers
+                    namenoext = threeletter+sixnumbers
+                    if namenoext in j[:-6]:
+                        filework = SELEXlist[x*2]
+                        if len(str(filework.get())) == 0:
+                            filework.delete(0,30)
+                            filework.insert(0, j)
+        if int(numberofrunsinput.get()) < len(namesindirectory):
+            if len(str(filenamesinputs.get())) == 0:
+                filenamesinputs.delete(0,30)
                 threeletterstart = str(firstfileauto[:3])
                 sixnumbersstart = str(int(firstfileauto[3:-6])-(int(startroundinputs.get())-1))
                 if len(sixnumbersstart) < 6:
                     sixnumbersstart = (6-len(sixnumbersstart))*"0"+sixnumbersstart
                 startingfile = threeletterstart+sixnumbersstart+firstfileauto[-6:]
                 filenamesinputs.insert(0, startingfile)
-                for x in range(0, int(numberofrunsinput.get())-1):
-                    for j in namesindirectory:
-                        threeletter = str(startingfile[:3])
-                        sixnumbers = str(int(startingfile[3:-6])-(x+1))
-                        if len(sixnumbers) < 6:
-                            sixnumbers = (6-len(sixnumbers))*"0"+sixnumbers
-                        namenoext = threeletter+sixnumbers
-                        if namenoext in j[:-6]:
-                            work = SELEXlist[x*2]
-                            work.delete(0,10)
-                            work.insert(0, j)
-
-        if extype != "SELEX":
-            if int(numberofrunsinput.get()) == len(namesindirectory):
-                filenamesinputs.delete(0,10)
+            else:
+                startingfile = str(filenamesinputs.get())
+            for x in range(0, int(numberofrunsinput.get())-1):
+                for j in namesindirectory:
+                    threeletter = str(startingfile[:3])
+                    sixnumbers = str(int(startingfile[3:-6])-(x+1))
+                    if len(sixnumbers) < 6:
+                        sixnumbers = (6-len(sixnumbers))*"0"+sixnumbers
+                    namenoext = threeletter+sixnumbers
+                    if namenoext in j[:-6]:
+                        filework = SELEXlist[x*2]
+                        if len(str(filework.get())) == 0:
+                            filework.delete(0,30)
+                            filework.insert(0, j)
+        if len(str(readlengthsinputs.get())) == 0:
+            firstfileautolval = open(str(pathtodirectoryinput.get())+"/"+str(filenamesinputs.get()))
+            for linenum, line in enumerate(firstfileautolval):
+                if linenum % 4 == 1:
+                    if "N" not in line:
+                        firstlval = len(line.strip())
+                        readlengthsinputs.delete(0,30)
+                        readlengthsinputs.insert(0, firstlval)
+                        break
+                if linenum > 32:
+                    break
+        for pos, files in enumerate(SELEXlist[::2]):
+            cwf = open(str(pathtodirectoryinput.get())+"/"+str(files.get()))
+            for linenum, line in enumerate(cwf):
+                if linenum % 4 == 1:
+                    if "N" not in line:
+                        lval = len(line.strip())
+                        lvalwork = SELEXlist[(pos*2)+1]
+                        if len(str(lvalwork.get())) == 0:
+                            lvalwork.delete(0,10)
+                            lvalwork.insert(0, lval)
+                            break
+                if linenum > 32:
+                    break
+    if extype != "SELEX":
+        if int(numberofrunsinput.get()) == len(namesindirectory):
+            if len(str(filenamesinputs.get())) == 0:
+                filenamesinputs.delete(0,30)
                 filenamesinputs.insert(0, firstfileauto)
-                for x in range(0, (int(numberofrunsinput.get())-1)):
-                    for j in namesindirectory:
-                        threeletter = str(firstfileauto[:3])
-                        sixnumbers = str(int(firstfileauto[3:-6])-(x+1))
-                        if len(sixnumbers) < 6:
-                            sixnumbers = (6-len(sixnumbers))*"0"+sixnumbers
-                        namenoext = threeletter+sixnumbers
-                        if namenoext in j[:-6]:
-                            work = fileinputslist[x]
-                            work.delete(0,10)
-                            work.insert(0, j)
-            if int(numberofrunsinput.get()) < len(namesindirectory):
-                filenamesinputs.delete(0,10)
+            for x in range(0, (int(numberofrunsinput.get())-1)):
+                for j in namesindirectory:
+                    threeletter = str(firstfileauto[:3])
+                    sixnumbers = str(int(firstfileauto[3:-6])-(x+1))
+                    if len(sixnumbers) < 6:
+                        sixnumbers = (6-len(sixnumbers))*"0"+sixnumbers
+                    namenoext = threeletter+sixnumbers
+                    if namenoext in j[:-6]:
+                        filework = fileinputslist[x]
+                        if len(str(filework.get())) == 0:
+                            filework.delete(0,30)
+                            filework.insert(0, j)
+        if int(numberofrunsinput.get()) < len(namesindirectory):
+            if len(str(filenamesinputs.get())) == 0:
+                filenamesinputs.delete(0,30)
                 threeletterstart = str(firstfileauto[:3])
                 sixnumbersstart = str(int(firstfileauto[3:-6])-(int(startroundinputs.get())-1))
                 if len(sixnumbersstart) < 6:
                     sixnumbersstart = (6-len(sixnumbersstart))*"0"+sixnumbersstart
                 startingfile = threeletterstart+sixnumbersstart+firstfileauto[-6:]
                 filenamesinputs.insert(0, startingfile)
-                for x in range(0, int(numberofrunsinput.get())-1):
-                    for j in namesindirectory:
-                        threeletter = str(startingfile[:3])
-                        sixnumbers = str(int(startingfile[3:-6])-(x+1))
-                        if len(sixnumbers) < 6:
-                            sixnumbers = (6-len(sixnumbers))*"0"+sixnumbers
-                        namenoext = threeletter+sixnumbers
-                        if namenoext in j[:-6]:
-                            work = fileinputslist[x]
-                            work.delete(0,10)
-                            work.insert(0, j)
+            else:
+                startingfile = str(filenamesinputs.get())
+            for x in range(0, int(numberofrunsinput.get())-1):
+                for j in namesindirectory:
+                    threeletter = str(startingfile[:3])
+                    sixnumbers = str(int(startingfile[3:-6])-(x+1))
+                    if len(sixnumbers) < 6:
+                        sixnumbers = (6-len(sixnumbers))*"0"+sixnumbers
+                    namenoext = threeletter+sixnumbers
+                    if namenoext in j[:-6]:
+                        filework = fileinputslist[x]
+                        if len(str(filework.get())) == 0:
+                            filework.delete(0,30)
+                            filework.insert(0, j)
 
-
-
-        #if len(str(readlengthsinputs.get())) == 0:
-
-
+    if multiround.get() == False and knownbarcodes.get() == True:
+        first5 = fiveprimebarinputs.get()
+        first3 = threeprimebarinputs.get()
+        if first5.isnumeric() and first3.isnumeric():
+            fivesplice = int(first5)
+            threesplice = int(first3)
+            firstfileautobar = open(str(pathtodirectoryinput.get())+"/"+str(filenamesinputs.get()))
+            for linenum, line in enumerate(firstfileautobar):
+                if linenum % 4 == 1:
+                    line = line.strip()
+                    if extype == "SELEX":
+                        if len(line) == int(readlengthsinputs.get()) and "N" not in line:
+                            fiveprimebarinputs.delete(0,30)
+                            fiveprimebarinputs.insert(0, line[:fivesplice])
+                            threeprimebarinputs.delete(0,30)
+                            threeprimebarinputs.insert(0, line[-threesplice:])
+                            break
+                    else:
+                        if "N" not in line:
+                            fiveprimebarinputs.delete(0,30)
+                            fiveprimebarinputs.insert(0, line[:fivesplice])
+                            threeprimebarinputs.delete(0,30)
+                            threeprimebarinputs.insert(0, line[-threesplice:])
+                            break
+                if linenum > 32:
+                    break
+            if extype == "SELEX":
+                for pos, files in enumerate(SELEXlist[::2]):
+                    cwf = open(str(pathtodirectoryinput.get())+"/"+str(files.get()))
+                    fivework = fiveprimebar[pos]
+                    threework = threeprimebar[pos]
+                    for linenum, line in enumerate(cwf):
+                        if linenum % 4 == 1:
+                            line = line.strip()
+                            if extype == "SELEX":
+                                lin = SELEXlist[(pos*2)+1]
+                                if len(line) == int(lin.get()) and "N" not in line:
+                                    if len(str(fivework.get())) == 0:
+                                        fivework.delete(0,30)
+                                        fivework.insert(0, line[:fivesplice])
+                                    if len(str(threework.get())) == 0:
+                                        threework.delete(0,30)
+                                        threework.insert(0, line[-threesplice:])
+                                    break
+            if extype != "SELEX":
+                for pos, files in enumerate(fileinputslist):
+                    cwf = open(str(pathtodirectoryinput.get())+"/"+str(files.get()))
+                    fivework = fiveprimebar[pos]
+                    threework = threeprimebar[pos]
+                    for linenum, line in enumerate(cwf):
+                        if linenum % 4 == 1:
+                            line = line.strip()
+                            if "N" not in line:
+                                if len(str(fivework.get())) == 0:
+                                    fivework.delete(0,30)
+                                    fivework.insert(0, line[:fivesplice])
+                                if len(str(threework.get())) == 0:
+                                    threework.delete(0,30)
+                                    threework.insert(0, line[-threesplice:])
+                                break
+                    if linenum > 32:
+                        break
 
 
 
