@@ -93,8 +93,8 @@ def revComp(seq):
 
 TSeqNums = {}
 LSeqNums = {}
-Barcodevalues = {}
-Primervalues = {}
+#Barcodevalues = {}
+#Primervalues = {}
 numoftfbsseq = {}
 
 def seqcountdictinit():
@@ -102,10 +102,12 @@ def seqcountdictinit():
         TSeqNums[x] = 0
         LSeqNums[x] = 0
         numoftfbsseq[x] = {}
+        """
         if knownbarcode == True:
-            Barcodevalues[x] = barcodeprimers53[x][0][:barfiveslice]
+            Barcodevalues[x] = barcodeprimers53[x][0]
         if knownbarcode == False:
             Barcodevalues[x] = barcodechecker(filenames[x])
+        """
         for k in range(mink, maxk+1):
             numoftfbsseq[x][k] = 0
 
