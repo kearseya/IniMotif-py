@@ -53,8 +53,8 @@ threeprimebarinputs.grid(row=1, column=4)
 
 multiroundsamefilelabels = Label(initialdetailsframe, text="Multiple rounds in same file: ")
 multiroundsamefilelabels.grid(row=8, column=0, sticky="e", padx=(20,0))
-multiround = BooleanVar()
-multiroundcheckbox = Checkbutton(initialdetailsframe, variable=multiround)
+multirounds = BooleanVar()
+multiroundcheckbox = Checkbutton(initialdetailsframe, variable=multirounds)
 multiroundcheckbox.grid(row=8, column=1)
 multiroundcheckbox.select()
 
@@ -296,7 +296,7 @@ def autofiller():
             if len(str(filenamesinputs.get())) == 0:
                 filenamesinputs.delete(0,30)
                 threeletterstart = str(firstfileauto[:3])
-                sixnumbersstart = str(int(firstfileauto[3:-6])-(int(startroundinputs.get())-1))
+                sixnumbersstart = str(orderednumbers[orderednumbers.index(int(firstfileauto[3:-6]))+int(startroundinputs.get())-1])
                 if len(sixnumbersstart) < 6:
                     sixnumbersstart = (6-len(sixnumbersstart))*"0"+sixnumbersstart
                 startingfile = threeletterstart+sixnumbersstart+firstfileauto[-6:]
@@ -360,7 +360,7 @@ def autofiller():
             if len(str(filenamesinputs.get())) == 0:
                 filenamesinputs.delete(0,30)
                 threeletterstart = str(firstfileauto[:3])
-                sixnumbersstart = str(int(firstfileauto[3:-6])-(int(startroundinputs.get())-1))
+                sixnumbersstart = str(orderednumbers[orderednumbers.index(int(firstfileauto[3:-6]))+int(startroundinputs.get())-1])
                 if len(sixnumbersstart) < 6:
                     sixnumbersstart = (6-len(sixnumbersstart))*"0"+sixnumbersstart
                 startingfile = threeletterstart+sixnumbersstart+firstfileauto[-6:]
@@ -380,7 +380,7 @@ def autofiller():
                             filework.delete(0,30)
                             filework.insert(0, j)
 
-    if multiround.get() == False and knownbarcodes.get() == True:
+    if multirounds.get() == False and knownbarcodes.get() == True:
         first5 = fiveprimebarinputs.get()
         first3 = threeprimebarinputs.get()
         if first5.isnumeric() and first3.isnumeric():
@@ -482,7 +482,7 @@ def makeorderedinputlist():
     global startround
     startround = int(startroundinputs.get())
     global multiround
-    multiround = multiround.get()
+    multiround = multirounds.get()
     global knownbarcode
     knownbarcode = knownbarcodes.get()
     global logotype
@@ -495,7 +495,7 @@ def makeorderedinputlist():
     if knownbarcode == True:
         inputlist.append(str(fiveprimebarinputs.get()))
         inputlist.append(str(threeprimebarinputs.get()))
-        for x in range(0, x-1):
+        for x in range(0, int(numberofrunsinput.get())-1):
             inputlist.append(fiveprimebar[x].get())
             inputlist.append(threeprimebar[x].get())
 
