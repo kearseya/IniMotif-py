@@ -283,7 +283,7 @@ def autofiller():
             for x in range(0, (int(numberofrunsinput.get())-1)):
                 for j in namesindirectory:
                     threeletter = str(firstfileauto[:3])
-                    sixnumbers = str(orderednumbers[x+2])
+                    sixnumbers = str(orderednumbers[orderednumbers.index(int(firstfileauto[3:-6]))+x+1])
                     if len(sixnumbers) < 6:
                         sixnumbers = (6-len(sixnumbers))*"0"+sixnumbers
                     namenoext = threeletter+sixnumbers
@@ -306,7 +306,7 @@ def autofiller():
             for x in range(0, int(numberofrunsinput.get())-1):
                 for j in namesindirectory:
                     threeletter = str(startingfile[:3])
-                    sixnumbers = str(int(startingfile[3:-6])-(x+1))
+                    sixnumbers = str(orderednumbers[orderednumbers.index(int(startingfile[3:-6]))+x+1])
                     if len(sixnumbers) < 6:
                         sixnumbers = (6-len(sixnumbers))*"0"+sixnumbers
                     namenoext = threeletter+sixnumbers
@@ -347,7 +347,7 @@ def autofiller():
             for x in range(0, (int(numberofrunsinput.get())-1)):
                 for j in namesindirectory:
                     threeletter = str(firstfileauto[:3])
-                    sixnumbers = str(orderednumbers[x+2])
+                    sixnumbers = str(orderednumbers[orderednumbers.index(int(firstfileauto[3:-6]))+x+1])
                     if len(sixnumbers) < 6:
                         sixnumbers = (6-len(sixnumbers))*"0"+sixnumbers
                     namenoext = threeletter+sixnumbers
@@ -370,7 +370,7 @@ def autofiller():
             for x in range(0, int(numberofrunsinput.get())-1):
                 for j in namesindirectory:
                     threeletter = str(startingfile[:3])
-                    sixnumbers = str(int(startingfile[3:-6])-(x+1))
+                    sixnumbers = str(orderednumbers[orderednumbers.index(int(startingfile[3:-6]))+x+1])
                     if len(sixnumbers) < 6:
                         sixnumbers = (6-len(sixnumbers))*"0"+sixnumbers
                     namenoext = threeletter+sixnumbers
