@@ -53,8 +53,8 @@ threeprimebarinputs.grid(row=1, column=4)
 
 multiroundsamefilelabels = Label(initialdetailsframe, text="Multiple rounds in same file: ")
 multiroundsamefilelabels.grid(row=8, column=0, sticky="e", padx=(20,0))
-multiround = BooleanVar()
-multiroundcheckbox = Checkbutton(initialdetailsframe, variable=multiround)
+multirounds = BooleanVar()
+multiroundcheckbox = Checkbutton(initialdetailsframe, variable=multirounds)
 multiroundcheckbox.grid(row=8, column=1)
 multiroundcheckbox.select()
 
@@ -380,7 +380,7 @@ def autofiller():
                             filework.delete(0,30)
                             filework.insert(0, j)
 
-    if multiround.get() == False and knownbarcodes.get() == True:
+    if multirounds.get() == False and knownbarcodes.get() == True:
         first5 = fiveprimebarinputs.get()
         first3 = threeprimebarinputs.get()
         if first5.isnumeric() and first3.isnumeric():
@@ -482,7 +482,7 @@ def makeorderedinputlist():
     global startround
     startround = int(startroundinputs.get())
     global multiround
-    multiround = multiround.get()
+    multiround = multirounds.get()
     global knownbarcode
     knownbarcode = knownbarcodes.get()
     global logotype
