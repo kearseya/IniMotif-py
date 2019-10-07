@@ -113,7 +113,7 @@ def fiveprimerfinder(listin):
 """
 def fiveprimerfinder(listin, min):
     primer = 0
-    for i in range(min):
+    for i in range(min+1):
         truefor = 0
         for x in range(len(listin)):
             if listin[0][i:] == listin[x][i:]:
@@ -124,7 +124,7 @@ def fiveprimerfinder(listin, min):
 
 def threeprimerfinder(listin, min):
     primer = 0
-    for i in range(min):
+    for i in range(min+1):
         truefor = 0
         for x in range(len(listin)):
             if listin[0][i:] == listin[x][i:]:
@@ -164,12 +164,14 @@ def autofiveprimefinder(run, fivesplice):
         if linenum % 4 == 1:
             line = line.strip()
             if extype == "SELEX":
-                if len(line) == int(readlengthsinputs.get()) and "N" not in line:
+                if len(line) == int(lvalues[run]) and "N" not in line:
                     five = line[:fivesplice]
+                    print(five)
                     return five
             else:
                 if "N" not in line:
                     five = line[:fivesplice]
+                    print(five)
                     return five
         if linenum > 32:
             break
@@ -180,12 +182,14 @@ def autothreeprimefinder(run, threesplice):
         if linenum % 4 == 1:
             line = line.strip()
             if extype == "SELEX":
-                if len(line) == int(readlengthsinputs.get()) and "N" not in line:
+                if len(line) == int(lvalues[run]) and "N" not in line:
                     three = line[-threesplice:]
+                    print(three)
                     return three
             else:
                 if "N" not in line:
                     three = line[-threesplice:]
+                    print(three)
                     return three
         if linenum > 32:
             break
@@ -345,11 +349,12 @@ def initialinput():
         global FileName1
         global FileName
 
+        if knownbarcode == True:
+            barcodeprimers53 = {}
+
         if multiround == False:
             if extype == "SELEX":
                 global l
-                if knownbarcode == True:
-                    barcodeprimers53 = {}
                 FileName1 = str(input("Fastx File Name (try \"auto\"): "))
                 if FileName1 == "auto":
                     tryauto = True
@@ -373,7 +378,11 @@ def initialinput():
                     lvalues.update({1:l})
                 if knownbarcode == True:
                     fivein = str(input("5' barcode/primer ("+str(1+startround-1)+"): "))
+                    if multiround == False and fivein.isnumeric():
+                        fivein = autofiveprimefinder(1, int(fivein))
                     threein = str(input("3' primer/barcode ("+str(1+startround-1)+"): "))
+                    if multiround == False and threein.isnumeric():
+                        threein = autothreeprimefinder(1, int(threein))
                     barcodeprimers53[1] = (fivein, threein)
                 if tryauto == True:
                     for runnum in range(2, numofruns+1):
@@ -396,7 +405,7 @@ def initialinput():
                                 fivein = autofiveprimefinder(runnum, int(fivein))
                             threein = str(input("3' primer/barcode ("+str(runnum+startround-1)+"): "))
                             if multiround == False and threein.isnumeric():
-                                fivein = autothreeprimefinder(runnum, int(threein))
+                                threein = autothreeprimefinder(runnum, int(threein))
                             barcodeprimers53[runnum] = (fivein, threein)
                 else:
                     for runnum in range(2, numofruns+1):
@@ -416,7 +425,70 @@ def initialinput():
                                 fivein = autofiveprimefinder(runnum, int(fivein))
                             threein = str(input("3' primer/barcode ("+str(runnum+startround-1)+"): "))
                             if multiround == False and threein.isnumeric():
-                                fivein = autothreeprimefinder(runnum, int(threein))
+                                threein = autothreeprimefinder(runnum, int(threein))
+                            barcodeprimers53[runnum] = (fivein, threein)
+            else:
+                FileName1 = str(input("Fastx File Name (try \"auto\"): "))
+                if FileName1 == "auto":
+                    tryauto = True
+                    FileName1 = str(input_with_prefill("Fastx File Name: ", startingfile))
+                    FileName = os.path.join(datadir, FileName1)
+                    #global runnum
+                    #runnum = int(input("Run number:"))
+                    filenames1.update({1:FileName1})
+                    ufilenames.update({FileName:1})
+                    filenames.update({1:FileName})
+                else:
+                    FileName = os.path.join(datadir, FileName1)
+                    #global runnum
+                    #runnum = int(input("Run number:"))
+                    filenames1.update({1:FileName1})
+                    ufilenames.update({FileName:1})
+                    filenames.update({1:FileName})
+                if knownbarcode == True:
+                    fivein = str(input("5' barcode/primer ("+str(1+startround-1)+"): "))
+                    if multiround == False and fivein.isnumeric():
+                        fivein = autofiveprimefinder(1, int(fivein))
+                    threein = str(input("3' primer/barcode ("+str(1+startround-1)+"): "))
+                    if multiround == False and threein.isnumeric():
+                        threein = autothreeprimefinder(1, int(threein))
+                    barcodeprimers53[1] = (fivein, threein)
+                if tryauto == True:
+                    for runnum in range(2, numofruns+1):
+                        for f in namesindirectory:
+                            if str(orderednumbers[startround+runnum-1]) in f:
+                                nextfile = f
+                        FileName1 = str(input_with_prefill("Fastx File Name: ", nextfile))
+                        FileName = os.path.join(datadir, FileName1)
+                        #global runnum
+                        #runnum = int(input("Run number:"))
+                        filenames1.update({runnum:FileName1})
+                        ufilenames.update({FileName:runnum})
+                        filenames.update({runnum:FileName})
+                        if knownbarcode == True:
+                            fivein = str(input("5' barcode/primer ("+str(runnum+startround-1)+"): "))
+                            if multiround == False and fivein.isnumeric():
+                                fivein = autofiveprimefinder(runnum, int(fivein))
+                            threein = str(input("3' primer/barcode ("+str(runnum+startround-1)+"): "))
+                            if multiround == False and threein.isnumeric():
+                                threein = autothreeprimefinder(runnum, int(threein))
+                            barcodeprimers53[runnum] = (fivein, threein)
+                else:
+                    for runnum in range(2, numofruns+1):
+                        FileName1 = str(input("Fastx File Name: "))
+                        FileName = os.path.join(datadir, FileName1)
+                        #global runnum
+                        #runnum = int(input("Run number:"))
+                        filenames1.update({runnum:FileName1})
+                        ufilenames.update({FileName:runnum})
+                        filenames.update({runnum:FileName})
+                        if knownbarcode == True:
+                            fivein = str(input("5' barcode/primer ("+str(runnum+startround-1)+"): "))
+                            if multiround == False and fivein.isnumeric():
+                                fivein = autofiveprimefinder(runnum, int(fivein))
+                            threein = str(input("3' primer/barcode ("+str(runnum+startround-1)+"): "))
+                            if multiround == False and threein.isnumeric():
+                                threein = autothreeprimefinder(runnum, int(threein))
                             barcodeprimers53[runnum] = (fivein, threein)
 
         if multiround == True:
@@ -424,8 +496,6 @@ def initialinput():
             numoffiles = int(input("Number of files: "))
             global clfiles
             clfiles = []
-            if knownbarcode == True:
-                barcodeprimers53 = {}
             for _ in range(numoffiles):
                 FileName1 = input("Fastx File Name: ")
                 FileName = os.path.join(datadir, FileName1)
@@ -916,16 +986,17 @@ def addruncl():
             """
             for run in range(1, numofruns+1):
                 RangeKmerCounterSELEX(filenames[run], run, mink, maxk)
-            #listhammer(runnum)
-            #dicthammer(runnum)
-            #startpwm(runnum)
-            #pwmmaker(runnum)
+                #listhammer(runnum)
+                #dicthammer(runnum)
+                #startpwm(runnum)
+                #pwmmaker(runnum)
         if extype in ["ChIP", "DNase"]:
-            RangeKmerCounterChipDNA(FileName, runnum, mink, maxk)
-            #listhammer(runnum)
-            #dicthammer(runnum)
-            #startpwm(runnum)
-            #pwmmaker(runnum)
+            for runnum in range(1, numofruns+1):
+                RangeKmerCounterChipDNA(FileName, runnum, mink, maxk)
+                #listhammer(runnum)
+                #dicthammer(runnum)
+                #startpwm(runnum)
+                #pwmmaker(runnum)
     if multiround == True:
         """
         global numoffiles
