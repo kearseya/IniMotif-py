@@ -259,6 +259,11 @@ def autofiller():
                         work.insert(0, string=predicted)
     """
     namesindirectory = os.listdir(str(pathtodirectoryinput.get()))
+    orderednumbers = [99999999]
+    for n in namesindirectory:
+        if n[:3].isalpha() and n[3:-6].isnumeric():
+            orderednumbers.append(int(n[3:-6]))
+    orderednumbers.sort(reverse=True)
     if len(str(filenamesinputs.get())) == 0:
         highestnumber = 0
         #print(namesindirectory)
@@ -278,7 +283,7 @@ def autofiller():
             for x in range(0, (int(numberofrunsinput.get())-1)):
                 for j in namesindirectory:
                     threeletter = str(firstfileauto[:3])
-                    sixnumbers = str(int(firstfileauto[3:-6])-(x+1))
+                    sixnumbers = str(orderednumbers[x+2])
                     if len(sixnumbers) < 6:
                         sixnumbers = (6-len(sixnumbers))*"0"+sixnumbers
                     namenoext = threeletter+sixnumbers
@@ -342,7 +347,7 @@ def autofiller():
             for x in range(0, (int(numberofrunsinput.get())-1)):
                 for j in namesindirectory:
                     threeletter = str(firstfileauto[:3])
-                    sixnumbers = str(int(firstfileauto[3:-6])-(x+1))
+                    sixnumbers = str(orderednumbers[x+2])
                     if len(sixnumbers) < 6:
                         sixnumbers = (6-len(sixnumbers))*"0"+sixnumbers
                     namenoext = threeletter+sixnumbers
