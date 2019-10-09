@@ -1,4 +1,4 @@
-#from tkinter import *
+from tkinter import *
 import os
 
 
@@ -502,6 +502,15 @@ def makeorderedinputlist():
     return inputlist
 
 
+def ebi_popup():
+    popup = Toplevel()
+    label = Label(popup, text="Enter accession IDs to download data from the EBI")
+    label.grid()
+    closeWin = Button(popup, text="Close", command=popup.destroy)
+    closeWin.grid(row=1)
+
+
+
 #autofilldetailslabel = Label(window, text="Autofill: ")
 #autofilldetailslabel.pack(side=LEFT, anchor="n", text="Autofill")
 autofilldetailscheckbox = Button(window, command=autofiller, text="Autofill")
@@ -510,6 +519,10 @@ autofilldetailscheckbox.pack(side=LEFT, anchor="n", padx=20, pady=20)
 
 submitdetailscheckbox = Button(window, command=makeorderedinputlist, text="SUBMIT")
 submitdetailscheckbox.pack(side=RIGHT, anchor="n", padx=20, pady=20)
+
+
+ebicheckbox = Button(window, command=ebi_popup, text="Download data from the EBI")
+ebicheckbox.pack(side=LEFT, anchor="n", padx=20, pady=20)
 
 window.mainloop()
 
