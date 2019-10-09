@@ -504,11 +504,27 @@ def makeorderedinputlist():
 
 def ebi_popup():
     popup = Toplevel()
-    label = Label(popup, text="Enter accession IDs to download data from the EBI")
-    label.grid()
-    closeWin = Button(popup, text="Close", command=popup.destroy)
-    closeWin.grid(row=1)
+    labelTop = Label(popup, text="Enter accession IDs to download data from the EBI")
+    labelTop.grid(row=0, column=1)
+    
+    studyLabel = Label(popup, text="Download the Study: ")
+    studyLabel.grid(row=1, column=0)
+    studyLabelInput = Entry(popup)
+    studyLabelInput.grid(row=1, column=1)
+    
+    studyButton = Button(popup, text="Enter")
+    studyButton.grid(row=1, column=2)
 
+    readLabel = Label(popup, text="Download the Read: ")
+    readLabel.grid(row=2, column=0)
+    readLabelInput = Entry(popup)
+    readLabelInput.grid(row=2, column=1)
+    
+    readButton = Button(popup, text="Enter")
+    readButton.grid(row=2, column=2)
+    
+    closeWin = Button(popup, text="Close", command=popup.destroy)
+    closeWin.grid(row=3, column=1)
 
 
 #autofilldetailslabel = Label(window, text="Autofill: ")
