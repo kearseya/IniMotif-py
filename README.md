@@ -1,7 +1,6 @@
 # IniMotif-py
-IniMotif in python
 
- ====================================
+## IniMotif in python
 
 +Alex Kearsey 
 +Dr Lu Cheng
@@ -30,7 +29,7 @@ Python module requirements: Numpy, Biopython, Matplotlib, Tkinter, Pillow, PyQt(
 
 Figures are saved in a folder with the name of the analysis identidier and split into subfolders for the logos, hamming distance, position bias, and kmer frequency.
 
-Variable inputs:
+## Variable inputs:
 
 **Analysis identifier** - The output name for the results page and the folder that the figures are organised in <br />
 **Path to directory** - The path to the directory the data files are <br />
