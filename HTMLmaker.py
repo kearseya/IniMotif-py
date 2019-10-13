@@ -15,7 +15,8 @@ from WebLogoMod import countdict
 
 from PositionBias import TSeqNums
 from PositionBias import LSeqNums
-from PositionBias import Barcodevalues
+#from PositionBias import Barcodevalues
+from KmerKounter import barcodeprimers53
 from PositionBias import numofkmers
 from PositionBias import numofuniquekmers
 from PositionBias import numoftfbs
@@ -192,13 +193,13 @@ def tablemaker():
             Html_file.write("<table cellpadding=10><tr><td colspan = "+str((maxk-mink)+2)+""" align = "middle"><h2>"""+str(r+(startround-1))+": "+str(filenames1[r])+"</h2></td>")
             Html_file.write("</tr><tr><td>Total sequences:</td><td colspan = "+str((maxk-mink)+1)+""" align = "left">"""+str(TSeqNums[r])+"</td>")
             Html_file.write("</tr><tr><td>Passed sequences:</td><td colspan = "+str((maxk-mink)+1)+""" align = "left">"""+str(LSeqNums[r])+"</td>")
-            Html_file.write("</tr></h2></td></tr>"+"<tr><td>Barcode:</td><td colspan = "+str((maxk-mink)+1)+""" align = "left">"""+str(Barcodevalues[r])+"</td>")
+            Html_file.write("</tr></h2></td></tr>"+"<tr><td>Barcode:</td><td colspan = "+str((maxk-mink)+1)+""" align = "left">5': """+str(barcodeprimers53[r][0])+" ("+str(len(barcodeprimers53[r][0]))+"),   3': "+str(barcodeprimers53[r][1])+" ("+str(len(barcodeprimers53[r][1]))+")</td>")
             Html_file.write("""</tr><tr><td style="background-color:lightgrey;"></td>""")
         if multiround == True:
             Html_file.write("<table cellpadding=10><tr><td colspan = "+str((maxk-mink)+2)+""" align = "middle"><h2>"""+str(r+(startround-1))+": "+str(files[0])+"</h2></td>")
             Html_file.write("</tr><tr><td>Total sequences:</td><td colspan = "+str((maxk-mink)+1)+""" align = "left">"""+str(TSeqNums[r])+"</td>")
             Html_file.write("</tr><tr><td>Passed sequences:</td><td colspan = "+str((maxk-mink)+1)+""" align = "left">"""+str(LSeqNums[r])+"</td>")
-            Html_file.write("</tr></h2></td></tr>"+"<tr><td>Barcode:</td><td colspan = "+str((maxk-mink)+1)+""" align = "left">"""+str(Barcodevalues[r])+"</td>")
+            Html_file.write("</tr></h2></td></tr>"+"<tr><td>Barcode:</td><td colspan = "+str((maxk-mink)+1)+""" align = "left">5': """+str(barcodeprimers53[r][0])+" ("+str(len(barcodeprimers53[r][0]))+"),   3': "+str(barcodeprimers53[r][1])+" ("+str(len(barcodeprimers53[r][1]))+")</td>")
             Html_file.write("""</tr><tr><td style="background-color:lightgrey;"></td>""")
         for k in range(mink, maxk+1):
             Html_file.write("""<td style="background-color:lightgrey;"><b>K"""+str(k)+"</b></td>")
