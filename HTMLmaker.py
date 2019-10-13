@@ -45,51 +45,42 @@ title = """
 * {
   box-sizing: border-box;
 }
-
   body {
   font-family: Arial, Helvetica, sans-serif;
   background-image: linear-gradient(to bottom, #051937, #004d7a, #008793, #00bf72, #a8eb12);
 }
-
 p {
-  font-size: 100px;
+  font-size: 30px;
 }
-
 h1 {
-  font-size: 200px;
+  font-size: 55px;
   background-color: none;
   color: white;
 }
-
 h2 {
-  font-size: 35px;
+  font-size: 20px;
 }
-
 th {
   color: lightgrey;
   background-color: none;
 }
-
 td {
   background-color: white;
 }
-
 header {
   background-color: none;
   padding: 10px;
   text-align: center;
   font-size: 35px;
   color: white;
-
 }
 </style>
 </head>
 <header>
-<h1 style="font-size: 600px;"> IniMotif </h1>
-<h2 style="font-size: 100px">A pipeline for motif discovery!</h2>
+<h1 style="font-size: 100px;"> IniMotif </h1>
+<h2 style="font-size: 50px">A pipeline for motif discovery!</h2>
 </header>
 <br>
-
 """
 
 logoordernames = ["", "First", "Second", "Third", "Fourth", "Fifth", "Sixth"]
@@ -120,13 +111,13 @@ def results():
             #logos = "<tr>"
             #kval = """<p style="color: white; padding: 30px;" align = "middle"><b>K = """+str(k)+"</b></p>"""
             for n in range(1, nmotifs+1):
-                logos = """<tr><td colspan = 2 align = "middle"><img src="figures/"""+str(identifier)+"""/logos/logo_"""+str(identifier)+"_"+str(x+(startround-1))+"_"+str(k)+"_"+str(n)+""".png"></td></tr>"""
+                logos = """<tr><td colspan = 2 align = "middle"><img src="figures/"""+str(identifier)+"""/logos/logo_"""+str(identifier)+"_"+str(x+(startround-1))+"_"+str(k)+"_"+str(n)+""".png\" width=700px></td></tr>"""
                 if nmotifs == 1:
                     logosusage = """<tr><td colspan = 2 align = "middle"><p>"""+"Motif uses "+str(round((countdict[x][k][n]/totaldict[x][k])*100, 2))+"% of kmers"+"</p></td></tr>"
                 else:
                     logosusage = """<tr><td colspan = 2 align = "middle"><p>"""+str(logoordernames[n])+" motif uses "+str(round((countdict[x][k][n]/totaldict[x][k])*100, 2))+"% of kmers"+"</p></td></tr>"
-                ham = """<tr><td><img src="figures/"""+str(identifier)+"""/hamming_distance/hamdist_"""+str(identifier)+"_"+str(x+(startround-1))+"_"+str(k)+"_"+str(n)+""".png" width=2000px hight=1200px></td>"""
-                pos = """<td><img src="figures/"""+str(identifier)+"""/position_bias/pos_"""+str(identifier)+"_"+str(x+(startround-1))+"_"+str(k)+"_"+str(n)+""".png" width=2000px hight=1200px></td></tr>"""
+                ham = """<tr><td><img src="figures/"""+str(identifier)+"""/hamming_distance/hamdist_"""+str(identifier)+"_"+str(x+(startround-1))+"_"+str(k)+"_"+str(n)+""".png\" width=500px hight=60%></td>"""
+                pos = """<td><img src="figures/"""+str(identifier)+"""/position_bias/pos_"""+str(identifier)+"_"+str(x+(startround-1))+"_"+str(k)+"_"+str(n)+""".png\" width=500px hight=60%></td></tr>"""
                 string = """<table align = "center";>"""+logos+logosusage+ham+pos+"</table>"
                 html_strs[x][k][n].append(string)
 
@@ -144,10 +135,10 @@ def kmerfrequency():
     for k in range(mink, maxk+1):
         html_kmerfreq.update({k:[]})
         if twos % 2 == 0:
-            first = """<tr><td><img src="figures/"""+str(identifier)+"""/kmer_frequency/kmerfreq_"""+str(identifier)+"_"+str(k)+""".png" width=3000px height=3000px></td>"""
+            first = """<tr><td><img src="figures/"""+str(identifier)+"""/kmer_frequency/kmerfreq_"""+str(identifier)+"_"+str(k)+""".png" width=800px height=800px></td>"""
             html_kmerfreq[k].append(first)
         if twos % 2 == 1:
-            second = """<td><img src="figures/"""+str(identifier)+"""/kmer_frequency/kmerfreq_"""+str(identifier)+"_"+str(k)+""".png" width=3000px height=3000px></td></tr>"""
+            second = """<td><img src="figures/"""+str(identifier)+"""/kmer_frequency/kmerfreq_"""+str(identifier)+"_"+str(k)+""".png" width=800px height=800px></td></tr>"""
             html_kmerfreq[k].append(second)
         #print(html_kmerfreq)
         #html_kmerfreq.update({k:[]})
@@ -175,7 +166,7 @@ def kmerfreqformatter():
         twos += 1
         if k == maxk:
             if twos % 2 == 1:
-                Html_file.write("""<td><background color = "white" width=3000px height=3000px></td></tr>""")
+                Html_file.write("""<td><background color = "white" width=800px height=800px></td></tr>""")
     Html_file.write("</table>")
 
 
