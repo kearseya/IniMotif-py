@@ -38,24 +38,29 @@ filenameslabels = Label(variableinputform, text="File name(s): ", anchor="w")
 filenameslabels.grid(row=0, column=1)
 filenamesinputs = Entry(variableinputform, textvariable=StringVar())
 filenamesinputs.grid(row=1, column=1)
+filenamesinputs.config({"background": "lightgrey"})
+
 
 readlengthslabels = Label(variableinputform, text="Read lengths: ")
 readlengthslabels.grid(row=0, column=2)
 readlengthsinputs = Entry(variableinputform, textvariable=IntVar())
 readlengthsinputs.delete(0)
 readlengthsinputs.grid(row=1, column=2)
+readlengthsinputs.config({"background": "lightgrey"})
 
 fiveprimebarlabels = Label(variableinputform, text="5' barcode/primer: ")
 fiveprimebarlabels.grid(row=0, column=3)
 fiveprimebarinputs = Entry(variableinputform, textvariable=StringVar())
 fiveprimebarinputs.delete(0)
 fiveprimebarinputs.grid(row=1, column=3)
+fiveprimebarinputs.config({"background": "lightgrey"})
 
 threeprimebarlabels = Label(variableinputform, text="3' barcode/primer: ")
 threeprimebarlabels.grid(row=0, column=4)
 threeprimebarinputs = Entry(variableinputform, textvariable=StringVar())
 threeprimebarinputs.delete(0)
 threeprimebarinputs.grid(row=1, column=4)
+threeprimebarinputs.config({"background": "lightgrey"})
 
 multiroundsamefilelabels = Label(initialdetailsframe, text="Multiple rounds in same file: ")
 multiroundsamefilelabels.grid(row=8, column=0, sticky="e", padx=(20,0))
@@ -85,6 +90,10 @@ def add_rows():
     threeprimebar = []
     extype = valueforexdrop.get()
     knownbarcodesval = knownbarcodes.get()
+    filenamesinputs.config({"background": "white"})
+    readlengthsinputs.config({"background": "white"})
+    fiveprimebarinputs.config({"background": "white"})
+    threeprimebarinputs.config({"background": "white"})
     #global filenameslabels
     #global filenamesinputs
     #if extype == "SELEX":
