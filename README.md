@@ -26,7 +26,8 @@ Press the "Enter" button and exit the GUI window. If the GUI does not show, ther
 <br />
 <br />
 Python module requirements: Numpy, Biopython, Matplotlib, Tkinter, Pillow, PyQt(5), SIP, adjustText
-
+<br />
+<br />
 Figures are saved in a folder with the name of the analysis identidier and split into subfolders for the logos, hamming distance, position bias, and kmer frequency.
 
 ## Variable inputs:
