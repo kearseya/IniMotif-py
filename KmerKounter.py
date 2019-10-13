@@ -233,6 +233,7 @@ def initialinput():
     #global multiround
     #global knownbarcode
     global barcodeprimers53
+    barcodeprimers53 = {}
     global barcodes5
     global barcodeslist5
     global barfiveslice
@@ -258,9 +259,6 @@ def initialinput():
             #print("Files")
             #print(files)
 
-        if knownbarcode == True:
-
-            barcodeprimers53 = {}
             for x in range(startround, (numofruns+startround)):
                 barcodeprimers53[x] = (inputlist[(((x-startround)*2)+(numofruns*2)+7)], inputlist[(((x-startround)*2)+(numofruns*2)+8)])
             #print("barprim53")
@@ -376,7 +374,7 @@ def initialinput():
         global FileName1
         global FileName
 
-        barcodeprimers53 = {}
+
 
         if multiround == False:
             if extype == "SELEX":
@@ -1079,6 +1077,11 @@ def addrungui():
                         filenames.update({runnum:FileName})
                         l = int(inputlist[(x*2)+8])
                         lvalues.update({runnum:l})
+                        if knownbarcode == False:
+                            bothslice = barcodechecker(filenames[runnum])
+                            fivein = autofiveprimefinder(runnum, int(bothslice))
+                            threein = autothreeprimefinder(runnum, int(bothslice))
+                            barcodeprimers53[runnum] = (fivein, threein)
                         RangeKmerCounterSELEX(FileName, runnum, mink, maxk)
                         #listhammer(runnum)
                         #dicthammer(runnum)
@@ -1092,6 +1095,11 @@ def addrungui():
                         filenames1.update({runnum:FileName1})
                         ufilenames.update({FileName:runnum})
                         filenames.update({runnum:FileName})
+                        if knownbarcode == False:
+                            bothslice = barcodechecker(filenames[runnum])
+                            fivein = autofiveprimefinder(runnum, int(bothslice))
+                            threein = autothreeprimefinder(runnum, int(bothslice))
+                            barcodeprimers53[runnum] = (fivein, threein)
                         #Combinations(runnum, mink, maxk)
                         RangeKmerCounterChipDNA(FileName, runnum, mink, maxk)
                         #listhammer(runnum)
