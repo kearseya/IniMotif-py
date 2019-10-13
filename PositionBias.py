@@ -24,9 +24,10 @@ if multiround == True:
     from KmerKounter import files
     from KmerKounter import datadir
 if knownbarcode == True:
-    from KmerKounter import barcodeprimers53
     from KmerKounter import barcodes5
     from KmerKounter import barfiveslice
+
+from KmerKounter import barcodeprimers53
 
 from KmerKounter import inputlist
 
