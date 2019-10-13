@@ -1,4 +1,4 @@
-#from tkinter import *
+from tkinter import *
 import os
 
 
@@ -13,10 +13,17 @@ title.pack(side=TOP)
 usage = 0
 
 initialdetailsframe = Frame(window)
-initialdetailsframe.pack(side=TOP, anchor="w")
+initialdetailsframe.pack(side=LEFT, anchor="w", pady=30)
+
+pictureframe = Frame(window)
+pictureframe.pack(side=TOP, anchor="n", pady=20)
 
 variableinputform = Frame(window)
-variableinputform.pack()
+variableinputform.pack(side=TOP, anchor="w", padx=10)
+
+buttonframe = Frame(window)
+buttonframe.pack(side=BOTTOM, anchor="s")
+
 
 
 experimenttype = Label(initialdetailsframe, text="Experiment type: ")
@@ -26,7 +33,6 @@ valueforexdrop = StringVar()
 valueforexdrop.set(experimentformatlist[0])
 experimenttypedrop = OptionMenu(initialdetailsframe, valueforexdrop, "SELEX", "ChIP", "ATAC", "DNase")
 experimenttypedrop.grid(row=7, column=1)
-
 
 filenameslabels = Label(variableinputform, text="File name(s): ", anchor="w")
 filenameslabels.grid(row=0, column=1)
@@ -56,7 +62,7 @@ multiroundsamefilelabels.grid(row=8, column=0, sticky="e", padx=(20,0))
 multirounds = BooleanVar()
 multiroundcheckbox = Checkbutton(initialdetailsframe, variable=multirounds)
 multiroundcheckbox.grid(row=8, column=1)
-multiroundcheckbox.select()
+#multiroundcheckbox.select()
 
 knownbarcodeslabels = Label(initialdetailsframe, text="Known barcode: ")
 knownbarcodeslabels.grid(row=9, column=0, sticky="e", padx=(20,0))
@@ -139,16 +145,84 @@ def add_rows():
                 SELEXlist = SELEXlist[:-(len(SELEXlist)-(int(numberofrunsinput.get())-1)*2]
 """
 
+def changecolour1(event):
+    identifiernameinput.config({"background": "light green"})
+    pathtodirectoryinput.config({"background": "white"})
+
+def changecolour2(event):
+    filesindircheck = len(os.listdir(str(pathtodirectoryinput.get())))
+    if filesindircheck > 0:
+        pathtodirectoryinput.config({"background": "light green"})
+        numberofrunsinput.config({"background": "white"})
+
+def changecolour3(event):
+    if str(numberofrunsinput.get()).isnumeric() == True:
+        numberofrunsinput.config({"background": "light green"})
+        minimimkvaluesinputs.config({"background": "white"})
+    if str(numberofrunsinput.get()).isnumeric() == False:
+        numberofrunsinput.config({"background": "tomato"})
+
+def changecolour4(event):
+    if str(minimimkvaluesinputs.get()).isnumeric() == True:
+        if 1 <= int(minimimkvaluesinputs.get()) <= 16:
+            minimimkvaluesinputs.config({"background": "light green"})
+            maximumkvaluesinputs.config({"background": "white"})
+        else:
+            minimimkvaluesinputs.config({"background": "tomato"})
+    if str(minimimkvaluesinputs.get()).isnumeric() == False:
+        minimimkvaluesinputs.config({"background": "tomato"})
+
+def changecolour5(event):
+    if str(maximumkvaluesinputs.get()).isnumeric() == True:
+        if int(minimimkvaluesinputs.get()) <= int(maximumkvaluesinputs.get()) <= 16:
+            maximumkvaluesinputs.config({"background": "light green"})
+            startroundinputs.config({"background": "white"})
+        else:
+            maximumkvaluesinputs.config({"background": "tomato"})
+    if str(maximumkvaluesinputs.get()).isnumeric() == False:
+        maximumkvaluesinputs.config({"background": "tomato"})
+
+def changecolour6(event):
+    if str(startroundinputs.get()).isnumeric() == True:
+        startroundinputs.config({"background": "light green"})
+        nmotifsinputs.config({"background": "white"})
+    if str(startroundinputs.get()).isnumeric() == False:
+        startroundinputs.config({"background": "tomato"})
+
+def changecolour7(event):
+    if str(nmotifsinputs.get()).isnumeric() == True:
+        if 1 <= int(nmotifsinputs.get()) <= 6:
+            nmotifsinputs.config({"background": "light green"})
+            allowhaminputs.config({"background": "white"})
+        else:
+            nmotifsinputs.config({"background": "tomato"})
+    if str(nmotifsinputs.get()).isnumeric() == False:
+        nmotifsinputs.config({"background": "tomato"})
+
+def changecolour8(event):
+    if str(allowhaminputs.get()).isnumeric() == True:
+        if 1 <= int(allowhaminputs.get()) <= int(minimimkvaluesinputs.get()):
+            allowhaminputs.config({"background": "light green"})
+        else:
+            nmotifsinputs.config({"background": "tomato"})
+    if str(nmotifsinputs.get()).isnumeric() == False:
+        nmotifsinputs.config({"background": "tomato"})
+
 
 identifiernamelabel = Label(initialdetailsframe, text="Analysis identifier: ")
 identifiernamelabel.grid(row=0, column=0, sticky="e")
 identifiernameinput = Entry(initialdetailsframe)
 identifiernameinput.grid(row=0, column=1)
+identifiernameinput.config({"background": "white"})
+identifiernameinput.bind("<FocusOut>", changecolour1)
 
 pathtodirectorylabel = Label(initialdetailsframe, text="Path to directory: ")
 pathtodirectorylabel.grid(row=1, column=0, sticky="e")
 pathtodirectoryinput = Entry(initialdetailsframe)
 pathtodirectoryinput.grid(row=1, column=1)
+pathtodirectoryinput.config({"background": "lightgrey"})
+pathtodirectoryinput.bind("<FocusOut>", changecolour2)
+
 
 numofrunsvalue = IntVar()
 numberofrunslabel = Label(initialdetailsframe, text="Number of runs: ")
@@ -156,6 +230,8 @@ numberofrunslabel.grid(row=2, column=0, sticky="e")
 numberofrunsinput = Entry(initialdetailsframe, textvariable=numofrunsvalue)
 numberofrunsinput.delete(0)
 numberofrunsinput.grid(row=2, column=1)
+numberofrunsinput.config({"background": "lightgrey"})
+numberofrunsinput.bind("<FocusOut>", changecolour3)
 
 
 reversecomplementwantedlabel = Label(initialdetailsframe, text="Reverse compliment: ")
@@ -172,24 +248,25 @@ valueforlogodrop.set(logoformatlist[0])
 logoformatdropdown = OptionMenu(initialdetailsframe, valueforlogodrop, "bits", "frequency")
 logoformatdropdown.grid(row=4, column=1)
 
-formchangebutton = Button(initialdetailsframe, text="Enter", pady=1, command=add_rows)
-formchangebutton.grid(row=2, column=2, padx=10)
-
 inimotifimage = PhotoImage(file='figures/GUIgraphics/tobylogo.png')
-inimotifimagelabel = Label(initialdetailsframe, image=inimotifimage)
-inimotifimagelabel.grid(row=1, column=3, padx=20)
+inimotifimagelabel = Label(pictureframe, image=inimotifimage)
+inimotifimagelabel.grid(padx=20)
 
 minimumkvalueslabels = Label(initialdetailsframe, text="Min K: ")
 minimumkvalueslabels.grid(row=5, column=0,  sticky="e")
 minimimkvaluesinputs = Entry(initialdetailsframe, textvariable=IntVar())
 minimimkvaluesinputs.delete(0)
 minimimkvaluesinputs.grid(row=5, column=1)
+minimimkvaluesinputs.config({"background": "lightgrey"})
+minimimkvaluesinputs.bind("<FocusOut>", changecolour4)
 
 maximumkvalueslabels = Label(initialdetailsframe, text="Max K: ")
 maximumkvalueslabels.grid(row=6, column=0,  sticky="e")
 maximumkvaluesinputs = Entry(initialdetailsframe, textvariable=IntVar())
 maximumkvaluesinputs.delete(0)
 maximumkvaluesinputs.grid(row=6, column=1)
+maximumkvaluesinputs.config({"background": "lightgrey"})
+maximumkvaluesinputs.bind("<FocusOut>", changecolour5)
 
 startroundlabels = Label(initialdetailsframe, text="Start round: ")
 startroundlabels.grid(row=10, column=0,  sticky="e")
@@ -197,6 +274,8 @@ startroundinputs = Entry(initialdetailsframe, textvariable=IntVar())
 startroundinputs.delete(0)
 startroundinputs.insert(0, int(1))
 startroundinputs.grid(row=10, column=1)
+startroundinputs.config({"background": "lightgrey"})
+startroundinputs.bind("<FocusOut>", changecolour6)
 
 nmotifslabels = Label(initialdetailsframe, text="Number of motifs: ")
 nmotifslabels.grid(row=11, column=0,  sticky="e")
@@ -204,6 +283,8 @@ nmotifsinputs = Entry(initialdetailsframe, textvariable=IntVar())
 nmotifsinputs.delete(0)
 nmotifsinputs.insert(0, int(1))
 nmotifsinputs.grid(row=11, column=1)
+nmotifsinputs.config({"background": "lightgrey"})
+nmotifsinputs.bind("<FocusOut>", changecolour7)
 
 allowhamlabels = Label(initialdetailsframe, text="Allow hamming distance: ")
 allowhamlabels.grid(row=12, column=0,  sticky="e")
@@ -211,6 +292,12 @@ allowhaminputs = Entry(initialdetailsframe, textvariable=IntVar())
 allowhaminputs.delete(0)
 allowhaminputs.insert(0, int(1))
 allowhaminputs.grid(row=12, column=1)
+allowhaminputs.config({"background": "lightgrey"})
+allowhaminputs.bind("<FocusOut>", changecolour8)
+
+
+formchangebutton = Button(initialdetailsframe, text="Ready for file name entry", pady=1, command=add_rows)
+formchangebutton.grid(row=13, column=1, padx=10, pady=10)
 
 
 """
@@ -504,12 +591,12 @@ def makeorderedinputlist():
 
 #autofilldetailslabel = Label(window, text="Autofill: ")
 #autofilldetailslabel.pack(side=LEFT, anchor="n", text="Autofill")
-autofilldetailscheckbox = Button(window, command=autofiller, text="Autofill")
-autofilldetailscheckbox.pack(side=LEFT, anchor="n", padx=20, pady=20)
+autofilldetailscheckbox = Button(buttonframe, command=autofiller, text="Autofill")
+autofilldetailscheckbox.pack(side=LEFT, anchor="s", padx=20, pady=20)
 
 
-submitdetailscheckbox = Button(window, command=makeorderedinputlist, text="SUBMIT")
-submitdetailscheckbox.pack(side=RIGHT, anchor="n", padx=20, pady=20)
+submitdetailscheckbox = Button(buttonframe, command=makeorderedinputlist, text="SUBMIT")
+submitdetailscheckbox.pack(side=RIGHT, anchor="s", padx=20, pady=20)
 
 window.mainloop()
 
