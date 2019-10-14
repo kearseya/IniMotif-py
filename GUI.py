@@ -159,10 +159,16 @@ def changecolour1(event):
     pathtodirectoryinput.config({"background": "white"})
 
 def changecolour2(event):
-    filesindircheck = len(os.listdir(str(pathtodirectoryinput.get())))
-    if filesindircheck > 0:
-        pathtodirectoryinput.config({"background": "light green"})
-        numberofrunsinput.config({"background": "white"})
+    try:
+        filesindircheck = len(os.listdir(str(pathtodirectoryinput.get())))
+        if filesindircheck > 0:
+            pathtodirectoryinput.config({"background": "light green"})
+            numberofrunsinput.config({"background": "white"})
+        else:
+            pathtodirectoryinput.config({"background": "tomato"})
+    except:
+        pathtodirectoryinput.config({"background": "tomato"})
+
 
 def changecolour3(event):
     if str(numberofrunsinput.get()).isnumeric() == True:
