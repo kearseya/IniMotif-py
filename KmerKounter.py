@@ -78,6 +78,9 @@ def importfromgui():
             multiround = False
         if knownbarcode in ["y", "Y", "yes", "Yes", "t", "true", "True"]:
             knownbarcode = True
+        elif knownbarcode in ["NA", "na", "None", "none"]:
+            nobarcode = True
+            knownbarcode = False
         else:
             knownbarcode = False
 
@@ -196,6 +199,9 @@ def autothreeprimefinder(run, threesplice):
 
 
 def barcodechecker(FileName):
+    if nobarcode == True:
+        avg = 0
+        return
     bar = []
     fastaFileName = open(FileName, "r")
     while len(bar) <= 500:
@@ -203,19 +209,34 @@ def barcodechecker(FileName):
             line = line.strip()
             if line.startswith(">") or line.startswith("@"):
                 continue
-            if len(line) == l and "N" not in line:
-                for i in range(12):
-                    start = line[0:i]
-                    end = revComp(line[len(line)-i : len(line)])
-                    if start == end:
-                        x = i
-                    else:
-                        break
-                bar.append(x)
-            if line.startswith("+"):
-                next(fastaFileName)
+            if extype == "SELEX":
+                if len(line) == l and "N" not in line:
+                    for i in range(12):
+                        start = line[0:i]
+                        end = revComp(line[len(line)-i : len(line)])
+                        if start == end:
+                            x = i
+                        else:
+                            break
+                    bar.append(x)
+                if line.startswith("+"):
+                    next(fastaFileName)
+                else:
+                    continue
             else:
-                continue
+                if "N" not in line:
+                    for i in range(12):
+                        start = line[0:i]
+                        end = revComp(line[len(line)-i : len(line)])
+                        if start == end:
+                            x = i
+                        else:
+                            break
+                    bar.append(x)
+                if line.startswith("+"):
+                    next(fastaFileName)
+                else:
+                    continue
     favg = (sum(bar)/len(bar))
     avg = round(favg)
     return avg
