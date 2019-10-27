@@ -171,7 +171,6 @@ def autofiveprimefinder(run, fivesplice):
     cwf = open(filenames[run])
     if nobarcode == True:
         five = 0
-        print("5': NA "+str(five))
         return five
     for linenum, line in enumerate(cwf):
         if linenum % 4 == 1:
@@ -193,7 +192,6 @@ def autothreeprimefinder(run, threesplice):
     cwf = open(filenames[run])
     if nobarcode == True:
         three = 0
-        print("3': NA "+str(three))
         return three
     for linenum, line in enumerate(cwf):
         if linenum % 4 == 1:
@@ -823,7 +821,6 @@ def KmerCounterSELEX(FileName, runnum, k):
 
 def RangeKmerCounterSELEX(FileName, runnum, mink, maxk):
     for i in range(mink,maxk+1):
-        print(FileName)
         KmerCounterSELEX(FileName, runnum, i)
 
 
@@ -1115,8 +1112,6 @@ def addrungui():
                         filenames.update({runnum:FileName})
                         l = int(inputlist[(x*2)+8])
                         lvalues.update({runnum:l})
-                        print(runnum)
-                        print(FileName)
                         if knownbarcode == False:
                             bothslice = barcodechecker(filenames[runnum])
                             fivein = autofiveprimefinder(runnum, int(bothslice))
@@ -1191,7 +1186,7 @@ print(hamdict)
 print("pwm")
 print(pwm)
 """
-print(inputlist)
+#print(inputlist)
 
 
 def removezeros():
