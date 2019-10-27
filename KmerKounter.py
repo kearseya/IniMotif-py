@@ -59,6 +59,7 @@ def importfromgui():
     global startround
     global multiround
     global knownbarcode
+    global nobarcode
     global inputlist
     try:
         from GUI import inputlist
@@ -66,6 +67,7 @@ def importfromgui():
         from GUI import startround
         from GUI import multiround
         from GUI import knownbarcode
+        from GUI import nobarcode
     except:
         print("Command line input required")
         inputlist = ["cl"]
@@ -116,6 +118,8 @@ def fiveprimerfinder(listin):
 """
 def fiveprimerfinder(listin, min):
     primer = 0
+    if nobarcode == True:
+        return primer
     for i in range(min+1):
         truefor = 0
         for x in range(len(listin)):
@@ -127,6 +131,8 @@ def fiveprimerfinder(listin, min):
 
 def threeprimerfinder(listin, min):
     primer = 0
+    if nobarcode == True:
+        return primer
     for i in range(min+1):
         truefor = 0
         for x in range(len(listin)):
@@ -163,6 +169,10 @@ def autolenfinder(run):
 
 def autofiveprimefinder(run, fivesplice):
     cwf = open(filenames[run])
+    if nobarcode == True:
+        five = 0
+        print("5': NA "+str(five))
+        return five
     for linenum, line in enumerate(cwf):
         if linenum % 4 == 1:
             line = line.strip()
@@ -174,13 +184,17 @@ def autofiveprimefinder(run, fivesplice):
             else:
                 if "N" not in line:
                     five = line[:fivesplice]
-                    print("5': "+str(five))
+                    print("5': NA "+str(five))
                     return five
         if linenum > 32:
             break
 
 def autothreeprimefinder(run, threesplice):
     cwf = open(filenames[run])
+    if nobarcode == True:
+        three = 0
+        print("3': NA "+str(three))
+        return three
     for linenum, line in enumerate(cwf):
         if linenum % 4 == 1:
             line = line.strip()
@@ -199,9 +213,10 @@ def autothreeprimefinder(run, threesplice):
 
 
 def barcodechecker(FileName):
+    global nobarcode
     if nobarcode == True:
         avg = 0
-        return
+        return avg
     bar = []
     fastaFileName = open(FileName, "r")
     while len(bar) <= 500:
@@ -352,6 +367,7 @@ def initialinput():
             primer3 = barcodeprimers3[0][:primer3len]
             #print("primer3")
             #print(primer3)
+
         print("Counting kmers")
 
     else:
@@ -807,6 +823,7 @@ def KmerCounterSELEX(FileName, runnum, k):
 
 def RangeKmerCounterSELEX(FileName, runnum, mink, maxk):
     for i in range(mink,maxk+1):
+        print(FileName)
         KmerCounterSELEX(FileName, runnum, i)
 
 
@@ -1098,6 +1115,8 @@ def addrungui():
                         filenames.update({runnum:FileName})
                         l = int(inputlist[(x*2)+8])
                         lvalues.update({runnum:l})
+                        print(runnum)
+                        print(FileName)
                         if knownbarcode == False:
                             bothslice = barcodechecker(filenames[runnum])
                             fivein = autofiveprimefinder(runnum, int(bothslice))
@@ -1154,6 +1173,7 @@ def addrungui():
 
 def addingall(n):
     if len(inputlist) > 1:
+        print("adding")
         addrungui()
     else:
         addruncl()
@@ -1161,8 +1181,17 @@ def addingall(n):
 
 addingall(numofruns)
 
-
-#print(inputlist)
+"""
+print("kmercount")
+print(kmercount)
+print("hamlist")
+print(hamlist)
+print("hamdict")
+print(hamdict)
+print("pwm")
+print(pwm)
+"""
+print(inputlist)
 
 
 def removezeros():
