@@ -12,6 +12,76 @@ title.pack(side=TOP)
 
 usage = 0
 
+def changeform(event):
+    extype = valueforexdrop.get()
+    global numberofrunsinput
+    global numberofrunslabel
+    global startroundinputs
+    global startroundlabels
+    global readlengthslabels
+    global readlengthsinputs
+    if extype != "SELEX":
+        print("ok")
+        numberofrunsinput.delete(0,END)
+        numberofrunsinput.insert(0, 1)
+        numberofrunsinput.config(state="readonly", foreground="grey")
+        numberofrunslabel.config(foreground="grey")
+        startroundinputs.delete(0, END)
+        startroundinputs.insert(0, 1)
+        startroundinputs.config(state="readonly", foreground="grey")
+        startroundlabels.config(foreground="grey")
+        readlengthslabels.grid_forget()
+        readlengthsinputs.grid_forget()
+    if extype == "SELEX":
+        numberofrunsinput.config(state="normal", foreground="black")
+        numberofrunslabel.config(foreground="black")
+        startroundinputs.config(state="normal", foreground="black")
+        startroundlabels.config(foreground="black")
+        readlengthslabels.grid(row=0, column=2)
+        readlengthsinputs.grid(row=1, column=2)
+
+
+
+
+def insertknownbarinputs():
+    knownbarcodevalue = valueforknownbarcode.get()
+    global knownbarcode
+    if knownbarcodevalue in ["Auto", "None"]:
+        knownbarcode = False
+    if knownbarcodevalue == "Manual":
+        knownbarcode = True
+    if knownbarcode == True:
+        global fiveprimebarlabels
+        fiveprimebarlabels = Label(variableinputform, text="5' barcode/primer: ")
+        fiveprimebarlabels.grid(row=0, column=3)
+        global fiveprimebarinputs
+        fiveprimebarinputs = Entry(variableinputform, textvariable=StringVar())
+        fiveprimebarinputs.delete(0)
+        fiveprimebarinputs.grid(row=1, column=3)
+        fiveprimebarinputs.config({"background": "lightgrey"})
+        global threeprimebarlabels
+        threeprimebarlabels = Label(variableinputform, text="3' barcode/primer: ")
+        threeprimebarlabels.grid(row=0, column=4)
+        global threeprimebarinputs
+        threeprimebarinputs = Entry(variableinputform, textvariable=StringVar())
+        threeprimebarinputs.delete(0)
+        threeprimebarinputs.grid(row=1, column=4)
+        threeprimebarinputs.config({"background": "lightgrey"})
+        """
+    if knownbarcode == False:
+        global fiveprimebarinputs
+        if type(fiveprimebarinputs) != "NoneType":
+            global fiveprimebarlabels
+            fiveprimebarlabels.destroy()
+            global fiveprimebarinputs
+            fiveprimebarinputs.destroy()
+            global threeprimebarlabels
+            threeprimebarlabels.destroy()
+            global threeprimebarinputs
+            threeprimebarinputs.destroy()
+        """
+
+
 initialdetailsframe = Frame(window)
 initialdetailsframe.pack(side=LEFT, anchor="w", pady=30)
 
@@ -27,12 +97,12 @@ buttonframe.pack(side=BOTTOM, anchor="s")
 
 
 experimenttype = Label(initialdetailsframe, text="Experiment type: ")
-experimenttype.grid(row=7, column=0, sticky="e")
+experimenttype.grid(row=2, column=0, sticky="e")
 experimentformatlist = ["SELEX", "ChIP", "ATAC", "DNase"]
 valueforexdrop = StringVar()
 valueforexdrop.set(experimentformatlist[0])
-experimenttypedrop = OptionMenu(initialdetailsframe, valueforexdrop, "SELEX", "ChIP", "ATAC", "DNase")
-experimenttypedrop.grid(row=7, column=1)
+experimenttypedrop = OptionMenu(initialdetailsframe, valueforexdrop, "SELEX", "ChIP", "ATAC", "DNase", command=changeform)
+experimenttypedrop.grid(row=2, column=1)
 
 filenameslabels = Label(variableinputform, text="File name(s): ", anchor="w")
 filenameslabels.grid(row=0, column=1)
@@ -48,19 +118,7 @@ readlengthsinputs.delete(0)
 readlengthsinputs.grid(row=1, column=2)
 readlengthsinputs.config({"background": "lightgrey"})
 
-fiveprimebarlabels = Label(variableinputform, text="5' barcode/primer: ")
-fiveprimebarlabels.grid(row=0, column=3)
-fiveprimebarinputs = Entry(variableinputform, textvariable=StringVar())
-fiveprimebarinputs.delete(0)
-fiveprimebarinputs.grid(row=1, column=3)
-fiveprimebarinputs.config({"background": "lightgrey"})
 
-threeprimebarlabels = Label(variableinputform, text="3' barcode/primer: ")
-threeprimebarlabels.grid(row=0, column=4)
-threeprimebarinputs = Entry(variableinputform, textvariable=StringVar())
-threeprimebarinputs.delete(0)
-threeprimebarinputs.grid(row=1, column=4)
-threeprimebarinputs.config({"background": "lightgrey"})
 
 multiroundsamefilelabels = Label(initialdetailsframe, text="Multiple rounds in same file: ")
 multiroundsamefilelabels.grid(row=8, column=0, sticky="e", padx=(20,0))
@@ -69,12 +127,27 @@ multiroundcheckbox = Checkbutton(initialdetailsframe, variable=multirounds)
 multiroundcheckbox.grid(row=8, column=1)
 #multiroundcheckbox.select()
 
-knownbarcodeslabels = Label(initialdetailsframe, text="Known barcode: ")
-knownbarcodeslabels.grid(row=9, column=0, sticky="e", padx=(20,0))
-knownbarcodes = BooleanVar()
-knownbarcodescheckbox = Checkbutton(initialdetailsframe, variable=knownbarcodes)
-knownbarcodescheckbox.grid(row=9, column=1)
-knownbarcodescheckbox.select()
+def getknownbarval(event):
+    knownbarcodevalue = valueforknownbarcode.get()
+    global knownbarcode
+    global nobarcode
+    nobarcode = False
+    if knownbarcodevalue == "None":
+        knownbarcode = False
+        nobarcode = True
+    if knownbarcodevalue == "Auto":
+        konwnbarcode = False
+    if knownbarcodevalue == "Manual":
+        knownbarcode = True
+    insertknownbarinputs()
+
+knownbarcodelabel = Label(initialdetailsframe, text="Experiment type: ")
+knownbarcodelabel.grid(row=9, column=0, sticky="e")
+knownbarcodelist = ["Auto", "Manual", "None"]
+valueforknownbarcode= StringVar()
+valueforknownbarcode.set(knownbarcodelist[2])
+knownbarcodedrop = OptionMenu(initialdetailsframe, valueforknownbarcode, "Auto", "Manual", "None", command=getknownbarval)
+knownbarcodedrop.grid(row=9, column=1)
 
 
 def add_rows():
@@ -89,11 +162,20 @@ def add_rows():
     fiveprimebar = []
     threeprimebar = []
     extype = valueforexdrop.get()
-    knownbarcodesval = knownbarcodes.get()
+    #knownbarcodesval = knownbarcodes.get()
     filenamesinputs.config({"background": "white"})
-    readlengthsinputs.config({"background": "white"})
-    fiveprimebarinputs.config({"background": "white"})
-    threeprimebarinputs.config({"background": "white"})
+    if extype == "SELEX":
+        readlengthsinputs.config({"background": "white"})
+
+    knownbarcodevalue = valueforknownbarcode.get()
+    global knownbarcode
+    if knownbarcodevalue in ["Auto", "None"]:
+        knownbarcode = False
+    if knownbarcodevalue == "Manual":
+        knownbarcode = True
+    if knownbarcode == True:
+        fiveprimebarinputs.config({"background": "white"})
+        threeprimebarinputs.config({"background": "white"})
     #global filenameslabels
     #global filenamesinputs
     #if extype == "SELEX":
@@ -106,7 +188,7 @@ def add_rows():
         for x in range(0,x-1):
             fileinputslist.append("file"+str(x))
     x = int(numberofrunsinput.get())
-    if knownbarcodesval == True:
+    if knownbarcode == True:
         for x in range(0, x-1):
             fiveprimebar.append("5barcode"+str(x))
             threeprimebar.append("3barcode"+str(x))
@@ -116,36 +198,36 @@ def add_rows():
             if x%2 == 0:
                 SELEXlist[x] = Entry(variableinputform, textvariable=StringVar())
                 if usage%2 == 0:
-                    SELEXlist[x].delete(0, 10)
+                    SELEXlist[x].delete(0, END)
                 SELEXlist[x].grid(row=(x//2)+2, column=(x%2)+1)
             if x%2 == 1:
                 SELEXlist[x] = Entry(variableinputform, textvariable=IntVar())
                 if usage%2 == 0:
-                    SELEXlist[x].delete(0, 10)
+                    SELEXlist[x].delete(0, END)
                 SELEXlist[x].grid(row=(x//2)+2, column=(x%2)+1)
     else:
         for x in range(0, x-1):
             fileinputslist[x] = Entry(variableinputform, textvariable=StringVar())
             if usage%2 == 0:
-                fileinputslist[x].delete(0, 10)
+                fileinputslist[x].delete(0, END)
             fileinputslist[x].grid(row=x+2, column=1)
             readlengthslabels.destroy()
             readlengthsinputs.destroy()
-    if knownbarcodesval == True:
+    if knownbarcode == True:
         x = int(numberofrunsinput.get())
         for x in range(0, x-1):
             fiveprimebar[x] = Entry(variableinputform, textvariable=StringVar())
             threeprimebar[x] = Entry(variableinputform, textvariable=StringVar())
             if usage%2 == 0:
-                fiveprimebar[x].delete(0, 20)
-                threeprimebar[x].delete(0, 20)
+                fiveprimebar[x].delete(0, END)
+                threeprimebar[x].delete(0, END)
             fiveprimebar[x].grid(row=x+2, column=3)
             threeprimebar[x].grid(row=x+2, column=4)
-    if knownbarcodesval == False:
-        fiveprimebarlabels.destroy()
-        fiveprimebarinputs.destroy()
-        threeprimebarlabels.destroy()
-        threeprimebarinputs.destroy()
+    #if knownbarcode == False:
+        #fiveprimebarlabels.destroy()
+        #fiveprimebarinputs.destroy()
+        #threeprimebarlabels.destroy()
+        #threeprimebarinputs.destroy()
 
 """
     if dele > 0:
@@ -241,45 +323,45 @@ pathtodirectoryinput.bind("<FocusOut>", changecolour2)
 
 numofrunsvalue = IntVar()
 numberofrunslabel = Label(initialdetailsframe, text="Number of runs: ")
-numberofrunslabel.grid(row=2, column=0, sticky="e")
+numberofrunslabel.grid(row=3, column=0, sticky="e")
 numberofrunsinput = Entry(initialdetailsframe, textvariable=numofrunsvalue)
 numberofrunsinput.delete(0)
-numberofrunsinput.grid(row=2, column=1)
+numberofrunsinput.grid(row=3, column=1)
 numberofrunsinput.config({"background": "lightgrey"})
 numberofrunsinput.bind("<FocusOut>", changecolour3)
 
 
 reversecomplementwantedlabel = Label(initialdetailsframe, text="Reverse compliment: ")
-reversecomplementwantedlabel.grid(row=3, column=0, sticky="e", padx=(20,0))
+reversecomplementwantedlabel.grid(row=4, column=0, sticky="e", padx=(20,0))
 reversecomplementwanted = BooleanVar()
 reversecomplementwantedcheckbox = Checkbutton(initialdetailsframe, variable=reversecomplementwanted)
-reversecomplementwantedcheckbox.grid(row=3, column=1)
+reversecomplementwantedcheckbox.grid(row=4, column=1)
 
 logoformatlabel = Label(initialdetailsframe, text="Logo format: ")
-logoformatlabel.grid(row=4, column=0, sticky="e")
+logoformatlabel.grid(row=5, column=0, sticky="e")
 logoformatlist = ["bits", "frequency"]
 valueforlogodrop = StringVar()
 valueforlogodrop.set(logoformatlist[0])
 logoformatdropdown = OptionMenu(initialdetailsframe, valueforlogodrop, "bits", "frequency")
-logoformatdropdown.grid(row=4, column=1)
+logoformatdropdown.grid(row=5, column=1)
 
 inimotifimage = PhotoImage(file='figures/GUIgraphics/tobylogo.png')
 inimotifimagelabel = Label(pictureframe, image=inimotifimage)
 inimotifimagelabel.grid(padx=20)
 
 minimumkvalueslabels = Label(initialdetailsframe, text="Min K: ")
-minimumkvalueslabels.grid(row=5, column=0,  sticky="e")
+minimumkvalueslabels.grid(row=6, column=0,  sticky="e")
 minimimkvaluesinputs = Entry(initialdetailsframe, textvariable=IntVar())
 minimimkvaluesinputs.delete(0)
-minimimkvaluesinputs.grid(row=5, column=1)
+minimimkvaluesinputs.grid(row=6, column=1)
 minimimkvaluesinputs.config({"background": "lightgrey"})
 minimimkvaluesinputs.bind("<FocusOut>", changecolour4)
 
 maximumkvalueslabels = Label(initialdetailsframe, text="Max K: ")
-maximumkvalueslabels.grid(row=6, column=0,  sticky="e")
+maximumkvalueslabels.grid(row=7, column=0,  sticky="e")
 maximumkvaluesinputs = Entry(initialdetailsframe, textvariable=IntVar())
 maximumkvaluesinputs.delete(0)
-maximumkvaluesinputs.grid(row=6, column=1)
+maximumkvaluesinputs.grid(row=7, column=1)
 maximumkvaluesinputs.config({"background": "lightgrey"})
 maximumkvaluesinputs.bind("<FocusOut>", changecolour5)
 
@@ -336,6 +418,12 @@ def autofiller():
     extype = valueforexdrop.get()
     #if usage%2 != 0:
         #add_rows()
+    knownbarcodevalue = valueforknownbarcode.get()
+    global knownbarcode
+    if knownbarcodevalue in ["Auto", "None"]:
+        knownbarcode = False
+    if knownbarcodevalue == "Manual":
+        knownbarcode = True
     """
     if len(str(filenamesinputs.get())) != 0:
         if int(numberofrunsinput.get()) != 0:
@@ -380,7 +468,7 @@ def autofiller():
     if extype == "SELEX":
         if int(numberofrunsinput.get()) == len(namesindirectory):
             if len(str(filenamesinputs.get())) == 0:
-                filenamesinputs.delete(0,30)
+                filenamesinputs.delete(0, END)
                 filenamesinputs.insert(0, firstfileauto)
             for x in range(0, (int(numberofrunsinput.get())-1)):
                 for j in namesindirectory:
@@ -392,11 +480,11 @@ def autofiller():
                     if namenoext in j[:-6]:
                         filework = SELEXlist[x*2]
                         if len(str(filework.get())) == 0:
-                            filework.delete(0,30)
+                            filework.delete(0, END)
                             filework.insert(0, j)
         if int(numberofrunsinput.get()) < len(namesindirectory):
             if len(str(filenamesinputs.get())) == 0:
-                filenamesinputs.delete(0,30)
+                filenamesinputs.delete(0, END)
                 threeletterstart = str(firstfileauto[:3])
                 sixnumbersstart = str(orderednumbers[orderednumbers.index(int(firstfileauto[3:-6]))+int(startroundinputs.get())-1])
                 if len(sixnumbersstart) < 6:
@@ -415,7 +503,7 @@ def autofiller():
                     if namenoext in j[:-6]:
                         filework = SELEXlist[x*2]
                         if len(str(filework.get())) == 0:
-                            filework.delete(0,30)
+                            filework.delete(0, END)
                             filework.insert(0, j)
         if len(str(readlengthsinputs.get())) == 0:
             firstfileautolval = open(str(pathtodirectoryinput.get())+"/"+str(filenamesinputs.get()))
@@ -423,7 +511,7 @@ def autofiller():
                 if linenum % 4 == 1:
                     if "N" not in line:
                         firstlval = len(line.strip())
-                        readlengthsinputs.delete(0,30)
+                        readlengthsinputs.delete(0, END)
                         readlengthsinputs.insert(0, firstlval)
                         break
                 if linenum > 32:
@@ -444,7 +532,7 @@ def autofiller():
     if extype != "SELEX":
         if int(numberofrunsinput.get()) == len(namesindirectory):
             if len(str(filenamesinputs.get())) == 0:
-                filenamesinputs.delete(0,30)
+                filenamesinputs.delete(0, END)
                 filenamesinputs.insert(0, firstfileauto)
             for x in range(0, (int(numberofrunsinput.get())-1)):
                 for j in namesindirectory:
@@ -456,11 +544,11 @@ def autofiller():
                     if namenoext in j[:-6]:
                         filework = fileinputslist[x]
                         if len(str(filework.get())) == 0:
-                            filework.delete(0,30)
+                            filework.delete(0, END)
                             filework.insert(0, j)
         if int(numberofrunsinput.get()) < len(namesindirectory):
             if len(str(filenamesinputs.get())) == 0:
-                filenamesinputs.delete(0,30)
+                filenamesinputs.delete(0, END)
                 threeletterstart = str(firstfileauto[:3])
                 sixnumbersstart = str(orderednumbers[orderednumbers.index(int(firstfileauto[3:-6]))+int(startroundinputs.get())-1])
                 if len(sixnumbersstart) < 6:
@@ -479,10 +567,10 @@ def autofiller():
                     if namenoext in j[:-6]:
                         filework = fileinputslist[x]
                         if len(str(filework.get())) == 0:
-                            filework.delete(0,30)
+                            filework.delete(0, END)
                             filework.insert(0, j)
 
-    if multirounds.get() == False and knownbarcodes.get() == True:
+    if multirounds.get() == False and knownbarcode == True:
         first5 = fiveprimebarinputs.get()
         first3 = threeprimebarinputs.get()
         if first5.isnumeric() and first3.isnumeric():
@@ -494,16 +582,16 @@ def autofiller():
                     line = line.strip()
                     if extype == "SELEX":
                         if len(line) == int(readlengthsinputs.get()) and "N" not in line:
-                            fiveprimebarinputs.delete(0,30)
+                            fiveprimebarinputs.delete(0, END)
                             fiveprimebarinputs.insert(0, line[:fivesplice])
-                            threeprimebarinputs.delete(0,30)
+                            threeprimebarinputs.delete(0, END)
                             threeprimebarinputs.insert(0, line[-threesplice:])
                             break
                     else:
                         if "N" not in line:
-                            fiveprimebarinputs.delete(0,30)
+                            fiveprimebarinputs.delete(0, END)
                             fiveprimebarinputs.insert(0, line[:fivesplice])
-                            threeprimebarinputs.delete(0,30)
+                            threeprimebarinputs.delete(0, END)
                             threeprimebarinputs.insert(0, line[-threesplice:])
                             break
                 if linenum > 32:
@@ -520,10 +608,10 @@ def autofiller():
                                 lin = SELEXlist[(pos*2)+1]
                                 if len(line) == int(lin.get()) and "N" not in line:
                                     if len(str(fivework.get())) == 0:
-                                        fivework.delete(0,30)
+                                        fivework.delete(0, END)
                                         fivework.insert(0, line[:fivesplice])
                                     if len(str(threework.get())) == 0:
-                                        threework.delete(0,30)
+                                        threework.delete(0, END)
                                         threework.insert(0, line[-threesplice:])
                                     break
             if extype != "SELEX":
@@ -536,10 +624,10 @@ def autofiller():
                             line = line.strip()
                             if "N" not in line:
                                 if len(str(fivework.get())) == 0:
-                                    fivework.delete(0,30)
+                                    fivework.delete(0, END)
                                     fivework.insert(0, line[:fivesplice])
                                 if len(str(threework.get())) == 0:
-                                    threework.delete(0,30)
+                                    threework.delete(0, END)
                                     threework.insert(0, line[-threesplice:])
                                 break
                     if linenum > 32:
@@ -585,8 +673,17 @@ def makeorderedinputlist():
     startround = int(startroundinputs.get())
     global multiround
     multiround = multirounds.get()
+    knownbarcodevalue = valueforknownbarcode.get()
     global knownbarcode
-    knownbarcode = knownbarcodes.get()
+    global nobarcode
+    nobarcode = False
+    if knownbarcodevalue == "None":
+        knownbarcode = False
+        nobarcode = True
+    if knownbarcodevalue == "Auto":
+        konwnbarcode = False
+    if knownbarcodevalue == "Manual":
+        knownbarcode = True
     global logotype
     logotype = str(valueforlogodrop.get())
     global nmotifs
