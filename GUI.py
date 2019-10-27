@@ -21,7 +21,6 @@ def changeform(event):
     global readlengthslabels
     global readlengthsinputs
     if extype != "SELEX":
-        print("ok")
         numberofrunsinput.delete(0,END)
         numberofrunsinput.insert(0, 1)
         numberofrunsinput.config(state="readonly", foreground="grey")
@@ -46,40 +45,27 @@ def changeform(event):
 def insertknownbarinputs():
     knownbarcodevalue = valueforknownbarcode.get()
     global knownbarcode
+    global fiveprimebarlabels
+    global fiveprimebarinputs
+    global threeprimebarlabels
+    global threeprimebarinputs
     if knownbarcodevalue in ["Auto", "None"]:
         knownbarcode = False
     if knownbarcodevalue == "Manual":
         knownbarcode = True
     if knownbarcode == True:
-        global fiveprimebarlabels
-        fiveprimebarlabels = Label(variableinputform, text="5' barcode/primer: ")
         fiveprimebarlabels.grid(row=0, column=3)
-        global fiveprimebarinputs
-        fiveprimebarinputs = Entry(variableinputform, textvariable=StringVar())
-        fiveprimebarinputs.delete(0)
         fiveprimebarinputs.grid(row=1, column=3)
         fiveprimebarinputs.config({"background": "lightgrey"})
-        global threeprimebarlabels
-        threeprimebarlabels = Label(variableinputform, text="3' barcode/primer: ")
         threeprimebarlabels.grid(row=0, column=4)
-        global threeprimebarinputs
-        threeprimebarinputs = Entry(variableinputform, textvariable=StringVar())
-        threeprimebarinputs.delete(0)
         threeprimebarinputs.grid(row=1, column=4)
         threeprimebarinputs.config({"background": "lightgrey"})
-        """
     if knownbarcode == False:
-        global fiveprimebarinputs
-        if type(fiveprimebarinputs) != "NoneType":
-            global fiveprimebarlabels
-            fiveprimebarlabels.destroy()
-            global fiveprimebarinputs
-            fiveprimebarinputs.destroy()
-            global threeprimebarlabels
-            threeprimebarlabels.destroy()
-            global threeprimebarinputs
-            threeprimebarinputs.destroy()
-        """
+        fiveprimebarlabels.grid_forget()
+        fiveprimebarinputs.grid_forget()
+        threeprimebarlabels.grid_forget()
+        threeprimebarinputs.grid_forget()
+
 
 
 initialdetailsframe = Frame(window)
@@ -126,6 +112,25 @@ multirounds = BooleanVar()
 multiroundcheckbox = Checkbutton(initialdetailsframe, variable=multirounds)
 multiroundcheckbox.grid(row=8, column=1)
 #multiroundcheckbox.select()
+
+fiveprimebarlabels = Label(variableinputform, text="5' barcode/primer: ")
+fiveprimebarlabels.grid(row=0, column=3)
+fiveprimebarlabels.grid_forget()
+fiveprimebarinputs = Entry(variableinputform, textvariable=StringVar())
+fiveprimebarinputs.delete(0)
+fiveprimebarinputs.grid(row=1, column=3)
+fiveprimebarinputs.config({"background": "lightgrey"})
+fiveprimebarinputs.grid_forget()
+
+threeprimebarlabels = Label(variableinputform, text="3' barcode/primer: ")
+threeprimebarlabels.grid(row=0, column=4)
+threeprimebarlabels.grid_forget()
+threeprimebarinputs = Entry(variableinputform, textvariable=StringVar())
+threeprimebarinputs.delete(0)
+threeprimebarinputs.grid(row=1, column=4)
+threeprimebarinputs.config({"background": "lightgrey"})
+threeprimebarinputs.grid_forget()
+
 
 def getknownbarval(event):
     knownbarcodevalue = valueforknownbarcode.get()
@@ -233,7 +238,22 @@ def add_rows():
     if dele > 0:
         if extype == "SELEX":
             if (int(numberofrunsinput.get())-1)*2 < len(SELEXlist):
-                SELEXlist = SELEXlist[:-(len(SELEXlist)-(int(numberofrunsinput.get())-1)*2]
+                SELEXlist global fiveprimebarlabels
+        fiveprimebarlabels = Label(variableinputform, text="5' barcode/primer: ")
+        fiveprimebarlabels.grid(row=0, column=3)
+        global fiveprimebarinputs
+        fiveprimebarinputs = Entry(variableinputform, textvariable=StringVar())
+        fiveprimebarinputs.delete(0)
+        fiveprimebarinputs.grid(row=1, column=3)
+        fiveprimebarinputs.config({"background": "lightgrey"})
+        global threeprimebarlabels
+        threeprimebarlabels = Label(variableinputform, text="3' barcode/primer: ")
+        threeprimebarlabels.grid(row=0, column=4)
+        global threeprimebarinputs
+        threeprimebarinputs = Entry(variableinputform, textvariable=StringVar())
+        threeprimebarinputs.delete(0)
+        threeprimebarinputs.grid(row=1, column=4)
+        threeprimebarinputs.config({"background": "lightgrey"})= SELEXlist[:-(len(SELEXlist)-(int(numberofrunsinput.get())-1)*2]
 """
 
 def changecolour1(event):
