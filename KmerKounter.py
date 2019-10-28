@@ -260,6 +260,8 @@ def barcodechecker(FileName):
                     continue
     favg = (sum(bar)/len(bar))
     avg = round(favg)
+    if not avg:
+        nobarcode = True
     return avg
 
 
