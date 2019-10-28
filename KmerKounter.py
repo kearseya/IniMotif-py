@@ -79,11 +79,13 @@ def importfromgui():
         else:
             multiround = False
         if knownbarcode in ["y", "Y", "yes", "Yes", "t", "true", "True"]:
+            nobarcode = False
             knownbarcode = True
         elif knownbarcode in ["NA", "na", "None", "none"]:
             nobarcode = True
             knownbarcode = False
         else:
+            nobarcode = False
             knownbarcode = False
 
 importfromgui()
