@@ -226,28 +226,34 @@ def barcodechecker(FileName):
                 continue
             if extype == "SELEX":
                 if len(line) == l and "N" not in line:
-                    for i in range(12):
+                    for i in range(4, 12):
                         start = line[0:i]
                         end = revComp(line[len(line)-i : len(line)])
                         if start == end:
-                            x = i
+                            bar.append(i)
                         else:
-                            break
-                    bar.append(x)
+                            continue
+                    if not bar:
+                        avg = 0
+                        nobarcode = True
+                        return avg
                 if line.startswith("+"):
                     next(fastaFileName)
                 else:
                     continue
             else:
                 if "N" not in line:
-                    for i in range(12):
+                    for i in range(4, 12):
                         start = line[0:i]
                         end = revComp(line[len(line)-i : len(line)])
                         if start == end:
-                            x = i
+                            bar.append(i)
                         else:
-                            break
-                    bar.append(x)
+                            continue
+                    if not bar:
+                        avg = 0
+                        nobarcode = True
+                        return avg
                 if line.startswith("+"):
                     next(fastaFileName)
                 else:
