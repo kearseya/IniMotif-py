@@ -167,11 +167,14 @@ rposlist = []
 
 hamminglist2 = []
 
+consensuslist = []
+
 
 def listinit():
     for i in range(0,numofruns+1):
         poslist.append({})
         rposlist.append({})
+        consensuslist.append({})
     for j in range(1, numofruns+1):
         if extype == "SELEX":
             l = lvalues[j]
@@ -190,9 +193,11 @@ def listinit():
         for k in range(mink, maxk+1):
             poslist[j][k] = {}
             rposlist[j][k] = {}
+            consensuslist[j][k] = {}
             for n in range(1, nmotifs+1):
                 poslist[j][k][n] = {}
                 rposlist[j][k][n] = {}
+                consensuslist[j][k][n] = {}
                 if extype == "SELEX":
                     for x in range(0,(l+1-k-(avg5+avg3))):
                         poslist[j][k][n].update({x:0})
@@ -229,6 +234,7 @@ def listhammer():
                     #hconsensus = (list(kmercount[runnum][i].keys())[0])
                 if n == 1:
                     hconsensus = max(kmercount[runnum][k], key=lambda key: kmercount[runnum][k][key])
+                    consensuslist[runnum][k][n] = hash2kmer(hconsensus, k)
                 else:
                     temptop6 = top6all[runnum][k].copy()
                     for j in temptop6:
@@ -237,6 +243,7 @@ def listhammer():
                             if kmer2hash(revComp(hash2kmer(j, k))) in temptop6:
                                 temptop6.remove(kmer2hash(revComp(hash2kmer(j, k))))
                     hconsensus = max(temptop6, key=lambda key: kmercount[runnum][k][key])
+                    consensuslist[runnum][k][n] = hash2kmer(hconsensus, k)
                 consensus = hash2kmer(hconsensus, k)
                 for x in list(kmercount[runnum][k].keys()):
                     values = hash2kmer(x,k)
@@ -611,7 +618,7 @@ def plotter(runnum, k, n):
 
         bar.set_xlabel("TFBS")
         bar.set_ylabel("Frequency")
-        bar.set_title("Position Distribution for Run: "+str(runnum+(startround-1))+", K: "+str(k))
+        bar.set_title("Position Distribution for Run: "+str(runnum+(startround-1))+", K: "+str(k)+", Consensus: "+str(consensuslist[runnum][k][n]))
         bar.set_ylim(0,0.7)
         bar.set_yticks(yaxis)
 
@@ -634,9 +641,9 @@ def plotter(runnum, k, n):
 
     else:
         fig, kde = plt.subplots()
-        kde.set_xlabel("TFBS")
-        kde.set_ylabel("Frequency")
-        kde.set_title("Position Distribution for Run: "+str(runnum+(startround-1))+", K: "+str(k))
+        kde.set_xlabel("TFBS relative position")
+        kde.set_ylabel("Probability density function")
+        kde.set_title("TFBS Position Distribution for Run: "+str(runnum+(startround-1))+", K: "+str(k)+", Consensus: "+str(consensuslist[runnum][k][n]))
         kde.set_xlim(0,1)
         if revcompwanted == False:
             plot = kdeplot(poslist[runnum][k][n], shade=True)
