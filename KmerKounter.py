@@ -1356,9 +1356,8 @@ import WebLogoMod
 print('Generating Hamming distance figures')
 import HamDistFig
 
-if extype == "SELEX":
-    print('Generating Position bias figures')
-    import PositionBias
+print('Generating Position bias figures')
+import PositionBias
 
 if numofruns > 1:
     print('Generating Kmer frequency figures')
