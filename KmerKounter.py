@@ -185,7 +185,7 @@ def autofiveprimefinder(run, fivesplice):
             else:
                 if "N" not in line:
                     five = line[:fivesplice]
-                    print("5': NA "+str(five))
+                    print("5': "+str(five))
                     return five
         if linenum > 32:
             break
@@ -1188,7 +1188,6 @@ def addrungui():
 
 def addingall(n):
     if len(inputlist) > 1:
-        print("adding")
         addrungui()
     else:
         addruncl()
