@@ -801,13 +801,13 @@ def KmerCounterSELEX(FileName, runnum, k):
     for sequence in SeqIO.parse(FileName, filetype):
         line = str(sequence.seq)
         if len(line) == l and "N" not in line:
-            done = []
+            done = set()
             for x in range(0,((len(line)+1)-k)-(avg5+avg3)):
                 kmers = str(line[x+avg5:x+k+avg5])
                 if kmers not in done:
                     if kmer2hash(kmers) < combinations:
                         kmercount[runnum][k][kmer2hash(kmers)] += 1
-                        done.append(kmers)
+                        done.add(kmers)
                         #if revcompwanted == True:
                             #rkmers = revComp(kmers)
                             #if len(rkmers) > 0 and (line.count(kmers) + line.count(rkmers)) <= 2:
@@ -818,14 +818,14 @@ def KmerCounterSELEX(FileName, runnum, k):
 
         if revcompwanted == True:
             if len(line) == l and "N" not in line:
-                rdone = []
+                rdone = set()
                 for x in range(0,((len(line)+1)-k)-(avg5+avg3)):
                     kmers = str(line[x+avg5:x+k+avg5])
                     rkmers = revComp(line[x+avg5:x+k+avg5])
                     if kmers not in rdone:
                         if kmer2hash(rkmers) < combinations:
                             kmercount[runnum][k][kmer2hash(rkmers)] += 1
-                            rdone.append(rkmers)
+                            rdone.add(rkmers)
             else:
                 continue
 
@@ -853,13 +853,13 @@ def KmerCounterSELEXmulti(FileName, k):
             continue
         if len(line) == l and "N" not in line:
             if line[:barfiveslice] in barcodeslist5:
-                done = []
+                done = set()
                 for x in range(0,(l+1-k-len(barcodeprimers53[runnum][0])-len(barcodeprimers53[runnum][1]))):
                     kmers = str(line[x+len(barcodeprimers53[runnum][0]):x+k+len(barcodeprimers53[runnum][0])])
                     if kmers not in done:
                         if kmer2hash(kmers) < combinations:
                             kmercount[runnum][k][kmer2hash(kmers)] += 1
-                            done.append(kmers)
+                            done.add(kmers)
                             #if revcompwanted == True:
                                 #rkmers = revComp(kmers)
                                 #if rkmers not in done:
@@ -872,14 +872,14 @@ def KmerCounterSELEXmulti(FileName, k):
             if len(line) == l and "N" not in line:
                 if line[:barfiveslice] in barcodeslist5:
                     runnum = barcodes5[line[:barfiveslice]]
-                    rdone = []
+                    rdone = set()
                     for x in range(0,((len(line)+1)-k)-len(barcodeprimers53[runnum][0])-len(barcodeprimers53[runnum][1])):
                         kmers = str(line[x+len(barcodeprimers53[runnum][0]):x+k+len(barcodeprimers53[runnum][0])])
                         rkmers = revComp(kmers)
                         if rkmers not in done:
                             if kmer2hash(rkmers) < combinations:
                                 kmercount[runnum][k][kmer2hash(rkmers)] += 1
-                                rdone.append(rkmers)
+                                rdone.add(rkmers)
             else:
                 continue
 
@@ -908,26 +908,31 @@ def KmerCounterChipDNA(FileName, runnum, k):
         filetype = "fastq"
     for sequence in SeqIO.parse(FileName, filetype):
         line = str(sequence.seq)
+        done = set()
         for x in range(0,((len(line)+1)-k)-(avg5+avg3)):
             kmers = str(line[x+avg5:x+k+avg5])
             try:
-                if kmer2hash(kmers) < combinations:
-                    kmercount[runnum][k][kmer2hash(kmers)] += 1
-                    #if revcompwanted == True:
-                        #rkmers = kmer2hash(revComp(kmers))
-                        #kmercount[runnum][k][kmer2hash(rkmers)] += 1
+                if kmers not in done:
+                    if kmer2hash(kmers) < combinations:
+                        kmercount[runnum][k][kmer2hash(kmers)] += 1
+                        done.add(kmers)
+                        #if revcompwanted == True:
+                            #rkmers = kmer2hash(revComp(kmers))
+                            #kmercount[runnum][k][kmer2hash(rkmers)] += 1
             except:
                 continue
         else:
             continue
 
         if revcompwanted == True:
+            rdone = set()
             for x in range(0,((len(line)+1)-k-(avg5+avg3))):
                 kmers = str(line[x+avg5:x+k+avg5])
                 rkmers = revComp(line[x+avg5:x+k+avg5])
-                if len(rkmers) > 0 and (line.count(kmers) + line.count(rkmers)) <= 2:
+                if len(rkmers) > 0 and rkmers not in rdone:
                     if kmer2hash(rkmers) < combinations:
                         kmercount[runnum][k][kmer2hash(rkmers)] += 1
+                        rdone.add(rkmers)
             else:
                 continue
 
@@ -947,27 +952,32 @@ def KmerCounterChipDNAmulti(FileName, k):
     for sequence in SeqIO.parse(FileName, filetype):
         line = str(sequence.seq)
         if line[:barfiveslice] in barcodeslist5:
+            done = set()
             runnum = barcodes5[line[:barfiveslice]]
             for x in range(0,((len(line)+1)-k)-(len(barcodeprimers53[runnum][0])+len(barcodeprimers53[runnum][1]))):
                 kmers = str(line[x+len(barcodeprimers53[runnum][0]):x+k+len(barcodeprimers53[runnum][0])])
                 try:
-                    if kmer2hash(kmers) < combinations:
-                        kmercount[runnum][k][kmer2hash(kmers)] += 1
-                        #if revcompwanted == True:
-                            #rkmers = kmer2hash(revComp(kmers))
-                            #kmercount[runnum][k][kmer2hash(rkmers)] += 1
+                    if kmers not in done:
+                        if kmer2hash(kmers) < combinations:
+                            kmercount[runnum][k][kmer2hash(kmers)] += 1
+                            done.add(kmers)
+                            #if revcompwanted == True:
+                                #rkmers = kmer2hash(revComp(kmers))
+                                #kmercount[runnum][k][kmer2hash(rkmers)] += 1
                 except:
                     continue
             else:
                 continue
 
             if revcompwanted == True:
+                rdone = set()
                 for x in range(0,((len(line)+1)-k-(len(barcodeprimers53[runnum][0])+len(barcodeprimers53[runnum][1])))):
                     kmers = str(line[x+len(barcodeprimers53[runnum][0]):x+k+len(barcodeprimers53[runnum][0])])
                     rkmers = revComp(line[x+len(barcodeprimers53[runnum][0]):x+k+len(barcodeprimers53[runnum][0])])
-                    if len(rkmers) > 0 and (line.count(kmers) + line.count(rkmers)) <= 2:
+                    if len(rkmers) > 0 and rkmers not in rdone:
                         if kmer2hash(rkmers) < combinations:
                             kmercount[runnum][k][kmer2hash(rkmers)] += 1
+                            rdone.add(rkmers)
                 else:
                     continue
 
@@ -1346,7 +1356,7 @@ import WebLogoMod
 print('Generating Hamming distance figures')
 import HamDistFig
 
-if extype in ["SELEX", "ATAC"]:
+if extype == "SELEX":
     print('Generating Position bias figures')
     import PositionBias
 
