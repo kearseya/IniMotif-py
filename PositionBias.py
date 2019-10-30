@@ -166,6 +166,7 @@ poslist = []
 rposlist = []
 
 hamminglist2 = []
+rhamminglist2 = []
 
 consensuslist = []
 
@@ -212,6 +213,7 @@ listinit()
 def hamdictinit(numofruns):
     for _ in range(numofruns + 1):
         hamminglist2.append({})
+        rhamminglist2.append({})
 
 hamdictinit(numofruns)
 
@@ -228,8 +230,10 @@ def listhammer():
     for runnum in range(1, numofruns+1):
         for k in range(mink, maxk+1):
             hamminglist2[runnum][k] = {}
+            rhamminglist2[runnum][k] = {}
             for n in range(1, nmotifs+1):
                 hamminglist2[runnum][k][n] = set()
+                rhamminglist2[runnum][k][n] = set()
                 #for i in kmercount[runnum]:
                     #hconsensus = (list(kmercount[runnum][i].keys())[0])
                 if n == 1:
@@ -251,11 +255,19 @@ def listhammer():
                     ham = hamming_distance(consensus, values)
                     rham = hamming_distance(consensus, rvalues)
                     if ham <= 2 and x not in removelist[runnum][k][n]:
-                        if kmer2hash(values) not in hamminglist2[runnum][k][n]:
-                            hamminglist2[runnum][k][n].add(kmer2hash(values))
+                        if ham < rham:
+                            if kmer2hash(values) not in hamminglist2[runnum][k][n]:
+                                hamminglist2[runnum][k][n].add(kmer2hash(values))
+                            if kmer2hash(rvalues) not in rhamminglist2[runnum][k][n]:
+                                rhamminglist2[runnum][k][n].add(kmer2hash(rvalues))
                     if rham <= 2 and x not in removelist[runnum][k][n]:
-                        if kmer2hash(rvalues) not in hamminglist2[runnum][k][n]:
+                        if kmer2hash(rvalues) not in rhamminglist2[runnum][k][n]:
                             hamminglist2[runnum][k][n].add(kmer2hash(rvalues))
+                    """
+                    if ham <= 2 and rham > 2:
+                        if kmer2hash(rvalues) not in removelist[runnum][k][n]:
+                            rhamminglist2[runnum][k][n].add(kmer2hash(rvalues))
+                    """
 
 listhammer()
 
@@ -358,6 +370,9 @@ def CreatePosListSELEX(FileName, k, runnum):
                             if hkmers in hamminglist2[runnum][k][n]:
                                 poslist[runnum][k][n][x] += 1
                                 done[n].add(kmers)
+                            if hkmers in rhamminglist2[runnum][k][n]:
+                                rposlist[runnum][k][n][x] += 1
+                                done[n].add(kmers)
                                 if c == 0:
                                     numoftfbsseq[runnum][k] += 1
                                     c += 1
@@ -371,7 +386,7 @@ def CreatePosListSELEX(FileName, k, runnum):
         else:
             TSeqNums[runnum] += 1
             continue
-
+"""
         if revcompwanted == True:
             if len(line) == lvalues[runnum] and "N" not in line:
                 rdone = {}
@@ -385,7 +400,7 @@ def CreatePosListSELEX(FileName, k, runnum):
                             if hrkmers in hamminglist2[runnum][k][n]:
                                 rposlist[runnum][k][n][x] += 1
                                 rdone[n].add(rkmers)
-
+"""
 
 
 def CreatePosListNORMAL(FileName, k, runnum):
@@ -423,7 +438,10 @@ def CreatePosListNORMAL(FileName, k, runnum):
                         hkmers = kmer2hash(kmers)
                         if hkmers < combinations:
                             if hkmers in hamminglist2[runnum][k][n]:
-                                poslist[runnum][k][n].append(x/lenline)
+                                poslist[runnum][k][n].append(x/(lenline-k))
+                                done[n].add(kmers)
+                            if hkmers in rhamminglist2[runnum][k][n]:
+                                rposlist[runnum][k][n].append((x+k)/(lenline-k))
                                 done[n].add(kmers)
                                 if c == 0:
                                     numoftfbsseq[runnum][k] += 1
@@ -438,7 +456,7 @@ def CreatePosListNORMAL(FileName, k, runnum):
         else:
             TSeqNums[runnum] += 1
             continue
-
+"""
         if revcompwanted == True:
             if "N" not in line:
                 rdone = {}
@@ -452,7 +470,7 @@ def CreatePosListNORMAL(FileName, k, runnum):
                             if hrkmers in hamminglist2[runnum][k][n]:
                                 rposlist[runnum][k][n].append(x/lenline)
                                 rdone[n].add(rkmers)
-
+"""
 
 
 def multiPosList(numofruns):
@@ -497,6 +515,9 @@ def CreatePosListmulti(FileName, k):
                             if hkmers in hamminglist2[runnum][k][n]:
                                 poslist[runnum][k][n][x] += 1
                                 done[n].add(kmers)
+                            if hkmers in rhamminglist2[runnum][k][n]:
+                                rposlist[runnum][k][n][x] += 1
+                                done[n].add(kmers)
                                 if c == 0:
                                     numoftfbsseq[runnum][k] += 1
                                     c += 1
@@ -510,7 +531,7 @@ def CreatePosListmulti(FileName, k):
         else:
             TSeqNums[runnum] += 1
             continue
-
+"""
         if revcompwanted == True:
             if len(line) == lvalues[runnum] and "N" not in line:
                 rdone = {}
@@ -524,6 +545,7 @@ def CreatePosListmulti(FileName, k):
                             if hrkmers in hamminglist2[runnum][k][n]:
                                 rposlist[runnum][k][n][x] += 1
                                 rdone[n].add(rkmers)
+"""
 
 def multiPosListmulti(numofruns):
     for j in files:
@@ -547,8 +569,8 @@ def FindTotal(runnum, k, n):
     total = 0
     for i in poslist[runnum][k][n]:
         total += poslist[runnum][k][n][i]
-        if revcompwanted == True:
-            total += rposlist[runnum][k][n][i]
+        #if revcompwanted == True:
+        total += rposlist[runnum][k][n][i]
     return total
 
 
@@ -591,7 +613,7 @@ def rmakexaxis2(width, runnum, k, n):
 
 def makeyaxis():
     yaxis = ([])
-    for i in range(0, 8):
+    for i in range(0, 6):
         yaxis.append(i/10)
     return yaxis
 
@@ -619,25 +641,25 @@ def plotter(runnum, k, n):
         bar.set_xlabel("TFBS")
         bar.set_ylabel("Frequency")
         bar.set_title("Position Distribution for Run: "+str(runnum+(startround-1))+", K: "+str(k)+", Consensus: "+str(consensuslist[runnum][k][n]))
-        bar.set_ylim(0,0.7)
+        bar.set_ylim(0,0.5)
         bar.set_yticks(yaxis)
-
+        """
         if revcompwanted == False:
             bar.set_xticks(xaxis)
             bar.bar(xaxis, fseq)
             bar.axhline(y=average, xmin=0.01, xmax=0.99, linestyle='dashed', color='black')
             bar.text((len(xaxis)-5), 0.65, "Average = "+str(round(average, 4)))
+        """
+        #if revcompwanted == True:
+        bar.set_xticks(xaxis)
+        bar.bar(fxaxis, fseq, width, label = 'Forward strands')
+        bar.bar(rxaxis, rseq, width, label = 'Reverse strands')
+        bar.axhline(y=raverage, xmin=0.01, xmax=0.99, linestyle='dashed', color = 'black', linewidth = 0.75)
 
-        if revcompwanted == True:
-            bar.set_xticks(xaxis)
-            bar.bar(fxaxis, fseq, width, label = 'Forward strands')
-            bar.bar(rxaxis, rseq, width, label = 'Reverse strands')
-            bar.axhline(y=raverage, xmin=0.01, xmax=0.99, linestyle='dashed', color = 'black', linewidth = 0.75)
-            bar.text((len(xaxis)-5), 0.55, "Average = "+str(round(raverage, 4)))
-
-            handels=('Forward strands', 'Reverse strands')
-            label=('Forward strands', 'Reverse strands')
-            bar.legend(loc = 1)
+        bar.text((len(xaxis)-5), 0.4, "Average = "+str(round(raverage, 4)))
+        handels=('Forward strands', 'Reverse strands')
+        label=('Forward strands', 'Reverse strands')
+        bar.legend(loc = 1)
 
     else:
         fig, kde = plt.subplots()
@@ -645,11 +667,11 @@ def plotter(runnum, k, n):
         kde.set_ylabel("Probability density function")
         kde.set_title("TFBS Position Distribution for Run: "+str(runnum+(startround-1))+", K: "+str(k)+", Consensus: "+str(consensuslist[runnum][k][n]))
         kde.set_xlim(0,1)
-        if revcompwanted == False:
-            plot = kdeplot(poslist[runnum][k][n], shade=True)
-        if revcompwanted == True:
-            plot1 = kdeplot(poslist[runnum][k][n], shade=True, label='Forward strands')
-            plot2 = kdeplot(rposlist[runnum][k][n], shade=True, label='Reverse strands')
+        #f revcompwanted == False:
+            #plot = kdeplot(poslist[runnum][k][n], shade=True)
+        #if revcompwanted == True:
+        plot1 = kdeplot(poslist[runnum][k][n], shade=True, label='Forward strands')
+        plot2 = kdeplot(rposlist[runnum][k][n], shade=True, label='Reverse strands')
 
     plt.savefig("figures/"+str(identifier)+"/position_bias/pos_"+str(identifier)+"_"+str(runnum+(startround-1))+"_"+str(k)+"_"+str(n), dpi=600)
     plt.close()
