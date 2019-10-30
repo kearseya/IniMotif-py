@@ -8,6 +8,8 @@ from collections import OrderedDict
 from Bio import SeqIO
 import os
 
+from seaborn import kdeplot
+
 from KmerKounter import numofruns
 from KmerKounter import kmercount
 from KmerKounter import barcodechecker
@@ -32,6 +34,9 @@ from KmerKounter import barcodeprimers53
 from KmerKounter import inputlist
 
 from KmerKounter import top6all
+
+from KmerKounter import extype
+from KmerKounter import nobarcode
 
 from WebLogoMod import nmotifs
 from WebLogoMod import removelist
@@ -168,10 +173,15 @@ def listinit():
         poslist.append({})
         rposlist.append({})
     for j in range(1, numofruns+1):
-        l = lvalues[j]
+        if extype == "SELEX":
+            l = lvalues[j]
         if knownbarcode == False:
-            avg5 = barcodechecker(filenames[j])
-            avg3 = avg5
+            if nobarcode == True:
+                avg5 = 0
+                avg3 = 0
+            if nobarcode == False:
+                avg5 = barcodechecker(filenames[j])
+                avg3 = avg5
         if knownbarcode == True:
             avg5 = len(barcodeprimers53[j][0])
             avg3 = len(barcodeprimers53[j][1])
@@ -183,9 +193,13 @@ def listinit():
             for n in range(1, nmotifs+1):
                 poslist[j][k][n] = {}
                 rposlist[j][k][n] = {}
-                for x in range(0,(l+1-k-(avg5+avg3))):
-                    poslist[j][k][n].update({x:0})
-                    rposlist[j][k][n].update({x:0})
+                if extype == "SELEX":
+                    for x in range(0,(l+1-k-(avg5+avg3))):
+                        poslist[j][k][n].update({x:0})
+                        rposlist[j][k][n].update({x:0})
+                else:
+                    poslist[j][k][n] = []
+                    rposlist[j][k][n] = []
 
 listinit()
 
@@ -301,11 +315,15 @@ def FindTotal(FileName, k, runnum):
 
 
 
-def CreatePosList(FileName, k, runnum):
+def CreatePosListSELEX(FileName, k, runnum):
     fastaFileName = open(FileName, "r")
     if knownbarcode == False:
-        avg5 = barcodechecker(FileName)
-        avg3 = avg5
+        if nobarcode == True:
+            avg5 = 0
+            avg3 = 0
+        if nobarcode == False:
+            avg5 = barcodechecker(FileName)
+            avg3 = avg5
     if knownbarcode == True:
         avg5 = len(barcodeprimers53[runnum][0])
         avg3 = len(barcodeprimers53[runnum][1])
@@ -324,7 +342,7 @@ def CreatePosList(FileName, k, runnum):
             TSeqNums[runnum] += 1
             done = {}
             for n in range(1, nmotifs+1):
-                done[n] = []
+                done[n] = set()
                 for x in range(0,((len(line)+1)-k)-(avg5+avg3)):
                     kmers = str(line[x+avg5:x+k+avg5])
                     if kmers not in done[n]:
@@ -332,7 +350,7 @@ def CreatePosList(FileName, k, runnum):
                         if hkmers < combinations:
                             if hkmers in hamminglist2[runnum][k][n]:
                                 poslist[runnum][k][n][x] += 1
-                                done[n].append(kmers)
+                                done[n].add(kmers)
                                 if c == 0:
                                     numoftfbsseq[runnum][k] += 1
                                     c += 1
@@ -351,7 +369,7 @@ def CreatePosList(FileName, k, runnum):
             if len(line) == lvalues[runnum] and "N" not in line:
                 rdone = {}
                 for n in range(1, nmotifs+1):
-                    rdone[n] = []
+                    rdone[n] = set()
                     for x in range(0,((len(line)+1)-k)-(avg5+avg3)):
                         #kmers = str(line[x+avg5:x+k+avg5])
                         rkmers = revComp(line[x+avg5:x+k+avg5])
@@ -359,14 +377,86 @@ def CreatePosList(FileName, k, runnum):
                             hrkmers = kmer2hash(rkmers)
                             if hrkmers in hamminglist2[runnum][k][n]:
                                 rposlist[runnum][k][n][x] += 1
-                                rdone[n].append(rkmers)
+                                rdone[n].add(rkmers)
+
+
+
+def CreatePosListNORMAL(FileName, k, runnum):
+    fastaFileName = open(FileName, "r")
+    if knownbarcode == False:
+        if nobarcode == True:
+            avg5 = 0
+            avg3 = 0
+        if nobarcode == False:
+            avg5 = barcodechecker(FileName)
+            avg3 = avg5
+    if knownbarcode == True:
+        avg5 = len(barcodeprimers53[runnum][0])
+        avg3 = len(barcodeprimers53[runnum][1])
+    combinations = 4**k
+    firstline = fastaFileName.readline()
+    firstline = firstline.strip()
+    if firstline.startswith(">"):
+        filetype = "fasta"
+    if firstline.startswith("@"):
+        filetype = "fastq"
+    for sequence in SeqIO.parse(FileName, filetype):
+        line = str(sequence.seq)
+        lenline = len(line)
+        c = 0
+        if "N" not in line:
+            LSeqNums[runnum] += 1
+            TSeqNums[runnum] += 1
+            done = {}
+            for n in range(1, nmotifs+1):
+                done[n] = set()
+                for x in range(0,((lenline+1)-k)-(avg5+avg3)):
+                    kmers = str(line[x+avg5:x+k+avg5])
+                    if kmers not in done[n]:
+                        hkmers = kmer2hash(kmers)
+                        if hkmers < combinations:
+                            if hkmers in hamminglist2[runnum][k][n]:
+                                poslist[runnum][k][n].append(x/lenline)
+                                done[n].add(kmers)
+                                if c == 0:
+                                    numoftfbsseq[runnum][k] += 1
+                                    c += 1
+                                #if revcompwanted == True:
+                                    #rkmers = revComp(kmers)
+                                    #if len(rkmers) > 0 and (line.count(kmers) + line.count(rkmers)) <= 2:
+                                        #hrkmers = kmer2hash(rkmers)
+                                        #if hrkmers < combinations:
+                                            #if hrkmers in hamminglist2[runnum][k][n]:
+                                                #rposlist[runnum][k][n][x].append(hrkmers)
+        else:
+            TSeqNums[runnum] += 1
+            continue
+
+        if revcompwanted == True:
+            if "N" not in line:
+                rdone = {}
+                for n in range(1, nmotifs+1):
+                    rdone[n] = set()
+                    for x in range(0,((len(line)+1)-k)-(avg5+avg3)):
+                        #kmers = str(line[x+avg5:x+k+avg5])
+                        rkmers = revComp(line[x+avg5:x+k+avg5])
+                        if rkmers not in rdone[n]:
+                            hrkmers = kmer2hash(rkmers)
+                            if hrkmers in hamminglist2[runnum][k][n]:
+                                rposlist[runnum][k][n].append(x/lenline)
+                                rdone[n].add(rkmers)
+
+
 
 def multiPosList(numofruns):
     for x in range(1, numofruns+1):
         #mink = int(inputlist[((x-1)*5)+7])
         #maxk = int(inputlist[((x-1)*5)+8])
         for i in range(mink, maxk+1):
-            CreatePosList(filenames[x],i,x)
+            if extype == "SELEX":
+                CreatePosListSELEX(filenames[x],i,x)
+            else:
+                CreatePosListNORMAL(filenames[x],i,x)
 
 
 def CreatePosListmulti(FileName, k):
@@ -391,7 +481,7 @@ def CreatePosListmulti(FileName, k):
             TSeqNums[runnum] += 1
             done = {}
             for n in range(1, nmotifs+1):
-                done[n] = []
+                done[n] = set()
                 for x in range(0,(l+1-k-len(barcodeprimers53[runnum][0])-len(barcodeprimers53[runnum][1]))):
                     kmers = str(line[x+len(barcodeprimers53[runnum][0]):x+k+len(barcodeprimers53[runnum][0])])
                     if kmers not in done[n]:
@@ -399,7 +489,7 @@ def CreatePosListmulti(FileName, k):
                         if hkmers < combinations:
                             if hkmers in hamminglist2[runnum][k][n]:
                                 poslist[runnum][k][n][x] += 1
-                                done[n].append(kmers)
+                                done[n].add(kmers)
                                 if c == 0:
                                     numoftfbsseq[runnum][k] += 1
                                     c += 1
@@ -418,7 +508,7 @@ def CreatePosListmulti(FileName, k):
             if len(line) == lvalues[runnum] and "N" not in line:
                 rdone = {}
                 for n in range(1, nmotifs+1):
-                    rdone[n] = []
+                    rdone[n] = set()
                     for x in range(0,((len(line)+1)-k)-(avg5+avg3)):
                         #kmers = str(line[x+avg5:x+k+avg5])
                         rkmers = revComp(line[x+avg5:x+k+avg5])
@@ -426,7 +516,7 @@ def CreatePosListmulti(FileName, k):
                             hrkmers = kmer2hash(rkmers)
                             if hrkmers in hamminglist2[runnum][k][n]:
                                 rposlist[runnum][k][n][x] += 1
-                                rdone[n].append(rkmers)
+                                rdone[n].add(rkmers)
 
 def multiPosListmulti(numofruns):
     for j in files:
@@ -501,45 +591,58 @@ def makeyaxis():
 
 
 def plotter(runnum, k, n):
-    fig, bar = plt.subplots()
-    width = 0.4
+    if extype == "SELEX":
+        fig, bar = plt.subplots()
+        width = 0.4
 
-    xaxis = makexaxis(runnum, k, n)
-    yaxis = makeyaxis()
+        xaxis = makexaxis(runnum, k, n)
+        yaxis = makeyaxis()
 
-    total = FindTotal(runnum, k, n)
+        total = FindTotal(runnum, k, n)
 
-    fseq = fseqbias(runnum, k, total, n)
-    rseq = rseqbias(runnum, k, total, n)
+        fseq = fseqbias(runnum, k, total, n)
+        rseq = rseqbias(runnum, k, total, n)
 
-    fxaxis = rmakexaxis1(width, runnum, k, n)
-    rxaxis = rmakexaxis2(width, runnum, k, n)
+        fxaxis = rmakexaxis1(width, runnum, k, n)
+        rxaxis = rmakexaxis2(width, runnum, k, n)
 
-    average = (1/len(fseq))
-    raverage = (1/(len(fseq)+len(rseq)))
+        average = (1/len(fseq))
+        raverage = (1/(len(fseq)+len(rseq)))
 
-    bar.set_xlabel("TFBS")
-    bar.set_ylabel("Frequency")
-    bar.set_title("Position Distribution for Run: "+str(runnum+(startround-1))+", K: "+str(k))
-    bar.set_ylim(0,0.7)
-    bar.set_yticks(yaxis)
+        bar.set_xlabel("TFBS")
+        bar.set_ylabel("Frequency")
+        bar.set_title("Position Distribution for Run: "+str(runnum+(startround-1))+", K: "+str(k))
+        bar.set_ylim(0,0.7)
+        bar.set_yticks(yaxis)
 
-    if revcompwanted == False:
-        bar.set_xticks(xaxis)
-        bar.bar(xaxis, fseq)
-        bar.axhline(y=average, xmin=0.01, xmax=0.99, linestyle='dashed', color='black')
-        bar.text((len(xaxis)-5), 0.65, "Average = "+str(round(average, 4)))
+        if revcompwanted == False:
+            bar.set_xticks(xaxis)
+            bar.bar(xaxis, fseq)
+            bar.axhline(y=average, xmin=0.01, xmax=0.99, linestyle='dashed', color='black')
+            bar.text((len(xaxis)-5), 0.65, "Average = "+str(round(average, 4)))
 
-    if revcompwanted == True:
-        bar.set_xticks(xaxis)
-        bar.bar(fxaxis, fseq, width, label = 'Forward strands')
-        bar.bar(rxaxis, rseq, width, label = 'Reverse strands')
-        bar.axhline(y=raverage, xmin=0.01, xmax=0.99, linestyle='dashed', color = 'black', linewidth = 0.75)
-        bar.text((len(xaxis)-5), 0.55, "Average = "+str(round(raverage, 4)))
+        if revcompwanted == True:
+            bar.set_xticks(xaxis)
+            bar.bar(fxaxis, fseq, width, label = 'Forward strands')
+            bar.bar(rxaxis, rseq, width, label = 'Reverse strands')
+            bar.axhline(y=raverage, xmin=0.01, xmax=0.99, linestyle='dashed', color = 'black', linewidth = 0.75)
+            bar.text((len(xaxis)-5), 0.55, "Average = "+str(round(raverage, 4)))
 
-        handels=('Forward strands', 'Reverse strands')
-        label=('Forward strands', 'Reverse strands')
-        bar.legend(loc = 1)
+            handels=('Forward strands', 'Reverse strands')
+            label=('Forward strands', 'Reverse strands')
+            bar.legend(loc = 1)
+
+    else:
+        fig, kde = plt.subplots()
+        kde.set_xlabel("TFBS")
+        kde.set_ylabel("Frequency")
+        kde.set_title("Position Distribution for Run: "+str(runnum+(startround-1))+", K: "+str(k))
+        kde.set_xlim(0,1)
+        if revcompwanted == False:
+            plot = kdeplot(poslist[runnum][k][n], shade=True)
+        if revcompwanted == True:
+            plot1 = kdeplot(poslist[runnum][k][n], shade=True, label='Forward strands')
+            plot2 = kdeplot(rposlist[runnum][k][n], shade=True, label='Reverse strands')
 
     plt.savefig("figures/"+str(identifier)+"/position_bias/pos_"+str(identifier)+"_"+str(runnum+(startround-1))+"_"+str(k)+"_"+str(n), dpi=600)
     plt.close()
