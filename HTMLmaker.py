@@ -146,7 +146,8 @@ def kmerfrequency():
         twos += 1
     return html_kmerfreq
 
-html_kmerfreq = kmerfrequency()
+if numofruns > 1:
+    html_kmerfreq = kmerfrequency()
 #print(html_kmerfreq)
 
 
@@ -173,7 +174,8 @@ def kmerfreqformatter():
 
 formatter()
 
-kmerfreqformatter()
+if numofruns > 1:
+    kmerfreqformatter()
 
 #for _ in range(mink, maxk+1):
     #Html_file.write("<td></td>")
