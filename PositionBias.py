@@ -169,6 +169,8 @@ hamminglist2 = []
 rhamminglist2 = []
 
 consensuslist = []
+cooccurencelist = []
+cooccurenceindexlist = []
 
 
 def listinit():
@@ -176,6 +178,8 @@ def listinit():
         poslist.append({})
         rposlist.append({})
         consensuslist.append({})
+        cooccurencelist.append({})
+        cooccurenceindexlist.append({})
     for j in range(1, numofruns+1):
         if extype == "SELEX":
             l = lvalues[j]
@@ -195,10 +199,14 @@ def listinit():
             poslist[j][k] = {}
             rposlist[j][k] = {}
             consensuslist[j][k] = {}
+            cooccurencelist[j][k] = {}
+            cooccurenceindexlist[j][k] = {}
             for n in range(1, nmotifs+1):
                 poslist[j][k][n] = {}
                 rposlist[j][k][n] = {}
                 consensuslist[j][k][n] = {}
+                cooccurencelist[j][k][n] = {}
+                cooccurenceindexlist[j][k][n] = {}
                 if extype == "SELEX":
                     for x in range(0,(l+1-k-(avg5+avg3))):
                         poslist[j][k][n].update({x:0})
@@ -209,6 +217,15 @@ def listinit():
 
 listinit()
 
+def cooccinit():
+    for r in range(1, numofruns+1):
+        for k in range(mink, maxk+1):
+            for n in range(1, nmotifs+1):
+                cooccurencelist[r][k][n]["fr"] = 0
+                cooccurencelist[r][k][n]["f"] = 0
+                cooccurencelist[r][k][n]["r"] = 0
+
+cooccinit()
 
 def hamdictinit(numofruns):
     for _ in range(numofruns + 1):
@@ -346,36 +363,47 @@ def CreatePosListSELEX(FileName, k, runnum):
     if knownbarcode == True:
         avg5 = len(barcodeprimers53[runnum][0])
         avg3 = len(barcodeprimers53[runnum][1])
-    combinations = 4**k
+    #combinations = 4**k
     firstline = fastaFileName.readline()
     firstline = firstline.strip()
     if firstline.startswith(">"):
         filetype = "fasta"
     if firstline.startswith("@"):
         filetype = "fastq"
-    for sequence in SeqIO.parse(FileName, filetype):
-        line = str(sequence.seq)
-        c = 0
-        if len(line) == lvalues[runnum] and "N" not in line:
-            LSeqNums[runnum] += 1
-            TSeqNums[runnum] += 1
-            done = {}
-            for n in range(1, nmotifs+1):
-                done[n] = set()
+    #global cooccurencelist
+    for n in range(1, nmotifs+1):
+        seq1 = kmer2hash(consensuslist[runnum][k][n])
+        print(consensuslist[runnum][k][n])
+        print(seq1)
+        seq2 = kmer2hash(revComp(consensuslist[runnum][k][n]))
+        print(revComp(consensuslist[runnum][k][n]))
+        print(seq2)
+        for sequence in SeqIO.parse(FileName, filetype):
+            line = str(sequence.seq)
+            c = 0
+            if len(line) == lvalues[runnum] and "N" not in line:
+                LSeqNums[runnum] += 1
+                TSeqNums[runnum] += 1
+                done = set()
                 for x in range(0,((len(line)+1)-k)-(avg5+avg3)):
-                    kmers = str(line[x+avg5:x+k+avg5])
-                    if kmers not in done[n]:
-                        hkmers = kmer2hash(kmers)
-                        if hkmers < combinations:
-                            if hkmers in hamminglist2[runnum][k][n]:
-                                poslist[runnum][k][n][x] += 1
-                                done[n].add(kmers)
-                            if hkmers in rhamminglist2[runnum][k][n]:
-                                rposlist[runnum][k][n][x] += 1
-                                done[n].add(kmers)
-                                if c == 0:
-                                    numoftfbsseq[runnum][k] += 1
-                                    c += 1
+                    kmers = kmer2hash(str(line[x+avg5:x+k+avg5]))
+                    if kmers in hamminglist2[runnum][k][n]:
+                        poslist[runnum][k][n][x] += 1
+                        done.add(kmers)
+                    if kmers in rhamminglist2[runnum][k][n]:
+                        rposlist[runnum][k][n][x] += 1
+                        done.add(kmers)
+                        if c == 0:
+                            numoftfbsseq[runnum][k] += 1
+                            c += 1
+                    if x == int(len(line)-k)-(avg5+avg3):
+                        if seq1 & seq2 in done:
+                            cooccurencelist[runnum][k][n]["fr"] += 1
+                        elif seq1 in done and seq2 not in done:
+                            cooccurencelist[runnum][k][n]["f"] += 1
+                        elif seq2 in done and seq1 not in done:
+                            cooccurencelist[runnum][k][n]["r"] += 1
+
                                 #if revcompwanted == True:
                                     #rkmers = revComp(kmers)
                                     #if len(rkmers) > 0 and (line.count(kmers) + line.count(rkmers)) <= 2:
@@ -415,37 +443,46 @@ def CreatePosListNORMAL(FileName, k, runnum):
     if knownbarcode == True:
         avg5 = len(barcodeprimers53[runnum][0])
         avg3 = len(barcodeprimers53[runnum][1])
-    combinations = 4**k
+    #combinations = 4**k
     firstline = fastaFileName.readline()
     firstline = firstline.strip()
     if firstline.startswith(">"):
         filetype = "fasta"
     if firstline.startswith("@"):
         filetype = "fastq"
-    for sequence in SeqIO.parse(FileName, filetype):
-        line = str(sequence.seq)
-        lenline = len(line)
-        c = 0
-        if "N" not in line:
+    #global cooccurencelist
+    for n in range(1, nmotifs+1):
+        seq1 = kmer2hash(consensuslist[runnum][k][n])
+        seq2 = kmer2hash(revComp(consensuslist[runnum][k][n]))
+        for sequence in SeqIO.parse(FileName, filetype):
+            line = str(sequence.seq)
+            lenline = len(line)
+            c = 0
             LSeqNums[runnum] += 1
             TSeqNums[runnum] += 1
-            done = {}
-            for n in range(1, nmotifs+1):
-                done[n] = set()
-                for x in range(0,((lenline+1)-k)-(avg5+avg3)):
-                    kmers = str(line[x+avg5:x+k+avg5])
-                    if kmers not in done[n]:
-                        hkmers = kmer2hash(kmers)
-                        if hkmers < combinations:
-                            if hkmers in hamminglist2[runnum][k][n]:
-                                poslist[runnum][k][n].append(x/(lenline-k))
-                                done[n].add(kmers)
-                            if hkmers in rhamminglist2[runnum][k][n]:
-                                rposlist[runnum][k][n].append((x+k)/(lenline-k))
-                                done[n].add(kmers)
-                                if c == 0:
-                                    numoftfbsseq[runnum][k] += 1
-                                    c += 1
+            done = set()
+            for x in range(0,(lenline+1-k)-(avg5+avg3)):
+                try:
+                    kmers = kmer2hash(str(line[x+avg5:x+k+avg5]))
+                    if kmers not in done:
+                        if kmers in hamminglist2[runnum][k][n]:
+                            poslist[runnum][k][n].append(x/(lenline-k+1-(avg5+avg3)))
+                            done.add(kmers)
+                        if kmers in rhamminglist2[runnum][k][n]:
+                            rposlist[runnum][k][n].append((x)/(lenline-k+1-(avg5+avg3)))
+                            done.add(kmers)
+                            if c == 0:
+                                numoftfbsseq[runnum][k] += 1
+                                c += 1
+                except:
+                    continue
+                if x == (len(line)-k)-(avg5+avg3):
+                    if seq1 & seq2 in done:
+                        cooccurencelist[runnum][k][n]["fr"] += 1
+                    elif seq1 in done and seq2 not in done:
+                        cooccurencelist[runnum][k][n]["f"] += 1
+                    elif seq2 in done and seq1 not in done:
+                        cooccurencelist[runnum][k][n]["r"] += 1
                                 #if revcompwanted == True:
                                     #rkmers = revComp(kmers)
                                     #if len(rkmers) > 0 and (line.count(kmers) + line.count(rkmers)) <= 2:
@@ -453,9 +490,6 @@ def CreatePosListNORMAL(FileName, k, runnum):
                                         #if hrkmers < combinations:
                                             #if hrkmers in hamminglist2[runnum][k][n]:
                                                 #rposlist[runnum][k][n][x].append(hrkmers)
-        else:
-            TSeqNums[runnum] += 1
-            continue
 """
         if revcompwanted == True:
             if "N" not in line:
@@ -670,8 +704,8 @@ def plotter(runnum, k, n):
         #f revcompwanted == False:
             #plot = kdeplot(poslist[runnum][k][n], shade=True)
         #if revcompwanted == True:
-        plot1 = kdeplot(poslist[runnum][k][n], shade=True, label='Forward strands')
-        plot2 = kdeplot(rposlist[runnum][k][n], shade=True, label='Reverse strands')
+        plot1 = kdeplot(poslist[runnum][k][n], shade=True, label='Forward strands', bw=0.075)
+        plot2 = kdeplot(rposlist[runnum][k][n], shade=True, label='Reverse strands', bw=0.075)
 
     plt.savefig("figures/"+str(identifier)+"/position_bias/pos_"+str(identifier)+"_"+str(runnum+(startround-1))+"_"+str(k)+"_"+str(n), dpi=600)
     plt.close()
@@ -797,4 +831,14 @@ def seqbiasfinder():
                     continue
     return seqbias
 
+
 seqbias = seqbiasfinder()
+
+
+def cooccurenceindex():
+    for r in range(1, numofruns+1):
+        for k in range(mink, maxk+1):
+            for n in range(1, nmotifs+1):
+                cooccurenceindexlist[r][k][n] = (cooccurencelist[r][k][n]["fr"]/(cooccurencelist[r][k][n]["fr"]+cooccurencelist[r][k][n]["f"]+cooccurencelist[r][k][n]["r"]))
+
+cooccurenceindex()
