@@ -1,6 +1,8 @@
 import re
 #from Bio import SeqIO
 import os
+import shutil
+import fileinput
 
 from itertools import chain, combinations, product
 
@@ -35,10 +37,13 @@ def myrepl(m):
 max_rep = ''
 
 file = str(input("File to be masked (with path): "))
+outfilename =str(os.path.dirname(file))+"/masked_"+str(os.path.basename(file))
+
+shutil.copy(file, str(os.path.dirname(file))+"/masked_"+str(os.path.basename(file)))
 
 def masker():
-    infile = open(file, "r")
-    outfile = open(str(os.path.dirname(file))+"/masked_"+str(os.path.basename(file)), "w")
+    outfile = open(outfilename, "r")
+    #outfile = open(str(os.path.dirname(file))+"/masked_"+str(os.path.basename(file)), "w")
     numberofmasks = int(input("Number of masks: "))
     for n in range(1, numberofmasks+1):
         typeofmask = str(input("Mask type (repeat/motif): "))
@@ -46,9 +51,8 @@ def masker():
             unit = str(input("Unit string: "))
             min_rep = int(input("Minimum repeats: "))
             pat = re.compile(f'({unit}){{{min_rep},{max_rep}}}')
-            for line in infile:
-                out_str = re.sub(pat, myrepl, line)
-                outfile.write(out_str)
+            for line in fileinput.input([outfilename], inplace=True):
+                print(line.replace(line, str.strip(re.sub(pat, myrepl, line))))
         if typeofmask in ["motif", "m", "mot"]:
             unit = str(input("Unit string: "))
             min_rep = 1
@@ -62,14 +66,12 @@ def masker():
                     rmaskmotifs.add(revComp(i))
                 for kmer in rmaskmotifs:
                     pat = re.compile(f'({kmer}){{{min_rep},{max_rep}}}')
-                    for line in infile:
-                        out_str = re.sub(pat, myrepl, line)
-                        outfile.write(out_str)
+                    for line in fileinput.input([outfilename], inplace=True):
+                        print(line.replace(line, str.strip(re.sub(pat, myrepl, line))))
             else:
                 for kmer in maskmotifs:
                     pat = re.compile(f'({kmer}){{{min_rep},{max_rep}}}')
-                    for line in infile:
-                        out_str = re.sub(pat, myrepl, line)
-                        outfile.write(out_str)
+                    for line in fileinput.input([outfilename], inplace=True):
+                        print(line.replace(line, str.strip(re.sub(pat, myrepl, line))))
 
 masker()
