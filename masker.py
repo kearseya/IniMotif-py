@@ -49,10 +49,24 @@ def masker():
         typeofmask = str(input("Mask type (repeat/motif): "))
         if typeofmask in ["repeat", "r", "rep"]:
             unit = str(input("Unit string: "))
+            revwant = str(input("Mask revcomp of unit?: "))
             min_rep = int(input("Minimum repeats: "))
+            funit = {unit}
             pat = re.compile(f'({unit}){{{min_rep},{max_rep}}}')
-            for line in fileinput.input([outfilename], inplace=True):
-                print(line.replace(line, str.strip(re.sub(pat, myrepl, line))))
+            frunit = set()
+            if revwant in ["y", "Y", "yes", "Yes", "t", "true", "True"]:
+                for i in funit:
+                    frunit.add(i)
+                    frunit.add(revComp(i))
+                for unit in frunit:
+                    pat = re.compile(f'({unit}){{{min_rep},{max_rep}}}')
+                    for line in fileinput.input([outfilename], inplace=True):
+                        print(line.replace(line, str.strip(re.sub(pat, myrepl, line))))
+            else:
+                pat = re.compile(f'({unit}){{{min_rep},{max_rep}}}')
+                for line in fileinput.input([outfilename], inplace=True):
+                    print(line.replace(line, str.strip(re.sub(pat, myrepl, l)))
+                    
         if typeofmask in ["motif", "m", "mot"]:
             unit = str(input("Unit string: "))
             min_rep = 1
