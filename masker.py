@@ -65,7 +65,7 @@ def masker():
             else:
                 pat = re.compile(f'({unit}){{{min_rep},{max_rep}}}')
                 for line in fileinput.input([outfilename], inplace=True):
-                    print(line.replace(line, str.strip(re.sub(pat, myrepl, l)))
+                    print(line.replace(line, str.strip(re.sub(pat, myrepl, l))))
                     
         if typeofmask in ["motif", "m", "mot"]:
             unit = str(input("Unit string: "))
