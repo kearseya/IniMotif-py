@@ -373,11 +373,11 @@ def CreatePosListSELEX(FileName, k, runnum):
     #global cooccurencelist
     for n in range(1, nmotifs+1):
         seq1 = kmer2hash(consensuslist[runnum][k][n])
-        print(consensuslist[runnum][k][n])
-        print(seq1)
+        #print(consensuslist[runnum][k][n])
+        #print(seq1)
         seq2 = kmer2hash(revComp(consensuslist[runnum][k][n]))
-        print(revComp(consensuslist[runnum][k][n]))
-        print(seq2)
+        #print(revComp(consensuslist[runnum][k][n]))
+        #print(seq2)
         for sequence in SeqIO.parse(FileName, filetype):
             line = str(sequence.seq)
             c = 0
