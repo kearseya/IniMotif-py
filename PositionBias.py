@@ -272,14 +272,11 @@ def listhammer():
                     ham = hamming_distance(consensus, values)
                     rham = hamming_distance(consensus, rvalues)
                     if ham <= 2 and x not in removelist[runnum][k][n]:
-                        if ham < rham:
-                            if kmer2hash(values) not in hamminglist2[runnum][k][n]:
-                                hamminglist2[runnum][k][n].add(kmer2hash(values))
-                            if kmer2hash(rvalues) not in rhamminglist2[runnum][k][n]:
-                                rhamminglist2[runnum][k][n].add(kmer2hash(rvalues))
-                    if rham <= 2 and x not in removelist[runnum][k][n]:
-                        if kmer2hash(rvalues) not in rhamminglist2[runnum][k][n]:
+                        hamminglist2[runnum][k][n].add(kmer2hash(values))
+                        if rham <= 2 and x not in removelist[runnum][k][n]:
                             hamminglist2[runnum][k][n].add(kmer2hash(rvalues))
+                        if rham > 2 and x not in removelist[runnum][k][n]:
+                            rhamminglist2[runnum][k][n].add(kmer2hash(rvalues))
                     """
                     if ham <= 2 and rham > 2:
                         if kmer2hash(rvalues) not in removelist[runnum][k][n]:
