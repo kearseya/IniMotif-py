@@ -511,7 +511,7 @@ def CreatePosListNORMAL(FileName, k, runnum):
                                 a += 1
                             else:
                                 b += 1
-                        if mindiff <= (2*k+10):
+                        if mindiff <= (2*k+6):
                             cooccurencelist[runnum][k][n]["fr"] += 1
                     elif seq1 in done and seq2 not in done:
                         cooccurencelist[runnum][k][n]["f"] += 1
