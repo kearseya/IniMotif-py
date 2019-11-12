@@ -387,6 +387,9 @@ def CreatePosListSELEX(FileName, k, runnum):
                     if kmers in hamminglist2[runnum][k][n]:
                         poslist[runnum][k][n][x] += 1
                         done.add(kmers)
+                        if c == 0:
+                            numoftfbsseq[runnum][k] += 1
+                            c += 1
                     if kmers in rhamminglist2[runnum][k][n]:
                         rposlist[runnum][k][n][x] += 1
                         done.add(kmers)
@@ -428,24 +431,6 @@ def CreatePosListSELEX(FileName, k, runnum):
 """
 
 
-"""
-if seq1 & seq2 in done:
-    numf = len(noisefilter["F"])
-    numr = len(noisefilter["R"])
-    a = 0
-    b = 0
-    mindiff = 1000
-    while (a < numf and b < numr):
-        if (abs(noisefilter["F"][a] - noisefilter["R"][b]) < result):
-            mindiff = abs(noisefilter["F"][a] - noisefilter["R"][b])
-        if (noisefilter["F"][a] < noisefilter["R"][b]):
-            a += 1
-        else:
-            b += 1
-    if mindiff <= (2*k+10)
-        cooccurencelist[runnum][k][n]["fr"] += 1
-"""
-
 
 def CreatePosListNORMAL(FileName, k, runnum):
     fastaFileName = open(FileName, "r")
@@ -485,6 +470,9 @@ def CreatePosListNORMAL(FileName, k, runnum):
                         if kmers in hamminglist2[runnum][k][n]:
                             poslist[runnum][k][n].append(x/(lenline-k+1-(avg5+avg3)))
                             done.add(kmers)
+                            if c == 0:
+                                numoftfbsseq[runnum][k] += 1
+                                c += 1
                         if kmers in rhamminglist2[runnum][k][n]:
                             rposlist[runnum][k][n].append((x)/(lenline-k+1-(avg5+avg3)))
                             done.add(kmers)
@@ -857,10 +845,7 @@ def seqbiasfinder():
                     forward = kmercount[r][k][x]
                     reverse = kmercount[r][k][kmer2hash(revComp(hash2kmer(x,k)))]
                     seqbiasval = ((forward-reverse)/(forward+reverse))
-                    if seqbiasval > 0:
-                        seqbias[r][k].append(seqbiasval)
-                    if seqbiasval < 0:
-                        seqbias[r][k].append(val*(-1))
+                    seqbias[r][k].append(abs(seqbiasval))
                 except:
                     continue
     return seqbias
