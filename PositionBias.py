@@ -428,6 +428,25 @@ def CreatePosListSELEX(FileName, k, runnum):
 """
 
 
+"""
+if seq1 & seq2 in done:
+    numf = len(noisefilter["F"])
+    numr = len(noisefilter["R"])
+    a = 0
+    b = 0
+    mindiff = 1000
+    while (a < numf and b < numr):
+        if (abs(noisefilter["F"][a] - noisefilter["R"][b]) < result):
+            mindiff = abs(noisefilter["F"][a] - noisefilter["R"][b])
+        if (noisefilter["F"][a] < noisefilter["R"][b]):
+            a += 1
+        else:
+            b += 1
+    if mindiff <= (2*k+10)
+        cooccurencelist[runnum][k][n]["fr"] += 1
+"""
+
+
 def CreatePosListNORMAL(FileName, k, runnum):
     fastaFileName = open(FileName, "r")
     if knownbarcode == False:
@@ -458,6 +477,7 @@ def CreatePosListNORMAL(FileName, k, runnum):
             LSeqNums[runnum] += 1
             TSeqNums[runnum] += 1
             done = set()
+            noisefilter = {"F": [],"R": []}
             for x in range(0,(lenline+1-k)-(avg5+avg3)):
                 try:
                     kmers = kmer2hash(str(line[x+avg5:x+k+avg5]))
@@ -471,11 +491,28 @@ def CreatePosListNORMAL(FileName, k, runnum):
                             if c == 0:
                                 numoftfbsseq[runnum][k] += 1
                                 c += 1
+                    if kmers == seq1:
+                        noisefilter["F"].append(x)
+                    if kmers == seq2:
+                        noisefilter["R"].append(x)
                 except:
                     continue
                 if x == (len(line)-k)-(avg5+avg3):
                     if seq1 & seq2 in done:
-                        cooccurencelist[runnum][k][n]["fr"] += 1
+                        numf = len(noisefilter["F"])
+                        numr = len(noisefilter["R"])
+                        a = 0
+                        b = 0
+                        mindiff = 1000
+                        while (a < numf and b < numr):
+                            if (abs(noisefilter["F"][a] - noisefilter["R"][b]) < mindiff):
+                                mindiff = abs(noisefilter["F"][a] - noisefilter["R"][b])
+                            if (noisefilter["F"][a] < noisefilter["R"][b]):
+                                a += 1
+                            else:
+                                b += 1
+                        if mindiff <= (2*k+10):
+                            cooccurencelist[runnum][k][n]["fr"] += 1
                     elif seq1 in done and seq2 not in done:
                         cooccurencelist[runnum][k][n]["f"] += 1
                     elif seq2 in done and seq1 not in done:
