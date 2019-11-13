@@ -8,7 +8,7 @@ from collections import OrderedDict
 from Bio import SeqIO
 import os
 
-from seaborn import kdeplot
+from sklearn.neighbors import KernelDensity
 
 from KmerKounter import numofruns
 from KmerKounter import kmercount
@@ -499,7 +499,7 @@ def CreatePosListNORMAL(FileName, k, runnum):
                                 a += 1
                             else:
                                 b += 1
-                        if mindiff <= (2*k+6):
+                        if mindiff <= (2*k+5):
                             cooccurencelist[runnum][k][n]["fr"] += 1
                     elif seq1 in done and seq2 not in done:
                         cooccurencelist[runnum][k][n]["f"] += 1
@@ -723,11 +723,30 @@ def plotter(runnum, k, n):
         kde.set_ylabel("Probability density function")
         kde.set_title("TFBS Position Distribution for Run: "+str(runnum+(startround-1))+", K: "+str(k)+", Consensus: "+str(consensuslist[runnum][k][n]))
         kde.set_xlim(0,1)
+        x_d = np.linspace(0,1)
         #f revcompwanted == False:
             #plot = kdeplot(poslist[runnum][k][n], shade=True)
         #if revcompwanted == True:
-        plot1 = kdeplot(poslist[runnum][k][n], shade=True, label='Forward strands', bw=0.075)
-        plot2 = kdeplot(rposlist[runnum][k][n], shade=True, label='Reverse strands', bw=0.075)
+        flen = len(poslist[runnum][k][n])
+        rlen = len(rposlist[runnum][k][n])
+        tot = flen+rlen
+
+        kdef = KernelDensity(bandwidth = 0.05, kernel='gaussian')
+        kder = KernelDensity(bandwidth = 0.05, kernel='gaussian')
+
+        kdef.fit(np.asarray(poslist[runnum][k][n])[:, None])
+        kder.fit(np.asarray(rposlist[runnum][k][n])[:, None])
+
+        logprobf = kdef.score_samples(x_d[:, None])
+        logprobr = kder.score_samples(x_d[:, None])
+
+        plt.fill_between(x_d, np.exp(logprobf*(flen/tot)), alpha=0.5)
+        plt.fill_between(x_d, np.exp(logprobr*(rlen/tot)), alpha=0.5)
+
+        label=("Forward", "Reverse")
+        plt.legend(label)
+        #plot1 = kdeplot(poslist[runnum][k][n], shade=True, label='Forward strands', bw=0.075)
+        #plot2 = kdeplot(rposlist[runnum][k][n], shade=True, label='Reverse strands', bw=0.075)
 
     plt.savefig("figures/"+str(identifier)+"/position_bias/pos_"+str(identifier)+"_"+str(runnum+(startround-1))+"_"+str(k)+"_"+str(n), dpi=600)
     plt.close()
