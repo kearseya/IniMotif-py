@@ -24,6 +24,7 @@ from PositionBias import numoftfbs
 from PositionBias import numoftfbsseq
 from PositionBias import seqbias
 from PositionBias import cooccurenceindexlist
+from PositionBias import gapstdev
 
 
 def setidentity():
@@ -61,6 +62,9 @@ h1 {
 }
 h2 {
   font-size: 20px;
+}
+h3 {
+ font-size: 15px;
 }
 th {
   color: lightgrey;
@@ -115,9 +119,9 @@ def results():
             for n in range(1, nmotifs+1):
                 logos = """<tr><td colspan = 2 align = "middle"><img src="figures/"""+str(identifier)+"""/logos/logo_"""+str(identifier)+"_"+str(x+(startround-1))+"_"+str(k)+"_"+str(n)+""".png\" width=700px></td></tr>"""
                 if nmotifs == 1:
-                    logosusage = """<tr><td colspan = 2 align = "middle"><p>"""+"Motif uses "+str(round((countdict[x][k][n]/totaldict[x][k])*100, 2))+"% of kmers"+"</p><p>Dimer co-occurence index: "+str(round(cooccurenceindexlist[x][k][n], 3))+"</p></td></tr>"
+                    logosusage = """<tr><td colspan = 2 align = "middle"><p>"""+"Motif on "+str(round(((numoftfbsseq[x][k]/LSeqNums[x])*100), 2))+"% of sequences and"+"uses "+str(round((countdict[x][k][n]/totaldict[x][k])*100, 2))+"% of kmers"+"</p><p>Dimer co-occurence index: "+str(round(cooccurenceindexlist[x][k][n], 3))+"</p><h3>With mean gap length: "+str(gapstdev[x][k][n]["mean"])+" (gap standard deviation: "+str(gapstdev[x][k][n]["stdev"])+")</h3></td></tr>"
                 else:
-                    logosusage = """<tr><td colspan = 2 align = "middle"><p>"""+str(logoordernames[n])+" motif uses "+str(round((countdict[x][k][n]/totaldict[x][k])*100, 2))+"% of kmers"+"</p><p>Dimer co-occurence index: "+str(round(cooccurenceindexlist[x][k][n], 3))+"</p></td></tr>"
+                    logosusage = """<tr><td colspan = 2 align = "middle"><p>"""+str(logoordernames[n])+" motif on "+str(round(((numoftfbsseq[x][k]/LSeqNums[x])*100), 2))+"% of sequences and"+" uses "+str(round((countdict[x][k][n]/totaldict[x][k])*100, 2))+"% of kmers"+"</p><p>Dimer co-occurence index: "+str(round(cooccurenceindexlist[x][k][n], 3))+"</p><h3>With mean gap length: "+str(gapstdev[x][k][n]["mean"])+" (gap standard deviation: "+str(gapstdev[x][k][n]["stdev"])+")</h3></td></tr>"
                 ham = """<tr><td><img src="figures/"""+str(identifier)+"""/hamming_distance/hamdist_"""+str(identifier)+"_"+str(x+(startround-1))+"_"+str(k)+"_"+str(n)+""".png\" width=500px hight=60%></td>"""
                 pos = """<td><img src="figures/"""+str(identifier)+"""/position_bias/pos_"""+str(identifier)+"_"+str(x+(startround-1))+"_"+str(k)+"_"+str(n)+""".png\" width=500px hight=60%></td></tr>"""
                 string = """<table align = "center";>"""+logos+logosusage+ham+pos+"</table>"
@@ -133,7 +137,6 @@ html_strs = results()
 def kmerfrequency():
     html_kmerfreq = {}
     twos = 0
-    #pair = """<table align = "center";>"""
     for k in range(mink, maxk+1):
         html_kmerfreq.update({k:[]})
         if twos % 2 == 0:
@@ -143,7 +146,6 @@ def kmerfrequency():
             second = """<td><img src="figures/"""+str(identifier)+"""/kmer_frequency/kmerfreq_"""+str(identifier)+"_"+str(k)+""".png" width=800px height=800px></td></tr>"""
             html_kmerfreq[k].append(second)
         #print(html_kmerfreq)
-        #html_kmerfreq.update({k:[]})
         twos += 1
     return html_kmerfreq
 
@@ -178,8 +180,7 @@ formatter()
 if numofruns > 1:
     kmerfreqformatter()
 
-#for _ in range(mink, maxk+1):
-    #Html_file.write("<td></td>")
+
 
 def tablemaker():
     Html_file.write("""<h1 style="background-color: #3c3c3c; padding: 20px; color: white;" align = "middle"> Numbers </h1><br>""")
