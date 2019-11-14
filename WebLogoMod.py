@@ -12,8 +12,6 @@ import math
 
 from KmerKounter import revnuc
 from KmerKounter import revComp
-#from KmerKounter import hamlist
-#from KmerKounter import pwm
 from KmerKounter import numofruns
 from KmerKounter import mink
 from KmerKounter import maxk
@@ -27,10 +25,7 @@ from KmerKounter import inputlist
 
 matplotlib.use('AGG')
 
-"""
-from KmerKounter import mink
-from KmerKounter import maxk
-"""
+
 
 def kmer2hash(kmer):
     """
@@ -70,7 +65,7 @@ def inputtype():
     try:
         from GUI import nmotifs
         from GUI import logotype
-        #if len(logotype) > 1:
+
         type = logotype[0]
         from GUI import allowham
     except:
@@ -83,8 +78,7 @@ def inputtype():
 
 inputtype()
 
-#print("PWM")
-#print(pwm)
+
 
 hamlist = []
 rhamlist = []
@@ -97,7 +91,6 @@ logoform = []
 
 def dictinit(numofruns):
     for _ in range(numofruns+1):
-        #kmercount.append({})
         hamlist.append({})
         rhamlist.append({})
         removelist.append({})
@@ -131,12 +124,9 @@ def listhammer():
         for i in kmercount[runnum]:
             hamlist[runnum][i] = {}
             rhamlist[runnum][i] = {}
-            #removelist[runnum][i] = {}
             for n in range(1, nmotifs+1):
                 hamlist[runnum][i][n] = []
                 rhamlist[runnum][i][n] = []
-                #removelist[runnum][i][n] = set()
-                #hconsensus = (list(kmercount[runnum][i].keys())[0])
                 if n == 1:
                     hconsensus = max(kmercount[runnum][i], key=lambda key: kmercount[runnum][i][key])
                 else:
@@ -192,16 +182,6 @@ def visualise():
 
 #print(removelist)
 
-"""
-else:
-    po = 0
-    for p, x in enumerate(top6all[runnum][i], 1):
-        if p > po:
-            if x not in removelist[runnum][i][n]:
-                hconsensus = x
-                po = p
-"""
-
 #print(hamlist)
 #print(rhamlist)
 #print("remove")
@@ -221,7 +201,6 @@ def dicthammer():
                 frac = { z : kmercount[runnum][k][z] for z in hamlist[runnum][k][n] }
                 rfrac = { z : kmercount[runnum][k][z] for z in rhamlist[runnum][k][n] }
                 combine = {**frac, **rfrac}
-                #M = sum(kmercount[runnum][k].values())
                 M = sum(combine.values())
                 frac = { z : (kmercount[runnum][k][z]/M) for z in frac }
                 rfrac = { z : (kmercount[runnum][k][z]/M) for z in rfrac }
@@ -306,18 +285,6 @@ def Ri(runnum, k, i, n):
 
 
 
-"""
-def dictinit():
-    for r in range(0, numofruns+1):
-        logoform.append({})
-        for k in range(mink, maxk+1):
-            logoform[r][k] = {}
-            #logoform[r].update({k:[]})
-            for n in range(1, nmotifs+1):
-                logoform[r][k][n] = []
-dictinit()
-"""
-
 def logopos(a,t,c,g):
     upos =  [('A', a), ('T', t), ('C', c), ('G', g)]
     pos = sorted(upos, key=lambda x:x[1])
@@ -327,7 +294,6 @@ def logopos(a,t,c,g):
 #print(pwm)
 #print("LOGO")
 #print(logoform)
-
 
 def kmerpwm(runnum, k, n):
     kmerpwm = []
@@ -342,8 +308,6 @@ def kmerpwm(runnum, k, n):
 
 def allmaker(numofruns):
     for z in range(1, numofruns+1):
-        #mink = int(inputlist[((z-1)*5)+7])
-        #maxk = int(inputlist[((z-1)*5)+8])
         for j in range(mink,maxk+1):
             for n in range(1, (nmotifs+1)):
                 logoform[z][j][n].append(kmerpwm(z,j,n))
@@ -375,7 +339,6 @@ def draw_logo(all_scores, run, k, n):
     fig = plt.figure()
     fig.set_size_inches(k, 2)
     ax = fig.add_subplot(111)
-    #ax.set_xticks(range(k))
 
     xshift = 0
     trans_offset = transforms.offset_copy(ax.transAxes,
@@ -413,15 +376,12 @@ def draw_logo(all_scores, run, k, n):
         ax.set_ylabel("frequency")
     if type == "b":
         ax.set_ylabel("bits")
-    #ax.set_title("Uses "+str(round((countdict[run][k][n]/totaldict[run][k])*100, 2))+"%")
-    #ax.spines['bottom'].set_visible(False)
-    #ax.spines['top'].set_visible(False)
-    #ax.spines['right'].set_visible(False)
+
     plt.tick_params(bottom = False, labelbottom = False)
     seaborn.despine(ax=ax, offset=30, trim=False, bottom=True)
-    #ax.set_xticklabels(range(1,len(all_scores)+1), rotation=90)
+
     ax.set_yticklabels(np.arange(0,3,1))
-    #plt.show()
+
     plt.savefig("figures/"+str(identifier)+"/logos/logo_"+str(identifier)+"_"+str(run+(startround-1))+"_"+str(k)+"_"+str(n), dpi=600, bbox_inches='tight')
     plt.close()
 
