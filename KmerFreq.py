@@ -27,41 +27,11 @@ def makexaxis():
         xaxis.append(i)
     return xaxis
 
-"""
-def top6(k):
-    top6s = []
-    keys = list(kmercount[(numofruns)][k].keys())
-    topvalpos = 0
-    while len(top6s) <= 11:
-        next = keys[topvalpos]
-        nkmer = hash2kmer(next, k)
-        nrkmer = revComp(nkmer)
-        nhrkmer = kmer2hash(nrkmer)
-        if next not in top6s:
-            top6s.append(next)
-        if nhrkmer not in top6s:
-            top6s.append(nhrkmer)
-
-        topvalpos += 1
-    return top6s
-"""
-
 #print(top6all)
-"""
-def colours1(k):
-    colours = []
-    top6s = top6all[numofruns][k]
-    consensusnum = kmercount[numofruns][k][top6s[0]]
-    for i in range(0, 4**k):
-        if kmercount[numofruns][k][i] not in top6s:
-            if kmercount[numofruns][k][i] >= consensusnum//5:
-                colours.append(i)
-    return colours
-"""
+
 
 
 def colours1():
-    #colours = []
     global colours
     colours = {}
     for k in range(mink, maxk+1):
@@ -76,19 +46,12 @@ def colours1():
 
 colours1()
 
-"""
-def makexaxis2():
-    xaxis = ([])
-    for i in range(-1, len(kmercount)+1):
-        xaxis.append(i)
-    return xaxis
-"""
+
 
 def makeyaxis1a(i, k):
     yaxis1a = ([])
     rkmer = kmer2hash(revComp(hash2kmer(i,k)))
     top6s = top6all[numofruns][k]
-    #colours = colours[k]
     for l in range(1, numofruns+1):
         total = totaldict[l][k]
         if i not in top6s or colours[k]:
@@ -110,7 +73,6 @@ def makeyaxis1a(i, k):
 def makeyaxis1b(i, k):
     yaxis1b = ([])
     rkmer = kmer2hash(revComp(hash2kmer(i,k)))
-    #colours = colours[k]
     for l in range(1, numofruns+1):
         total = totaldict[l][k]
         if i in colours[k]:
@@ -154,7 +116,6 @@ def makeyaxis2a(i, k):
     yaxis2a = ([])
     rkmer = kmer2hash(revComp(hash2kmer(i,k)))
     top6s = top6all[numofruns][k]
-    #colours = colours[k]
     for l in range(1, numofruns+1):
         total = totaldict[l][k]
         if i not in top6s or colours[k]:
@@ -173,7 +134,6 @@ def makeyaxis2a(i, k):
 def makeyaxis2b(i, k):
     yaxis2b = ([])
     rkmer = kmer2hash(revComp(hash2kmer(i,k)))
-    #colours = colours[k]
     for l in range(1, numofruns+1):
         total = totaldict[l][k]
         if i in colours[k]:
@@ -223,7 +183,6 @@ def grapher(k):
     xaxis = makexaxis()
     last = (len(xaxis)-1)
     top6s = top6all[numofruns][k]
-    #colourp = colours[k]
 
     fig = plt.figure(figsize=(10,10))
     grid = plt.GridSpec(2,3,wspace=0.4,hspace=0.3)
@@ -252,7 +211,6 @@ def grapher(k):
 
     if revcompwanted == False:
         for l in range(1, (numofruns+1)):
-            #total = sum(kmercount[l][k].values())
             for i in kmercount[l][k]:
                 num = kmercount[l][k][i]
                 rkmer = kmer2hash(revComp(hash2kmer(i,k)))
@@ -273,7 +231,6 @@ def grapher(k):
 
 
         for l in range(1, (numofruns+1)):
-            #total = sum(kmercount[l][k].values())
             for i in kmercount[l][k]:
                 num = kmercount[l][k][i]
                 rkmer = kmer2hash(revComp(hash2kmer(i,k)))
@@ -295,7 +252,6 @@ def grapher(k):
 
     if revcompwanted == True:
         for l in range(1, (numofruns+1)):
-            #total = sum(kmercount[l][k].values())
             alreadytop = []
             for i in kmercount[l][k]:
                 num = kmercount[l][k][i]
@@ -319,7 +275,6 @@ def grapher(k):
 
 
         for l in range(1, numofruns+1):
-            #total = sum(kmercount[l][k].values())
             alreadybottom = []
             for i in kmercount[l][k]:
                 num = kmercount[l][k][i]
@@ -363,7 +318,6 @@ def grapher(k):
 
     bar.bar(xaxis, makeyaxis3(k))
 
-    #plt.show()
     plt.savefig("figures/"+str(identifier)+"/kmer_frequency/kmerfreq_"+str(identifier)+"_"+str(k), dpi=600)
     plt.close()
 
