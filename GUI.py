@@ -84,10 +84,10 @@ buttonframe.pack(side=BOTTOM, anchor="s")
 
 experimenttype = Label(initialdetailsframe, text="Experiment type: ")
 experimenttype.grid(row=2, column=0, sticky="e")
-experimentformatlist = ["SELEX", "ChIP", "ATAC", "DNase"]
+experimentformatlist = ["ChIP", "SELEX"]
 valueforexdrop = StringVar()
 valueforexdrop.set(experimentformatlist[0])
-experimenttypedrop = OptionMenu(initialdetailsframe, valueforexdrop, "SELEX", "ChIP", "ATAC", "DNase", command=changeform)
+experimenttypedrop = OptionMenu(initialdetailsframe, valueforexdrop, "ChIP", "SELEX", command=changeform)
 experimenttypedrop.grid(row=2, column=1)
 
 filenameslabels = Label(variableinputform, text="File name(s): ", anchor="w")
@@ -103,7 +103,8 @@ readlengthsinputs = Entry(variableinputform, textvariable=IntVar())
 readlengthsinputs.delete(0)
 readlengthsinputs.grid(row=1, column=2)
 readlengthsinputs.config({"background": "lightgrey"})
-
+readlengthslabels.grid_forget()
+readlengthsinputs.grid_forget()
 
 
 multiroundsamefilelabels = Label(initialdetailsframe, text="Multiple rounds in same file: ")
@@ -167,7 +168,6 @@ def add_rows():
     fiveprimebar = []
     threeprimebar = []
     extype = valueforexdrop.get()
-    #knownbarcodesval = knownbarcodes.get()
     filenamesinputs.config({"background": "white"})
     if extype == "SELEX":
         readlengthsinputs.config({"background": "white"})
@@ -181,11 +181,7 @@ def add_rows():
     if knownbarcode == True:
         fiveprimebarinputs.config({"background": "white"})
         threeprimebarinputs.config({"background": "white"})
-    #global filenameslabels
-    #global filenamesinputs
-    #if extype == "SELEX":
-        #global readlengthslabels
-        #global readlengthsinputs
+
     if extype == "SELEX":
         for x in range(0, (x-1)*2):
             SELEXlist.append("position"+str(x))
@@ -228,11 +224,7 @@ def add_rows():
                 threeprimebar[x].delete(0, END)
             fiveprimebar[x].grid(row=x+2, column=3)
             threeprimebar[x].grid(row=x+2, column=4)
-    #if knownbarcode == False:
-        #fiveprimebarlabels.destroy()
-        #fiveprimebarinputs.destroy()
-        #threeprimebarlabels.destroy()
-        #threeprimebarinputs.destroy()
+
 
 """
     if dele > 0:
@@ -346,6 +338,8 @@ numberofrunslabel = Label(initialdetailsframe, text="Number of runs: ")
 numberofrunslabel.grid(row=3, column=0, sticky="e")
 numberofrunsinput = Entry(initialdetailsframe, textvariable=numofrunsvalue)
 numberofrunsinput.delete(0)
+numberofrunsinput.insert(0, int(1))
+numberofrunsinput.config(state="readonly", foreground="grey")
 numberofrunsinput.grid(row=3, column=1)
 numberofrunsinput.config({"background": "lightgrey"})
 numberofrunsinput.bind("<FocusOut>", changecolour3)
@@ -390,6 +384,7 @@ startroundlabels.grid(row=10, column=0,  sticky="e")
 startroundinputs = Entry(initialdetailsframe, textvariable=IntVar())
 startroundinputs.delete(0)
 startroundinputs.insert(0, int(1))
+startroundinputs.config(state="readonly", foreground="grey")
 startroundinputs.grid(row=10, column=1)
 startroundinputs.config({"background": "lightgrey"})
 startroundinputs.bind("<FocusOut>", changecolour6)
@@ -417,27 +412,10 @@ formchangebutton = Button(initialdetailsframe, text="Ready for file name entry",
 formchangebutton.grid(row=13, column=1, padx=10, pady=10)
 
 
-"""
-filenameslabels = Label(variableinputform, text="File name: ", anchor="w")
-filenameslabels.grid(row=0, column=1)
-filenamesinputs = Entry(variableinputform, textvariable=StringVar())
-filenamesinputs.grid(row=1, column=1)
-"""
-"""
-readlengthslabels = Label(variableinputform, text="Read lengths: ")
-readlengthslabels.grid(row=1, column=2)
-readlengthsinputs = Entry(variableinputform, textvariable=IntVar())
-readlengthsinputs.delete(0)
-readlengthsinputs.grid(row=2, column=2)
-"""
-
-
 
 def autofiller():
     usage =+ 1
     extype = valueforexdrop.get()
-    #if usage%2 != 0:
-        #add_rows()
     knownbarcodevalue = valueforknownbarcode.get()
     global knownbarcode
     if knownbarcodevalue in ["Auto", "None"]:
@@ -666,8 +644,7 @@ def makeorderedinputlist():
     inputlist.append(str(pathtodirectoryinput.get()))
     inputlist.append(int(numberofrunsinput.get()))
     inputlist.append(bool(reversecomplementwanted.get()))
-    #inputlist.append(str(filenamesinputs.get()))
-    #inputlist.append(int(runnumbersinputs.get()))
+
     inputlist.append(int(minimimkvaluesinputs.get()))
     inputlist.append(int(maximumkvaluesinputs.get()))
     inputlist.append(str(valueforexdrop.get()))
@@ -721,8 +698,7 @@ def makeorderedinputlist():
     return inputlist
 
 
-#autofilldetailslabel = Label(window, text="Autofill: ")
-#autofilldetailslabel.pack(side=LEFT, anchor="n", text="Autofill")
+
 autofilldetailscheckbox = Button(buttonframe, command=autofiller, text="Autofill")
 autofilldetailscheckbox.pack(side=LEFT, anchor="s", padx=20, pady=20)
 
@@ -731,18 +707,3 @@ submitdetailscheckbox = Button(buttonframe, command=makeorderedinputlist, text="
 submitdetailscheckbox.pack(side=RIGHT, anchor="s", padx=20, pady=20)
 
 window.mainloop()
-
-
-
-"""
-def on_entry_click(event):
-    #function that gets called whenever entry is clicked#
-    if entry.get() == 'Enter your user name...':
-       entry.delete(0, "end") # delete all the text in the entry
-       entry.insert(0, '') #Insert blank for user input
-       entry.config(fg = 'black')
-def on_focusout(event):
-    if entry.get() == '':
-        entry.insert(0, 'Enter your username...')
-        entry.config(fg = 'grey')
-"""
