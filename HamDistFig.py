@@ -61,9 +61,9 @@ def hammer():
                             if kmer2hash(revComp(hash2kmer(j, k))) in temptop6:
                                 temptop6.remove(kmer2hash(revComp(hash2kmer(j, k))))
                     hconsensus = max(temptop6, key=lambda key: kmercount[run][k][key])
-                #hconsensus = max(kmercount[run][k], key=lambda key: kmercount[run][k][key])
+
                 consensus = hash2kmer(hconsensus, k)
-                #print("con: "+str(consensus))
+                #print("Consensus: "+str(consensus))
                 for x in list(kmercount[run][k].keys()):
                     if x not in removelist[run][k][n]:
                         values = hash2kmer(x,k)
@@ -77,12 +77,7 @@ def hammer():
     return khams
 
 hammer()
-"""
-def multihammer():
-    for k in range (mink, maxk+1):
-        hammer(k)
-"""
-#multihammer()
+
 #print("khams")
 #print(khams)
 
@@ -111,128 +106,6 @@ findremovedkmers()
 #print("removelist")
 #print(removelist)
 
-"""
-top12t = []
-top12 = []
-
-def top12maker(numofruns):
-    for _ in range(0, numofruns+1):
-        top12t.append({})
-        top12.append({})
-    for x in range(1, numofruns+1):
-        #mink = int(inputlist[((x-1)*5)+7])
-        #maxk = int(inputlist[((x-1)*5)+8])
-        for k in range(mink, maxk+1):
-            top12t[x][k] = list(sorted(kmercount[x][k].items(), key=lambda x: x[1], reverse=True))[:12]
-            top12[x][k] = [j[0] for j in top12t[x][k]]
-
-top12maker(numofruns)
-#print(kmercount)
-#print(top12)
-
-top6all = []
-"""
-
-"""
-def top6(run, k):
-    top6s = []
-    #keys = top12[run][k]
-    topvalpos = 0
-    while len(top6s) <= 11:
-        next = top12[run][k][topvalpos]
-        nkmer = hash2kmer(next, k)
-        nrkmer = revComp(nkmer)
-        nhrkmer = kmer2hash(nrkmer)
-        if next not in top6s:
-            top6s.append(next)
-            #print("k "+str(k)+" len "+str(len(top6s))+" kmer "+str(next))
-        if next == nhrkmer:
-            if len(top6s) <= 11:
-                top6s.append(nhrkmer)
-        try:
-            if kmercount[run][k][nhrkmer] > 0:
-                if nhrkmer not in top6s:
-                    if len(top6s) <= 11:
-                        top6s.append(nhrkmer)
-                        #print("k "+str(k)+" len "+str(len(top6s))+" kmer "+str(nhrkmer))
-        except:
-            if len(top6s) <= 11:
-                top6s.append(next)
-        topvalpos += 1
-    return top6s
-"""
-
-"""
-def top6(run, k):
-    top6us = []
-    top6ts = []
-    top6ds = {}
-    top6s = []
-    topvalpos = 0
-    while len(top6us) <= 11:
-        next = top12[run][k][topvalpos]
-        nkmer = hash2kmer(next, k)
-        nrkmer = revComp(nkmer)
-        nhrkmer = kmer2hash(nrkmer)
-        if next not in top6us:
-            top6us.append(next)
-            #print("k "+str(k)+" len "+str(len(top6s))+" kmer "+str(next))
-        if next == nhrkmer:
-            if len(top6us) <= 11:
-                top6us.append(nhrkmer)
-        try:
-            if kmercount[run][k][nhrkmer] > 0:
-                if nhrkmer not in top6us:
-                    if len(top6us) <= 11:
-                        top6us.append(nhrkmer)
-                        #print("k "+str(k)+" len "+str(len(top6s))+" kmer "+str(nhrkmer))
-        except:
-            if len(top6us) <= 11:
-                top6us.append(next)
-        topvalpos += 1
-
-    for i in range(len(top6us)):
-        if i//2 == (i+1)//2:
-            top6ts.append((top6us[i], top6us[i+1]))
-
-    for x in top6ts:
-        try:
-            first = kmercount[run][k][x[0]]
-        except:
-            first = 0
-        if x[0] != x[1]:
-            try:
-                second = kmercount[run][k][x[1]]
-            except:
-                second = 0
-        if x[0] == x[1]:
-            second = 0
-        top6ds[x] = first+second
-
-    sort = sorted(top6ds.items(), key=operator.itemgetter(1), reverse=True)
-
-    for z in range(len(sort)):
-        top6s.append(sort[z][0][0])
-        top6s.append(sort[z][0][1])
-
-    return top6s
-
-
-
-
-def top6maker(numofruns):
-    for _ in range(0, numofruns+1):
-        top6all.append({})
-    for x in range(1, numofruns+1):
-        #mink = int(inputlist[((x-1)*5)+7])
-        #maxk = int(inputlist[((x-1)*5)+8])
-        for k in range(mink, maxk+1):
-            top6all[x][k] = top6(x, k)
-
-top6maker(numofruns)
-#print("top6all")
-#print(top6all)
-"""
 
 
 def top6plotx(run, p, k, n):
@@ -394,16 +267,12 @@ def scatter(run, k, n):
     #print(split)
     labels = []
     handels = []
-    #labelcolours = []
-    #greys = [0.6, 0.75, 0.9]
+
     c = 0
     cc = 0
     texts = []
 
     for x in khams[run][k][n]:
-
-        #print("run: "+str(run)+", k: "+str(k)+", n: "+str(n))
-        #print("X: "+str(x))
 
         xaxis = xaxismaker(run, x, k, n)
         yaxis = yaxismaker(run, x, k, n)
@@ -428,28 +297,15 @@ def scatter(run, k, n):
 
 
         for p, j in enumerate(split[run][x]):
-            #print("split[run][x]")
-            #print(split[run][x])
-            #print("p: "+str(p))
-            #print("j: "+str(j))
-            #print("top6x: "+str(top6x[p]))
-            #print("top6y: "+str(top6y[p]))
 
             xp = top6x[p]
             yp = top6y[p]
 
             texts.append(plt.text(float(xp), float(yp-0.3), str(hash2kmer(j,k) + ' ' + str(khams[run][k][n][x][j])),color=colours[cc], fontsize=5))
 
-            #if (p % 2)+x == x:
-                #plt.annotate(str(hash2kmer(j,k) + ' ' + str(khams[run][k][n][x][j])), (float(xp), float(yp)+0.6), color=colours[cc], fontsize=5)
-            #if (p % 2)+x != x:
-                #plt.annotate(str(hash2kmer(j,k) + ' ' + str(khams[run][k][n][x][j])), (float(xp), float(yp)-0.6), color=colours[cc], fontsize=5)
-
             cc += 1
 
     adjust_text(texts, lw=0.5)
-    #for z in colours[::2]:
-        #labelcolours.append(z)
 
     leg = plt.legend(labels[::2], fontsize=7)
     if n == 1:
@@ -476,14 +332,12 @@ def scatter(run, k, n):
         plt.title("Run number:"+' '+str(run+(startround-1))+'\n'+'K: '+str(k)+'\n'+'Total kmers: '+str(totaldict[run][k]))
     else:
         plt.title("Run number:"+' '+str(run+(startround-1))+'\n'+'K: '+str(k)+'\n'+'Total kmers: '+str(totaldict[run][k]-removedkmers[run][k][n]))
-    #plt.show()
+
     plt.savefig("figures/"+str(identifier)+"/hamming_distance/hamdist_"+str(identifier)+"_"+str(run+(startround-1))+"_"+str(k)+"_"+str(n), dpi=600)
     plt.close()
 
 def plotrange(runs):
     for r in range(1, runs+1):
-        #mink = int(inputlist[((r-1)*5)+7])
-        #maxk = int(inputlist[((r-1)*5)+8])
         for k in range(mink, maxk+1):
             for n in range(1, nmotifs+1):
                 scatter(r, k, n)
