@@ -43,7 +43,6 @@ shutil.copy(file, str(os.path.dirname(file))+"/masked_"+str(os.path.basename(fil
 
 def masker():
     outfile = open(outfilename, "r")
-    #outfile = open(str(os.path.dirname(file))+"/masked_"+str(os.path.basename(file)), "w")
     numberofmasks = int(input("Number of masks: "))
     for n in range(1, numberofmasks+1):
         typeofmask = str(input("Mask type (repeat/motif): "))
@@ -65,8 +64,8 @@ def masker():
             else:
                 pat = re.compile(f'({unit}){{{min_rep},{max_rep}}}')
                 for line in fileinput.input([outfilename], inplace=True):
-                    print(line.replace(line, str.strip(re.sub(pat, myrepl, l))))
-                    
+                    print(line.replace(line, str.strip(re.sub(pat, myrepl, line))))
+
         if typeofmask in ["motif", "m", "mot"]:
             unit = str(input("Unit string: "))
             min_rep = 1
