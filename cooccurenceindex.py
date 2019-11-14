@@ -5,6 +5,12 @@ file = str(input("File name with path: "))
 
 sequence1 = str(input("Frist motif: "))
 sequence2 = str(input("Second motif: "))
+filterchoice = str(input("Noise filter? "))
+if filterchoice in ["y", "Y", "yes", "Yes", "t", "true", "True"]:
+    filter = True
+    gaplength = int(input("Gap size: "))
+else:
+    filter = False
 
 seq1len = len(sequence1)
 seq2len = len(sequence2)
@@ -13,6 +19,7 @@ seq2len = len(sequence2)
 forwardandreverse = 0
 forwardonly = 0
 reverseonly = 0
+gaplist = []
 
 
 def kmer2hash(kmer):
@@ -62,19 +69,47 @@ def cooccurence(FileName):
         for sequence in SeqIO.parse(FileName, filetype):
             line = str(sequence.seq)
             done = set()
+            noisefilter = {"F": [],"R": []}
             for x in range(0,((len(line)+1)-k)):
                 kmers = str(line[x:x+k])
                 try:
-                    done.add(kmer2hash(kmers))
+                    hkmer = kmer2hash(kmers)
+                    done.add(hkmer)
+                    if hkmer == seq1:
+                        noisefilter["F"].append(x)
+                    if hkmers == seq2:
+                        noisefilter["R"].append(x)
                 except:
                     continue
                 if x == (len(line)-k):
-                    if seq1 & seq2 in done:
-                        forwardandreverse += 1
-                    elif seq1 in done and seq2 not in done:
-                        forwardonly += 1
-                    elif seq2 in done and seq1 not in done:
-                        reverseonly += 1
+                    if filter = True:
+                        if seq1 & seq2 in done:
+                            numf = len(noisefilter["F"])
+                            numr = len(noisefilter["R"])
+                            a = 0
+                            b = 0
+                            mindiff = 1000
+                            while (a < numf and b < numr):
+                                if (k < abs(noisefilter["F"][a] - noisefilter["R"][b]) < mindiff):
+                                    mindiff = abs(noisefilter["F"][a] - noisefilter["R"][b])
+                                if (noisefilter["F"][a] < noisefilter["R"][b]):
+                                    a += 1
+                                else:
+                                    b += 1
+                            if k < mindiff <= (k+gaplength):
+                                forwardandreverse += 1
+                                gaplist.append(mindiff-k)
+                        elif seq1 in done and seq2 not in done:
+                            forwardonly += 1
+                        elif seq2 in done and seq1 not in done:
+                            reverseonly += 1
+                    else:
+                        if seq1 & seq2 in done:
+                            forwardandreverse += 1
+                        elif seq1 in done and seq2 not in done:
+                            forwardonly += 1
+                        elif seq2 in done and seq1 not in done:
+                            reverseonly += 1
 
 
 cooccurence(file)
@@ -86,4 +121,34 @@ def cooccurenceindex():
 
 cooccurenceindex = cooccurenceindex()
 
+print("Cooccurence index:")
 print(cooccurenceindex)
+
+def meangapcalc():
+    if filter = False:
+        meangap = "Not calculated"
+    if filter = True:
+        if len(gaplist) > 0:
+            meangap = int(round((sum(gaplist)/len(gaplist)),0))
+        else:
+            meangap = 0
+    return meangap
+
+meangap = meangapcalc()
+
+def stdevcalc():
+    if filter = False:
+        stdev = "Not calculated"
+    if filter = True:
+        if len(gaplist) > 0:
+            stdev = statistics.stdev(gaplist)
+        else:
+            stdev = 0
+    return stdev
+
+stdev = stdevcalc()
+
+print("Mean gap:")
+print(meangap)
+print("Standard deviation:")
+print(stdev)
