@@ -140,7 +140,7 @@ try:
     unitlabel.grid(row=1, column=0, padx=10, sticky="e")
     revwantlabel = Label(maskinputframe, text="Reverse compliment: ")
     revwantlabel.grid(row=2, column=0, padx=10, sticky="e")
-    minrephamlabel = Label(maskinputframe, text="Min repeats/Hamming dist: ")
+    minrephamlabel = Label(maskinputframe, text="Min repeats/Mutations: ")
     minrephamlabel.grid(row=3, column=0, padx=10, sticky="e")
 
     variableentrylist.append("typeent1")
@@ -194,7 +194,7 @@ except:
                 inputlist.append(unit)
                 revwant = str(input("Mask revcomp of unit?: "))
                 inputlist.append(revwant)
-                allowham = int(input("Hamming distance: "))
+                allowham = int(input("Num mutations: "))
                 inputlist.append(allowham)
 
     clinputbuffer()
