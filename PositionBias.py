@@ -40,7 +40,9 @@ from KmerKounter import extype
 from KmerKounter import nobarcode
 
 from WebLogoMod import nmotifs
+from WebLogoMod import allowham
 from WebLogoMod import removelist
+from WebLogoMod import logoform
 
 
 
@@ -216,7 +218,7 @@ def listhammer():
                     ham = hamming_distance(consensus, values)
                     rham = hamming_distance(consensus, rvalues)
                     if ham <= 2 and x not in removelist[runnum][k][n]:
-                        hamminglist2[runnum][k][n].add(kmer2hash(values))
+                        hamminglist2[runnum][k][n].add(x)
                         if rham <= 2 and x not in removelist[runnum][k][n]:
                             hamminglist2[runnum][k][n].add(kmer2hash(rvalues))
                         if rham > 2 and x not in removelist[runnum][k][n]:
@@ -257,8 +259,10 @@ def CreatePosListSELEX(FileName, k, runnum):
                 LSeqNums[runnum] += 1
                 TSeqNums[runnum] += 1
                 done = set()
+                noisefilter = {"F": [],"R": []}
                 for x in range(0,((l+1)-k)-(avg5+avg3)):
                     kmers = kmer2hash(str(line[x+avg5:x+k+avg5]))
+                    #if kmers not in done:
                     if kmers in hamminglist2[runnum][k][n]:
                         poslist[runnum][k][n][x] += 1
                         done.add(kmers)
@@ -271,6 +275,10 @@ def CreatePosListSELEX(FileName, k, runnum):
                         if c == 0:
                             numoftfbsseq[runnum][k] += 1
                             c += 1
+                    if kmers == seq1:
+                        noisefilter["F"].append(x)
+                    if kmers == seq2:
+                        noisefilter["R"].append(x)
                     if x == int(l-k)-(avg5+avg3):
                         if seq1 & seq2 in done:
                             numf = len(noisefilter["F"])
@@ -285,7 +293,7 @@ def CreatePosListSELEX(FileName, k, runnum):
                                     a += 1
                                 else:
                                     b += 1
-                            if k < mindiff <= (l):
+                            if k < mindiff < l:
                                 cooccurencelist[runnum][k][n]["fr"] += 1
                                 gaplist[runnum][k][n].append(mindiff-k)
                         elif seq1 in done and seq2 not in done:
@@ -333,19 +341,19 @@ def CreatePosListNORMAL(FileName, k, runnum):
             for x in range(0,(lenline+1-k)-(avg5+avg3)):
                 try:
                     kmers = kmer2hash(str(line[x+avg5:x+k+avg5]))
-                    if kmers not in done:
-                        if kmers in hamminglist2[runnum][k][n]:
-                            poslist[runnum][k][n].append(x/(lenline-k+1-(avg5+avg3)))
-                            done.add(kmers)
-                            if c == 0:
-                                numoftfbsseq[runnum][k] += 1
-                                c += 1
-                        if kmers in rhamminglist2[runnum][k][n]:
-                            rposlist[runnum][k][n].append((x)/(lenline-k+1-(avg5+avg3)))
-                            done.add(kmers)
-                            if c == 0:
-                                numoftfbsseq[runnum][k] += 1
-                                c += 1
+                    #if kmers not in done:
+                    if kmers in hamminglist2[runnum][k][n]:
+                        poslist[runnum][k][n].append(x/(lenline-k+1-(avg5+avg3)))
+                        done.add(kmers)
+                        if c == 0:
+                            numoftfbsseq[runnum][k] += 1
+                            c += 1
+                    if kmers in rhamminglist2[runnum][k][n]:
+                        rposlist[runnum][k][n].append((x)/(lenline-k+1-(avg5+avg3)))
+                        done.add(kmers)
+                        if c == 0:
+                            numoftfbsseq[runnum][k] += 1
+                            c += 1
                     if kmers == seq1:
                         noisefilter["F"].append(x)
                     if kmers == seq2:
@@ -378,8 +386,6 @@ def CreatePosListNORMAL(FileName, k, runnum):
 
 def multiPosList(numofruns):
     for x in range(1, numofruns+1):
-        #mink = int(inputlist[((x-1)*5)+7])
-        #maxk = int(inputlist[((x-1)*5)+8])
         for i in range(mink, maxk+1):
             if extype == "SELEX":
                 CreatePosListSELEX(filenames[x],i,x)
@@ -410,24 +416,24 @@ def CreatePosListmulti(FileName, k):
             LSeqNums[runnum] += 1
             TSeqNums[runnum] += 1
             done = {}
+            noisefilter = {"F": [],"R": []}
             for n in range(1, nmotifs+1):
                 done[n] = set()
                 for x in range(0,(l+1-k-avg5-avg3)):
-                    kmers = str(line[x+avg5:x+k+avg5])
-                    if kmers not in done[n]:
-                        hkmers = kmer2hash(kmers)
-                        if hkmers < combinations:
-                            if hkmers in hamminglist2[runnum][k][n]:
-                                poslist[runnum][k][n][x] += 1
-                                done[n].add(kmers)
-                            if hkmers in rhamminglist2[runnum][k][n]:
-                                rposlist[runnum][k][n][x] += 1
-                                done[n].add(kmers)
-                                if c == 0:
-                                    numoftfbsseq[runnum][k] += 1
-                                    c += 1
+                    kmers = kmer2hash(str(line[x+avg5:x+k+avg5]))
+                    #if kmers not in done[n]:
+                    if kmers < combinations:
+                        if kmers in hamminglist2[runnum][k][n]:
+                            poslist[runnum][k][n][x] += 1
+                            done[n].add(kmers)
+                        if kmers in rhamminglist2[runnum][k][n]:
+                            rposlist[runnum][k][n][x] += 1
+                            done[n].add(kmers)
+                            if c == 0:
+                                numoftfbsseq[runnum][k] += 1
+                                c += 1
                     if x == int(l-k)-(avg5+avg3):
-                        if seq1 & seq2 in done:
+                        if seq1 & seq2 in done[n]:
                             numf = len(noisefilter["F"])
                             numr = len(noisefilter["R"])
                             a = 0
@@ -440,12 +446,12 @@ def CreatePosListmulti(FileName, k):
                                     a += 1
                                 else:
                                     b += 1
-                            if k < mindiff <= (l):
+                            if k < mindiff < l:
                                 cooccurencelist[runnum][k][n]["fr"] += 1
                                 gaplist[runnum][k][n].append(mindiff-k)
-                        elif seq1 in done and seq2 not in done:
+                        elif seq1 in done and seq2 not in done[n]:
                             cooccurencelist[runnum][k][n]["f"] += 1
-                        elif seq2 in done and seq1 not in done:
+                        elif seq2 in done and seq1 not in done[n]:
                             cooccurencelist[runnum][k][n]["r"] += 1
 
         else:
@@ -456,8 +462,6 @@ def CreatePosListmulti(FileName, k):
 def multiPosListmulti(numofruns):
     for j in files:
         fullname = os.path.join(datadir, j)
-        #mink = int(inputlist[((x-1)*5)+7])
-        #maxk = int(inputlist[((x-1)*5)+8])
         for i in range(mink, maxk+1):
             CreatePosListmulti(fullname,i)
 
@@ -644,7 +648,10 @@ def cooccurenceindex():
     for r in range(1, numofruns+1):
         for k in range(mink, maxk+1):
             for n in range(1, nmotifs+1):
-                cooccurenceindexlist[r][k][n] = (cooccurencelist[r][k][n]["fr"]/(cooccurencelist[r][k][n]["fr"]+cooccurencelist[r][k][n]["f"]+cooccurencelist[r][k][n]["r"]))
+                total = (cooccurencelist[r][k][n]["fr"]+cooccurencelist[r][k][n]["f"]+cooccurencelist[r][k][n]["r"])
+                if total == 0:
+                    total = 1
+                cooccurenceindexlist[r][k][n] = (cooccurencelist[r][k][n]["fr"]/total)
 
 cooccurenceindex()
 
@@ -653,8 +660,63 @@ def gapstdevcalc():
     for r in range(1, numofruns+1):
         for k in range(mink, maxk+1):
             for n in range(1, nmotifs+1):
-                if len(gaplist[r][k][n]) > 0:
+                if len(gaplist[r][k][n]) >= 2:
                     gapstdev[r][k][n]["mean"] += int(round((sum(gaplist[r][k][n])/len(gaplist[r][k][n])), 0))
                     gapstdev[r][k][n]["stdev"] += round(statistics.stdev(gaplist[r][k][n]),4)
+                else:
+                    gapstdev[r][k][n]["mean"] = 0
+                    gapstdev[r][k][n]["stdev"] = 0
 
 gapstdevcalc()
+
+
+def writemetainfo():
+    metafile = open("figures/"+str(identifier)+"/metainfo", "w")
+    metafile.write("Analysis identifier: \t"+str(inputlist[0])+"\n")
+    metafile.write("Data directory: \t"+str(inputlist[1])+"\n")
+    metafile.write("Number of runs: \t"+str(inputlist[2])+"\n")
+    metafile.write("Reverse compliment: \t"+str(inputlist[3])+"\n")
+    metafile.write("Min k value: \t"+str(inputlist[4])+"\n")
+    metafile.write("Max k value: \t"+str(inputlist[5])+"\n")
+    metafile.write("Experiment type: \t"+str(inputlist[6])+"\n")
+    metafile.write("Number of motifs: \t"+str(nmotifs)+"\n")
+    metafile.write("Allowed hamming dist: \t"+str(allowham)+"\n")
+    metafile.write("\n")
+    if extype == "ChIP":
+        for n in range(numofruns):
+            metafile.write("File name "+str(n+1)+": \t"+str(inputlist[n+7])+"\n")
+            metafile.write("Number of sequences "+str(n+1)+": \t"+str(TSeqNums[n+1])+"\n")
+            if nobarcode == False:
+                metafile.write("Barcode 5' "+str(n+1)+": \t"+str(barcodeprimers53[n+startround][0])+"\n")
+                metafile.write("Barcode 3' "+str(n+1)+": \t"+str(barcodeprimers53[n+startround][1])+"\n")
+            for k in range(mink, maxk+1):
+                metafile.write("Sequence bias ("+str(n+1)+", "+str(k)+"): \t"+str(round((sum(seqbias[n+1][k])/len(seqbias[n+1][k])),7))+"\n")
+                for x in range(1, nmotifs+1):
+                    metafile.write("Consensus ("+str(n+1)+", "+str(k)+", "+str(x)+"): \t"+str(consensuslist[n+1][k][x])+"\n")
+                    metafile.write("PWM ("+str(n+1)+", "+str(k)+", "+str(x)+"): \t"+str(logoform[n+1][k][x])+"\n")
+                    metafile.write("Dimer co-occurence ("+str(n+1)+", "+str(k)+", "+str(x)+"): \t"+str(cooccurenceindexlist[n+1][k][x])+"\n")
+                    metafile.write("Mean gap ("+str(n+1)+", "+str(k)+", "+str(x)+"): \t"+str(gapstdev[n+1][k][x]["mean"])+"\n")
+                    metafile.write("Gap size stdev ("+str(n+1)+", "+str(k)+", "+str(x)+"): \t"+str(gapstdev[n+1][k][x]["stdev"])+"\n")
+            metafile.write("\n")
+    if extype == "SELEX":
+        for n in range(numofruns):
+            metafile.write("File name "+str(n+1)+": \t"+str(inputlist[(n*2)+7])+"\n")
+            metafile.write("Sequence length "+str(n+1)+": \t"+str(inputlist[(n*2)+8])+"\n")
+            metafile.write("Total number of sequences "+str(n+1)+": \t"+str(TSeqNums[n+1])+"\n")
+            metafile.write("Passed number of sequences "+str(n+1)+": \t"+str(LSeqNums[n+1])+"\n")
+            if nobarcode == False:
+                metafile.write("Barcode 5' "+str(n+1)+": \t"+str(barcodeprimers53[n+startround][0])+"\n")
+                metafile.write("Barcode 3' "+str(n+1)+": \t"+str(barcodeprimers53[n+startround][1])+"\n")
+            for k in range(mink, maxk+1):
+                metafile.write("Sequence bias ("+str(n+1)+", "+str(k)+"): \t"+str(round((sum(seqbias[n+1][k])/len(seqbias[n+1][k])),7))+"\n")
+                for x in range(1, nmotifs+1):
+                    metafile.write("Consensus ("+str(n+1)+", "+str(k)+", "+str(x)+"): \t"+str(consensuslist[n+1][k][x])+"\n")
+                    metafile.write("PWM ("+str(n+1)+", "+str(k)+", "+str(x)+"): \t"+str(logoform[n+1][k][x])+"\n")
+                    metafile.write("Dimer co-occurence ("+str(n+1)+", "+str(k)+", "+str(x)+"): \t"+str(cooccurenceindexlist[n+1][k][x])+"\n")
+                    metafile.write("Mean gap ("+str(n+1)+", "+str(k)+", "+str(x)+"): \t"+str(gapstdev[n+1][k][x]["mean"])+"\n")
+                    metafile.write("Gap size stdev ("+str(n+1)+", "+str(k)+", "+str(x)+"): \t"+str(gapstdev[n+1][k][x]["stdev"])+"\n")
+            metafile.write("\n")
+
+    metafile.close()
+
+writemetainfo()
