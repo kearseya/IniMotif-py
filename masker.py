@@ -132,6 +132,7 @@ try:
     numofmasksentry.delete(0)
     numofmasksentry.insert(0, int(1))
     numofmasksentry.bind("<FocusOut>", changeform)
+    numofmasksentry.bind("<Return>", changeform)
 
     typelabel = Label(maskinputframe, text="Type of masks: ")
     typelabel.grid(row=0, column=0, padx=10, sticky="e")
