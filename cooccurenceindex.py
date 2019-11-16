@@ -1,5 +1,6 @@
 from Bio import SeqIO
 import numpy as np
+import statistics
 
 file = str(input("File name with path: "))
 
@@ -77,12 +78,12 @@ def cooccurence(FileName):
                     done.add(hkmer)
                     if hkmer == seq1:
                         noisefilter["F"].append(x)
-                    if hkmers == seq2:
+                    if hkmer == seq2:
                         noisefilter["R"].append(x)
                 except:
                     continue
                 if x == (len(line)-k):
-                    if filter = True:
+                    if filter == True:
                         if seq1 & seq2 in done:
                             numf = len(noisefilter["F"])
                             numr = len(noisefilter["R"])
@@ -90,7 +91,7 @@ def cooccurence(FileName):
                             b = 0
                             mindiff = 1000
                             while (a < numf and b < numr):
-                                if (k < abs(noisefilter["F"][a] - noisefilter["R"][b]) < mindiff):
+                                if k < abs(noisefilter["F"][a] - noisefilter["R"][b]) < mindiff:
                                     mindiff = abs(noisefilter["F"][a] - noisefilter["R"][b])
                                 if (noisefilter["F"][a] < noisefilter["R"][b]):
                                     a += 1
@@ -116,7 +117,10 @@ cooccurence(file)
 
 
 def cooccurenceindex():
-    cooccurence = (forwardandreverse/(forwardandreverse+forwardonly+reverseonly))
+    total = (forwardandreverse+forwardonly+reverseonly)
+    if total == 0:
+        total = 1
+    cooccurence = (forwardandreverse/total)
     return cooccurence
 
 cooccurenceindex = cooccurenceindex()
@@ -125,9 +129,9 @@ print("Cooccurence index:")
 print(cooccurenceindex)
 
 def meangapcalc():
-    if filter = False:
+    if filter == False:
         meangap = "Not calculated"
-    if filter = True:
+    if filter == True:
         if len(gaplist) > 0:
             meangap = int(round((sum(gaplist)/len(gaplist)),0))
         else:
@@ -137,9 +141,9 @@ def meangapcalc():
 meangap = meangapcalc()
 
 def stdevcalc():
-    if filter = False:
+    if filter == False:
         stdev = "Not calculated"
-    if filter = True:
+    if filter == True:
         if len(gaplist) > 0:
             stdev = statistics.stdev(gaplist)
         else:
