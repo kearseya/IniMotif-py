@@ -579,13 +579,16 @@ def plotter(runnum, k, n):
         kder = KernelDensity(bandwidth = 0.05, kernel='gaussian')
 
         kdef.fit(np.asarray(poslist[runnum][k][n])[:, None])
-        kder.fit(np.asarray(rposlist[runnum][k][n])[:, None])
+        if len(rposlist[runnum][k][n]) > 0:
+            kder.fit(np.asarray(rposlist[runnum][k][n])[:, None])
 
         logprobf = kdef.score_samples(x_d[:, None])
-        logprobr = kder.score_samples(x_d[:, None])
+        if len(rposlist[runnum][k][n]) > 0:
+            logprobr = kder.score_samples(x_d[:, None])
 
         plt.fill_between(x_d, np.exp(logprobf*(flen/tot)), alpha=0.5)
-        plt.fill_between(x_d, np.exp(logprobr*(rlen/tot)), alpha=0.5)
+        if len(rposlist[runnum][k][n]) > 0:
+            plt.fill_between(x_d, np.exp(logprobr*(rlen/tot)), alpha=0.5)
 
         label=("Forward", "Reverse")
         plt.legend(label)
