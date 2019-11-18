@@ -6,4 +6,4 @@ pillow
 sip
 pyqt5
 adjusttext
-sklearn
+scikit-learn
