@@ -1,0 +1,9 @@
+numpy
+biopython
+matplotlib
+seaborn
+pillow
+sip
+pyqt5
+adjusttext
+sklearn
