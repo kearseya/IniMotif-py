@@ -10,8 +10,24 @@
 
 Python scripts for extracting TF motif from SELEXseq data.
 
-To run: <br />
-Open the HTMLmaker.py in python3 and enter data into the pop up window.
+## Setup
+The recommended way to setup your computer for running Inimotif is to install the official distribution of Python 3.7. You can download the official Python 3.7 distribution [here](https://www.python.org/downloads/release/python-375). Once you've installed Python, open the terminal/prompt and enter the following command:
+```
+pip install -r requirements.txt
+```
+This will install the required python packages that Inimotif needs to run. Note that Inimotif may work for versions of Python 3 prior to 3.7, but this is untested. For Mac you may need to update Tcl/Tk to use the GUI for versions of Python prior to 3.7.2. See [here](https://www.python.org/download/mac/tcltk/) for more information.
+<br/>
+<br/>
+Alternatively, you can also run Inimotif using [Anaconda](https://www.anaconda.com/distribution/). To setup a conda environment and install the requirements:
+```
+conda create -y --name inimotif python==3.7
+conda install -fyq --name inimotif -c conda-forge --file requirements.txt
+conda activate inimotif
+```
+
+
+## Running Inimotif
+You can download Inimotif [here](https://github.com/kearseya/IniMotif-py/archive/master.zip). Open the HTMLmaker.py in python3 and enter data into the pop up window.
 
 * On Mac/Linux <br />
 ```bash
@@ -23,10 +39,6 @@ $ python3 HTMLmaker.py
 ```
 <br />
 Press the "Enter" button and exit the GUI window. If the GUI does not show, there will be command line input prompts.
-<br />
-<br />
-Python module requirements: Numpy, Biopython, Matplotlib, Tkinter, Pillow, PyQt(5), SIP, adjustText, sklearn
-<br />
 <br />
 Figures are saved in a folder with the name of the analysis identidier and split into subfolders for the logos, hamming distance, position bias, and kmer frequency.
 
