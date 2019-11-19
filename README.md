@@ -15,7 +15,7 @@ The recommended way to setup your computer for running Inimotif is to install th
 ```
 pip install -r requirements.txt
 ```
-This will install the required python packages that Inimotif needs to run. Note that Inimotif should work for versions of Python 3 prior to 3.7, but for Mac you may need to update Tcl/Tk to use the GUI. See [here](https://www.python.org/download/mac/tcltk/) for more information.
+This will install the required python packages that Inimotif needs to run. Note that Inimotif may work for versions of Python 3 prior to 3.7, but this is untested. For Mac you may need to update Tcl/Tk to use the GUI for versions of Python prior to 3.7.2. See [here](https://www.python.org/download/mac/tcltk/) for more information.
 <br/>
 <br/>
 Alternatively, you can also run Inimotif using [Anaconda](https://www.anaconda.com/distribution/). To setup a conda environment and install the requirements:
