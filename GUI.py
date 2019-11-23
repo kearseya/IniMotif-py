@@ -694,7 +694,8 @@ def makeorderedinputlist():
         for x in range(0, int(numberofrunsinput.get())-1):
             inputlist.append(fiveprimebar[x].get())
             inputlist.append(threeprimebar[x].get())
-
+    
+    window.destroy()
     return inputlist
 
 
