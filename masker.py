@@ -116,7 +116,7 @@ try:
 
     pictureframe = Frame(window)
     pictureframe.pack(side=RIGHT)
-    maskerimage = PhotoImage(file='figures/GUIgraphics/masker.png')
+    maskerimage = PhotoImage(file='GUIgraphics/masker.png')
     maskerimagelabel = Label(pictureframe, image=maskerimage)
     maskerimagelabel.grid(padx=20, pady=20)
 
