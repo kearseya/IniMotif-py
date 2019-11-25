@@ -359,7 +359,7 @@ valueforlogodrop.set(logoformatlist[0])
 logoformatdropdown = OptionMenu(initialdetailsframe, valueforlogodrop, "bits", "frequency")
 logoformatdropdown.grid(row=5, column=1)
 
-inimotifimage = PhotoImage(file='figures/GUIgraphics/logo.png')
+inimotifimage = PhotoImage(file='/GUIgraphics/logo.png')
 inimotifimagelabel = Label(pictureframe, image=inimotifimage)
 inimotifimagelabel.grid(padx=20)
 
