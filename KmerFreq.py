@@ -205,12 +205,18 @@ def grapher(k):
     top.set_xlim([((startround-1)-0.5), (numofruns+startround)])
     top.set_xticks(np.linspace((startround-1)-0.5, (numofruns+startround), num=((2*(numofruns+1))+2), endpoint=True))
 
+    top.spines['right'].set_visible(False)
+    top.spines['top'].set_visible(False)
+
     bottom = fig.add_subplot(grid[-1,:-1])
     bottom.set_xlabel("SELEX round")
     bottom.set_ylabel("f = (kmer/total)")
     bottom.set_title("Kmer frequency")
     bottom.set_xlim([((startround-1)-0.5), (numofruns+(startround-1))])
     bottom.set_xticks(range((startround-1),(numofruns+1)))
+
+    bottom.spines['right'].set_visible(False)
+    bottom.spines['top'].set_visible(False)
 
     bar = fig.add_subplot(grid[-1,-1:])
     bar.set_xlabel("SELEX round")
