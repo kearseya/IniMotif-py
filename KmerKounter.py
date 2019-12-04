@@ -925,6 +925,15 @@ def removezeros():
 
 removezeros()
 
+
+def sortkmercountdict():
+    global kmercount
+    for x in range(1, numofruns+1):
+        for k in range(mink, maxk+1):
+            kmercount[x][k] = dict(sorted(kmercount[x][k].items(), key=lambda x: x[1], reverse=True))
+
+sortkmercountdict()
+
 top12t = []
 top12 = []
 
@@ -934,7 +943,7 @@ def top12maker(numofruns):
         top12.append({})
     for x in range(1, numofruns+1):
         for k in range(mink, maxk+1):
-            top12t[x][k] = list(sorted(kmercount[x][k].items(), key=lambda x: x[1], reverse=True))[:12]
+            top12t[x][k] = list(kmercount[x][k].items())[:12]
             top12[x][k] = [j[0] for j in top12t[x][k]]
 
 top12maker(numofruns)
