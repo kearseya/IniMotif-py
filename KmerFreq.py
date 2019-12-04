@@ -37,8 +37,8 @@ def colours1():
     for k in range(mink, maxk+1):
         top6s = top6all[numofruns][k]
         #consensusnum = kmercount[numofruns][k][top6s[0]]
-        colours[k] = list(sorted(kmercount[numofruns][k].items(), key=lambda x: x[1], reverse=True))[:62]
-        colours[k] = [j[0] for j in colours[k]]
+        colours[k] = list(kmercount[numofruns][k].keys())[6:66]
+        #colours[k] = [j[0] for j in colours[k]]
         for i in top6s:
             if i in colours[k]:
                 colours[k].remove(i)
@@ -59,9 +59,12 @@ def makeyaxis1a(i, k):
                 num =  kmercount[l][k][i]
             except:
                 num = 0
-            try:
-                rnum = kmercount[l][k][rkmer]
-            except:
+            if i != rkmer:
+                try:
+                    rnum = kmercount[l][k][rkmer]
+                except:
+                    rnum = 0
+            else:
                 rnum = 0
             f = (num+rnum)/total
             freq = (f/(1-f))
@@ -80,9 +83,12 @@ def makeyaxis1b(i, k):
                 num =  kmercount[l][k][i]
             except:
                 num = 0
-            try:
-                rnum = kmercount[l][k][rkmer]
-            except:
+            if i != rkmer:
+                try:
+                    rnum = kmercount[l][k][rkmer]
+                except:
+                    rnum = 0
+            else:
                 rnum = 0
             f = (num+rnum)/total
             freq = (f/(1-f))
@@ -101,12 +107,17 @@ def makeyaxis1c(i, k):
                 num =  kmercount[l][k][i]
             except:
                 num = 0
-            try:
-                rnum = kmercount[l][k][rkmer]
-            except:
+            if i != rkmer:
+                try:
+                    rnum = kmercount[l][k][rkmer]
+                except:
+                    rnum = 0
+            else:
                 rnum = 0
             f = (num+rnum)/total
             freq = (f/(1-f))
+            if freq == 0:
+                freq = 1
             yaxis1c.append(math.log10(freq))
     return yaxis1c
 
@@ -211,27 +222,43 @@ def grapher(k):
 
     if revcompwanted == False:
         for l in range(1, (numofruns+1)):
-            for i in kmercount[l][k]:
+            hashkeys = list(kmercount[l][k].keys())
+            for x in range(0, 66):
+                i = hashkeys[x]
                 num = kmercount[l][k][i]
                 rkmer = kmer2hash(revComp(hash2kmer(i,k)))
                 try:
                     rnum = kmercount[l][k][rkmer]
-                    if num > rnum:
+                    if num >= rnum:
                         if i in top6s:
                             yaxis1c = makeyaxis1c(i, k)
-                            top.plot(xaxis, yaxis1c, color=colourslist[(top6s.index(i)//2)], linewidth=2, marker="s", markevery=None, zorder=int(kmercount[l][k][i]))
+                            top.plot(xaxis, yaxis1c, color=colourslist[(top6s.index(i)//2)], linewidth=2, marker="s", markevery=None, zorder=(66-x))
                         if i in colours[k]:
                             yaxis1b = makeyaxis1b(i, k)
-                            top.plot(xaxis, yaxis1b, linewidth=1,  marker=".", markevery=None, zorder=int(kmercount[l][k][i]))
-                        if i not in top6s or colours[k]:
-                            yaxis1a = makeyaxis1a(i, k)
-                            top.plot(xaxis, yaxis1a, color = '0.75', linestyle='--', linewidth=0.5, marker="x", markevery=None, alpha=0.5, zorder=0)
+                            top.plot(xaxis, yaxis1b, linewidth=1,  marker=".", markevery=None, zorder=(66-x))
+                except:
+                    continue
+            if k <= 5:
+                step = 1
+            if k > 5:
+                step = int(round(len(hashkeys)/1000, 0))
+            for x in range(66, len(hashkeys), step):
+                i = hashkeys[x]
+                num = kmercount[l][k][i]
+                rkmer = kmer2hash(revComp(hash2kmer(i,k)))
+                try:
+                    rnum = kmercount[l][k][rkmer]
+                    if num >= rnum:
+                        yaxis1a = makeyaxis1a(i, k)
+                        top.plot(xaxis, yaxis1a, color = '0.75', linestyle='--', linewidth=0.5, marker="x", markevery=None, alpha=0.5, zorder=0)
                 except:
                     continue
 
 
         for l in range(1, (numofruns+1)):
-            for i in kmercount[l][k]:
+            hashkeys = list(kmercount[l][k].keys())
+            for x in range(0, 66):
+                i = hashkeys[x]
                 num = kmercount[l][k][i]
                 rkmer = kmer2hash(revComp(hash2kmer(i,k)))
                 try:
@@ -239,13 +266,25 @@ def grapher(k):
                     if num > rnum:
                         if i in top6s:
                             yaxis2c = makeyaxis2c(i, k)
-                            bottom.plot(xaxis, yaxis2c, color=colourslist[(top6s.index(i)//2)], linewidth=2, marker="s", markevery=None, zorder=int(kmercount[l][k][i]))
+                            bottom.plot(xaxis, yaxis2c, color=colourslist[(top6s.index(i)//2)], linewidth=2, marker="s", markevery=None, zorder=(66-x))
                         if i in colours[k]:
                             yaxis2b = makeyaxis2b(i, k)
-                            bottom.plot(xaxis, yaxis2b, linewidth=1,  marker=".", markevery=None, zorder=int(kmercount[l][k][i]))
-                        if i not in top6s or colours[k]:
-                            yaxis2a = makeyaxis2a(i, k)
-                            bottom.plot(xaxis, yaxis2a, color = '0.75', linestyle='--', linewidth=0.5, marker="x", markevery=None, alpha=0.8, zorder=0)
+                            bottom.plot(xaxis, yaxis2b, linewidth=1,  marker=".", markevery=None, zorder=66-x)
+                except:
+                    continue
+            if k <= 5:
+                step = 1
+            if k > 5:
+                step = int(round(len(hashkeys)/1000, 0))
+            for x in range(66, len(hashkeys), step):
+                i = hashkeys[x]
+                num = kmercount[l][k][i]
+                rkmer = kmer2hash(revComp(hash2kmer(i,k)))
+                try:
+                    rnum = kmercount[l][k][rkmer]
+                    if num > rnum:
+                        yaxis2a = makeyaxis2a(i, k)
+                        bottom.plot(xaxis, yaxis2a, color = '0.75', linestyle='--', linewidth=0.5, marker="x", markevery=None, alpha=0.8, zorder=0)
                 except:
                     continue
 
