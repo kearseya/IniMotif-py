@@ -25,17 +25,17 @@ Select from one of the three options: ChP-seq, SELEX-seq, or Masker.
 ### ChIP-seq
 For ChIP-seq data, you will be promted to enter: Identifier (name of output file), Input file (data to be analysed), Output directory (where should results be written), Minimum and Maximum Kmer length (kmers within the range of these variables will be scanned).
 
-![ChIP form entry](https://https://github.com/kearseya/IniMotif-py/tree/master/tutorial/screenshots/ChIPexampleGUI)
+![ChIP form entry](https://github.com/kearseya/IniMotif-py/tree/master/tutorial/screenshots/ChIPexampleGUI)
 
 ### SELEX-seq
 For SELEX-seq data, you will be promted to enter: Identifier, Minimum SELEX round number, Maximum SELEX round number, Input files (for in the range of min and max round number), Output directory, Minimum and Maximum Kmer length.
 
-![SELEX form entry](https://https://github.com/kearseya/IniMotif-py/tree/master/tutorial/screenshots/SELEXexampleGUI)
+![SELEX form entry](https://github.com/kearseya/IniMotif-py/tree/master/tutorial/screenshots/SELEXexampleGUI)
 
 ### Masker
 Masker will ask for an input file, and the output file name with location. Clicking the "Add Pattern" button will produce a new input row where the masks can be specified. Inputs for a pattern require: Type (repeat or motif), Reverse compliment (mask revcom of sequence), Sequence (to be masked), and depending on the type Number of minimum repeats, or Number of maximum mutations.
 
-![Masker form entry](https://https://github.com/kearseya/IniMotif-py/tree/master/tutorial/screenshots/MaskerexampleGUI)
+![Masker form entry](https://github.com/kearseya/IniMotif-py/tree/master/tutorial/screenshots/MaskerexampleGUI)
 
 
 ## Sub tabs
@@ -46,17 +46,17 @@ Both SELEX and ChIP seq tabs have the subtabs:
 
 The required inputs include: input and output directory, and up to n consensus sequence(s) with how many mutations, and a reverse compliment option.
 
-![Motif scan form entry](https://https://github.com/kearseya/IniMotif-py/tree/master/tutorial/screenshots/MotifScanexampleGUI)
+![Motif scan form entry](https://github.com/kearseya/IniMotif-py/tree/master/tutorial/screenshots/MotifScanexampleGUI)
 
 ### Top kmer
 
 The Top kmer tab only requires 2 inputs: the prepoc.pickle file produced from an analysis (can be found in the rXkX directories of the analysis output directory), and the number of top kmers to be displayed.
 
-![Top kmers form entry](https://https://github.com/kearseya/IniMotif-py/tree/master/tutorial/screenshots/TopKmerexampleGUI)
+![Top kmers form entry](https://github.com/kearseya/IniMotif-py/tree/master/tutorial/screenshots/TopKmerexampleGUI)
 
 ### Kmer query
 
 Similar to the Top kmer tab, the Kmer query tab on requires two entries: a preproc.pickle file, and input kmers (one per line).
 
-![Top kmers form entry](https://https://github.com/kearseya/IniMotif-py/tree/master/tutorial/screenshots/KmerQueryexampleGUI)
+![Top kmers form entry](https://github.com/kearseya/IniMotif-py/tree/master/tutorial/screenshots/KmerQueryexampleGUI)
 
