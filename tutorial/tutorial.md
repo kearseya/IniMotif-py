@@ -52,7 +52,7 @@ The required inputs include: input and output directory, and up to n consensus s
 
 ### Top kmer
 
-The Top kmer tab only requires 2 inputs: the prepoc.pickle file produced from an analysis (can be found in the rXkX directories of the analysis output directory), and the number of top kmers to be displayed.
+The Top kmer tab only requires 2 inputs: the prepoc.pickle file produced from an analysis (can be found in the (rX)kX directories of the analysis output directory), and the number of top kmers to be displayed.
 
 ![Top kmers form entry](https://github.com/kearseya/IniMotif-py/blob/master/tutorial/screenshots/TopKmerexampleGUI.png "Top kmers")
 
