@@ -60,4 +60,4 @@ Figures are saved in a folder with the name of the analysis identidier and split
 
 ## Tutorial
 
-[chip](https://github.com/kearseya/IniMotif-py/blob/master/tutorial/ChIPseq%20tutorial.md)
+[ChIP](https://github.com/kearseya/IniMotif-py/blob/master/tutorial/ChIPseq%20tutorial.md) [SELEX](https://github.com/kearseya/IniMotif-py/blob/master/tutorial/SELEXseq%20tutorial.md) [Masker](https://github.com/kearseya/IniMotif-py/blob/master/tutorial/Masker%20tutorial.md) 
