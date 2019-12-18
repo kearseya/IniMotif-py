@@ -57,3 +57,7 @@ Figures are saved in a folder with the name of the analysis identidier and split
 **Start round** - What round/run number does the analysis start from (*with large numbers of rounds in eg. a SELEX experiment, excluding the first few rounds can be faster for analysis*) <br />
 **Number of motifs** - How many motifs should be calculated (*generation of more than 1 motif will remove kmers used for previous logos for their generation*) <br />
 **Allowed hamming distance** - At what hamming distance value (compared to the consensus kmer) should kmers be used for the making of the position weight matrix <br />
+
+## Tutorial
+
+[chip](https://github.com/kearseya/IniMotif-py/blob/master/tutorial/ChIPseq%20tutorial.md)
