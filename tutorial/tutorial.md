@@ -30,7 +30,9 @@ For ChIP-seq data, you will be promted to enter: Identifier (name of output file
 ### SELEX-seq
 For SELEX-seq data, you will be promted to enter: Identifier, Minimum SELEX round number, Maximum SELEX round number, Input files (for in the range of min and max round number), Output directory, Minimum and Maximum Kmer length.
 
-![SELEXformentry](https://github.com/kearseya/IniMotif-py/blob/master/tutorial/screenshots/SELEXexampleGUI.png "SELEX")
+![SELEXformentry](https://github.com/kearseya/IniMotif-py/blob/master/tutorial/screenshots/SELEXexampleGUI1.png = 200x135 "SELEX")
+![SELEXformentry](https://github.com/kearseya/IniMotif-py/blob/master/tutorial/screenshots/SELEXexampleGUI2.png = 200x135 "SELEX2")
+![SELEXformentry](https://github.com/kearseya/IniMotif-py/blob/master/tutorial/screenshots/SELEXexampleGUI3.png = 200x135 "SELEX3")
 
 ### Masker
 Masker will ask for an input file, and the output file name with location. Clicking the "Add Pattern" button will produce a new input row where the masks can be specified. Inputs for a pattern require: Type (repeat or motif), Reverse compliment (mask revcom of sequence), Sequence (to be masked), and depending on the type Number of minimum repeats, or Number of maximum mutations.
