@@ -5,4 +5,4 @@ Masker will ask for an input file, and the output file name with location. Click
 
 ![Masker form entry](https://github.com/kearseya/IniMotif-py/blob/master/tutorial/screenshots/MaskerexampleGUI.png "Masker")
 
-In this screenshot, repeats of 4 or more A's and the barcode (TCTA/TAGA) are being masked from the NF1-1.fa file.
+In this screenshot, repeats of 4 or more A's or T's and the barcode (TCTA/TAGA) are being masked from the NF1-1.fa file.
