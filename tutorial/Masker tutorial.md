@@ -6,3 +6,7 @@ Masker will ask for an input file, and the output file name with location. Click
 ![Masker form entry](https://github.com/kearseya/IniMotif-py/blob/master/tutorial/screenshots/MaskerexampleGUI.png "Masker")
 
 In this screenshot, repeats of 4 or more A's or T's and the barcode (TCTA/TAGA) are being masked from the NF1-1.fa file.
+
+Here is a comparison between the input and output file.
+
+![unmasked example](https://github.com/kearseya/IniMotif-py/blob/master/tutorial/screenshots/unmasked%20example.png "unmaksed example") ![masked example](https://github.com/kearseya/IniMotif-py/blob/master/tutorial/screenshots/masked%20example.png "maksed example")
