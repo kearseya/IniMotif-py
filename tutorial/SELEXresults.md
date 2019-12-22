@@ -6,7 +6,7 @@ Inside the results directory, each value of K gets its own reults directory for 
 
 Inside each rNkN folder, the: cooccurence distace, hamming distance, forward and reverse logo, position distribution distance, and a preproc.pickle for the corresponding round and K value are saved.
 
-![SELEXrkdir](https://github.com/kearseya/IniMotif-py/blob/master/tutorial/screenshots/SELEXerunkDIR.png "SELEXrkdir")
+![SELEXrkdir](https://github.com/kearseya/IniMotif-py/blob/master/tutorial/screenshots/SELEXrunkDIR.png "SELEXrkdir")
 
 The main reults directory also contains a folder for the trend figure reults.
 
