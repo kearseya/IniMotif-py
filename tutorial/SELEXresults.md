@@ -14,7 +14,9 @@ The main reults directory also contains a folder for the trend figure reults.
 
 There are also two sets of reults pages which separate the results by round (ie. show all values of K for a single round) and by K value (show all rounds for a single value of K). 
 
-![SELEXrunPage](https://github.com/kearseya/IniMotif-py/blob/master/tutorial/screenshots/SELEXrunPAGE.png "SELEXrundPAGE")
+![SELEXrunPage](https://github.com/kearseya/IniMotif-py/blob/master/tutorial/screenshots/SELEXrunPAGE.png "SELEXrunPAGE")
+
+![SELEXbykPage](https://github.com/kearseya/IniMotif-py/blob/master/tutorial/screenshots/SELEXbykPAGE.png "SELEXbykPAGE")
 
 
 
