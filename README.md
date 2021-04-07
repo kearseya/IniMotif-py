@@ -1,5 +1,7 @@
 # IniMotif-py
 
+Beta POC code for https://github.com/chengl7/IniMotif
+
 ## IniMotif in python
 
 *Alex Kearsey 
